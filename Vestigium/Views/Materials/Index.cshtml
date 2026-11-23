@@ -1,0 +1,1014 @@
+﻿@model Vestigium.Models.ViewModels.MaterialSearchVM
+@using Vestigium.ViewModels
+
+@{
+    ViewData["Title"] = "Inventario";
+
+    var hasFilters =
+        !string.IsNullOrWhiteSpace(Model.SearchText) ||
+        !string.IsNullOrWhiteSpace(Model.PartNumber) ||
+        Model.ProductId.HasValue ||
+        !string.IsNullOrWhiteSpace(Model.Rack) ||
+        !string.IsNullOrWhiteSpace(Model.QuantityOrder);
+}
+
+<div class="container-fluid px-0">
+
+    <!-- =====================================================
+         ENCABEZADO
+    ====================================================== -->
+
+    <div class="card hero-card mb-4">
+
+        <div class="card-body p-4">
+
+            <div class="d-flex flex-column flex-lg-row
+                justify-content-between
+                align-items-lg-center
+                gap-3">
+
+                <!-- Información -->
+
+                <div>
+
+                    <h1 class="hero-title
+                        d-flex
+                        align-items-center
+                        gap-2
+                        mb-1">
+
+                        <i class="bi bi-box-seam"></i>
+
+                        <span>
+                            Inventario
+                        </span>
+
+                    </h1>
+
+
+                    <p class="hero-subtitle">
+
+                        Consulta materiales, existencias, productos relacionados
+                        y ubicaciones de inventario.
+
+                    </p>
+
+                </div>
+
+
+                <!-- Acciones -->
+
+                <div class="page-header-actions">
+
+                    <a asp-action="ScrapMrb"
+                       class="btn btn-outline-secondary">
+
+                        <i class="bi bi-recycle"></i>
+
+                        Scrap / MRB
+
+                    </a>
+
+
+                    <a asp-action="Create"
+                       class="btn btn-primary">
+
+                        <i class="bi bi-plus-lg"></i>
+
+                        Nuevo Material
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         INDICADORES
+    ====================================================== -->
+
+    <div class="row g-3 mb-4">
+
+        <!-- Materiales -->
+
+        <div class="col-12 col-md-4">
+
+            @await Html.PartialAsync(
+                "_KpiCard",
+                new KpiCardVM
+                {
+                    Title = "Materiales",
+                    Value = Model.GlobalMaterials.ToString("N0"),
+                    Subtitle = "Registrados",
+                    Icon = "bi bi-box-seam",
+                    ColorClass = "kpi-primary"
+                })
+
+        </div>
+
+
+        <!-- Inventario total -->
+
+        <div class="col-12 col-md-4">
+
+            @await Html.PartialAsync(
+                "_KpiCard",
+                new KpiCardVM
+                {
+                    Title = "Inventario Total",
+                    Value = Model.TotalInventory.ToString("N0"),
+                    Subtitle = "Piezas disponibles",
+                    Icon = "bi bi-stack",
+                    ColorClass = "kpi-success"
+                })
+
+        </div>
+
+
+        <!-- Materiales críticos -->
+
+        <div class="col-12 col-md-4">
+
+            @await Html.PartialAsync(
+                "_KpiCard",
+                new KpiCardVM
+                {
+                    Title = "Inventario Crítico",
+                    Value = Model.CriticalMaterials.ToString("N0"),
+                    Subtitle = "Materiales con inventario bajo",
+                    Icon = "bi bi-exclamation-triangle",
+                    ColorClass = Model.CriticalMaterials > 0
+                        ? "kpi-danger"
+                        : "kpi-success"
+                })
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         FILTROS
+    ====================================================== -->
+
+    <form method="get"
+          class="card module-card mb-4">
+
+        <!-- Header -->
+
+        <div class="card-header">
+
+            <div class="d-flex flex-column flex-md-row
+                justify-content-between
+                align-items-md-center
+                gap-2">
+
+                <div>
+
+                    <h2 class="card-title-standard
+                        d-flex
+                        align-items-center
+                        gap-2">
+
+                        <i class="bi bi-funnel text-primary"></i>
+
+                        Filtros de Inventario
+
+                    </h2>
+
+
+                    <div class="text-muted small mt-1">
+
+                        Localice materiales por parte, producto BOM,
+                        ubicación o nivel de inventario.
+
+                    </div>
+
+                </div>
+
+
+                @if (hasFilters)
+                {
+                    <span class="status-badge badge-primary">
+
+                        <i class="bi bi-funnel-fill"></i>
+
+                        Filtros aplicados
+
+                    </span>
+                }
+
+            </div>
+
+        </div>
+
+
+        <!-- Body -->
+
+        <div class="card-body">
+
+            <!-- =================================================
+                 FILA 1
+            ================================================== -->
+
+            <div class="row g-3">
+
+                <!-- Búsqueda general -->
+
+                <div class="col-12 col-lg-8">
+
+                    <label asp-for="SearchText"
+                           class="form-label">
+
+                        Búsqueda General
+
+                    </label>
+
+
+                    <div class="input-group">
+
+                        <span class="input-group-text">
+
+                            <i class="bi bi-search"></i>
+
+                        </span>
+
+
+                        <input asp-for="SearchText"
+                               class="form-control"
+                               autocomplete="off"
+                               placeholder="Número de parte o descripción..." />
+
+                    </div>
+
+                </div>
+
+
+                <!-- Número de parte -->
+
+                <div class="col-12 col-md-6 col-lg-4">
+
+                    <label asp-for="PartNumber"
+                           class="form-label">
+
+                        Número de Parte
+
+                    </label>
+
+
+                    <input asp-for="PartNumber"
+                           class="form-control"
+                           list="partNumbersList"
+                           autocomplete="off"
+                           placeholder="Seleccione o escriba..." />
+
+
+                    <datalist id="partNumbersList">
+
+                        @foreach (var item in ViewBag.PartNumbers)
+                        {
+                            <option value="@item"></option>
+                        }
+
+                    </datalist>
+
+                </div>
+
+
+                <!-- =================================================
+                     FILA 2
+                ================================================== -->
+                <!-- Producto BOM -->
+
+                <div class="col-12 col-md-4">
+
+                    <label asp-for="ProductId"
+                           class="form-label">
+
+                        Producto BOM
+
+                    </label>
+
+
+                    <select asp-for="ProductId"
+                            class="form-select">
+
+                        <option value="">
+                            Todos los productos
+                        </option>
+
+
+                        @foreach (var product in ViewBag.BomProducts)
+                        {
+                            <option value="@product.ProductId">
+
+                                @product.ProductNumber
+
+                            </option>
+                        }
+
+                    </select>
+
+
+                    <div class="form-text">
+
+                        Muestra los materiales utilizados por el producto.
+
+                    </div>
+
+                </div>
+
+
+                <!-- Ubicación -->
+
+                <div class="col-12 col-md-4">
+
+                    <label asp-for="Rack"
+                           class="form-label">
+
+                        Ubicación Principal
+
+                    </label>
+
+
+                    <select asp-for="Rack"
+                            class="form-select">
+
+                        <option value="">
+                            Todas las ubicaciones
+                        </option>
+
+                        <option>A</option>
+                        <option>B</option>
+                        <option>C</option>
+                        <option>D</option>
+                        <option>E</option>
+                        <option>F</option>
+                        <option>G</option>
+                        <option>H</option>
+                        <option>I</option>
+                        <option>J</option>
+                        <option>K</option>
+                        <option>L</option>
+                        <option>M</option>
+                        <option>N</option>
+                        <option>W</option>
+                        <option>X</option>
+                        <option>Y</option>
+
+                    </select>
+
+
+                    <div class="form-text">
+
+                        Filtra por la ubicación principal del material.
+
+                    </div>
+
+                </div>
+
+
+                <!-- Ordenar -->
+
+                <div class="col-12 col-md-4">
+
+                    <label asp-for="QuantityOrder"
+                           class="form-label">
+
+                        Ordenar por Inventario
+
+                    </label>
+
+
+                    <select asp-for="QuantityOrder"
+                            class="form-select">
+
+                        <option value="">
+                            Orden predeterminado
+                        </option>
+
+                        <option value="desc">
+                            Mayor cantidad primero
+                        </option>
+
+                        <option value="asc">
+                            Menor cantidad primero
+                        </option>
+
+                    </select>
+
+
+                    <div class="form-text">
+
+                        Ordena los resultados por existencia disponible.
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 ACCIONES
+            ================================================== -->
+
+            <div class="d-flex flex-column flex-sm-row
+                justify-content-end
+                gap-2
+                mt-4">
+
+                @if (hasFilters)
+                {
+                    <a asp-action="Index"
+                       class="btn btn-outline-secondary">
+
+                        <i class="bi bi-x-lg"></i>
+
+                        Limpiar Filtros
+
+                    </a>
+                }
+
+
+                <button type="submit"
+                        class="btn btn-primary">
+
+                    <i class="bi bi-search"></i>
+
+                    Aplicar Filtros
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </form>
+
+
+    <!-- =====================================================
+         INVENTARIO
+    ====================================================== -->
+
+    <div class="card module-card inventory-card">
+
+        <!-- Header -->
+
+        <div class="card-header">
+
+            <div class="d-flex flex-column flex-md-row
+                justify-content-between
+                align-items-md-center
+                gap-3">
+
+                <div>
+
+                    <h2 class="card-title-standard
+                        d-flex
+                        align-items-center
+                        gap-2">
+
+                        <i class="bi bi-boxes text-primary"></i>
+
+                        Inventario Disponible
+
+                    </h2>
+
+
+                    <div class="text-muted small mt-1">
+
+                        Existencias, productos relacionados
+                        y ubicación principal de cada material.
+
+                    </div>
+
+                </div>
+
+
+                <div class="d-flex
+                    flex-wrap
+                    align-items-center
+                    gap-2">
+
+                    <span class="component-badge">
+
+                        <i class="bi bi-box-seam"></i>
+
+                        @Model.TotalRecords
+
+                        @(Model.TotalRecords == 1
+                            ? "material"
+                            : "materiales")
+
+                    </span>
+
+
+                    @if (Model.TotalPages > 1)
+                    {
+                        <span class="text-muted small">
+
+                            Página @Model.CurrentPage de @Model.TotalPages
+
+                        </span>
+                    }
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             TABLA
+        ================================================== -->
+        @if (Model.Materials.Any())
+        {
+            <div class="table-responsive inventory-table-container">
+
+                <table class="table
+                    table-modern
+                    table-hover
+                    align-middle"
+                       style="min-width: 1200px;">
+
+                    <thead>
+
+                        <tr>
+
+                            <th style="width: 14%;">
+
+                                Número de Parte
+
+                            </th>
+
+
+                            <th style="width: 27%;">
+
+                                Descripción
+
+                            </th>
+
+
+                            <th class="text-end text-nowrap"
+                                style="width: 10%;">
+
+                                Inventario
+
+                            </th>
+
+
+                            <th style="width: 23%;">
+
+                                Usado en
+
+                            </th>
+
+
+                            <th class="text-center text-nowrap"
+                                style="width: 12%;">
+
+                                Ubicación Principal
+
+                            </th>
+
+
+                            <th class="text-center text-nowrap"
+                                style="width: 14%;">
+
+                                Acciones
+
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        @foreach (var item in Model.Materials)
+                        {
+                            var isCritical =
+                                item.Quantity <= 10;
+
+                            var isLow =
+                                item.Quantity > 10 &&
+                                item.Quantity <= 50;
+
+
+                            <tr class="@(isCritical ? "critical-row" : "")">
+
+                                <!-- =================================
+                                     NÚMERO DE PARTE
+                                ================================== -->
+
+                                <td>
+
+                                    <span class="material-number table-reference">
+
+                                        @item.PartNumber
+
+                                    </span>
+
+                                </td>
+
+
+                                <!-- =================================
+                                     DESCRIPCIÓN
+                                ================================== -->
+
+                                <td>
+
+                                    @if (!string.IsNullOrWhiteSpace(item.Description))
+                                    {
+                                        <div class="material-description">
+
+                                            @item.Description
+
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">
+
+                                            Sin descripción
+
+                                        </span>
+                                    }
+
+                                </td>
+
+
+                                <!-- =================================
+                                     INVENTARIO
+                                ================================== -->
+
+                                <td class="text-end">
+
+                                    @if (isCritical)
+                                    {
+                                        <span class="quantity-negative">
+
+                                            @item.Quantity.ToString("N0")
+
+                                        </span>
+                                    }
+                                    else if (isLow)
+                                    {
+                                        <span class="quantity-warning">
+
+                                            @item.Quantity.ToString("N0")
+
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="quantity-positive">
+
+                                            @item.Quantity.ToString("N0")
+
+                                        </span>
+                                    }
+
+                                </td>
+
+
+                                <!-- =================================
+                                     USADO EN PRODUCTOS
+                                ================================== -->
+
+                                <td>
+
+                                    @if (item.UsedInProducts.Any())
+                                    {
+                                        <div class="d-flex
+                                            flex-wrap
+                                            align-items-center
+                                            gap-1">
+
+                                            @foreach (
+                                                var productNumber
+                                                in item.UsedInProducts.Take(3))
+                                            {
+                                                <span class="status-badge engineering-pill">
+
+                                                    <i class="bi bi-diagram-3"></i>
+
+                                                    @productNumber
+
+                                                </span>
+                                            }
+
+
+                                            @if (item.UsedInProducts.Count > 3)
+                                            {
+                                                var remainingProducts =
+                                                    item.UsedInProducts
+                                                        .Skip(3)
+                                                        .ToList();
+
+
+                                                <span class="status-badge badge-neutral"
+                                                      title="@string.Join(", ", remainingProducts)">
+
+                                                    +@remainingProducts.Count
+
+                                                </span>
+                                            }
+
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted small">
+
+                                            <i class="bi bi-dash-circle me-1"></i>
+
+                                            Sin asignación BOM
+
+                                        </span>
+                                    }
+
+                                </td>
+
+
+                                <!-- =================================
+                                     UBICACIÓN
+                                ================================== -->
+
+                                <td class="text-center">
+
+                                    @if (!string.IsNullOrWhiteSpace(item.Rack))
+                                    {
+                                        <span class="location-badge">
+
+                                            <i class="bi bi-geo-alt"></i>
+
+                                            @item.Rack
+
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted small">
+
+                                            <i class="bi bi-dash-circle me-1"></i>
+
+                                            Sin ubicación
+
+                                        </span>
+                                    }
+
+                                </td>
+
+
+                                <!-- =================================
+                                     ACCIONES
+                                ================================== -->
+
+                                <td class="text-center table-actions">
+
+                                    <div class="action-buttons">
+
+                                        <!-- Editar -->
+
+                                        <a asp-action="Edit"
+                                           asp-route-id="@item.Id"
+                                           class="btn btn-outline-secondary"
+                                           title="Editar material"
+                                           aria-label="Editar material @item.PartNumber">
+
+                                            <i class="bi bi-pencil"></i>
+
+                                        </a>
+
+
+                                        <!-- Ubicaciones -->
+
+                                        <a asp-action="Locations"
+                                           asp-route-id="@item.Id"
+                                           class="btn btn-outline-success"
+                                           title="Administrar ubicaciones"
+                                           aria-label="Administrar ubicaciones de @item.PartNumber">
+
+                                            <i class="bi bi-geo-alt"></i>
+
+                                        </a>
+
+
+                                        <!-- QR -->
+
+                                        <a asp-action="DownloadQr"
+                                           asp-route-id="@item.Id"
+                                           class="btn btn-outline-secondary"
+                                           title="Descargar código QR"
+                                           aria-label="Descargar QR de @item.PartNumber">
+
+                                            <i class="bi bi-qr-code"></i>
+
+                                        </a>
+
+                                    </div>
+
+                                </td>
+
+                            </tr>
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+        }
+        else
+        {
+            <!-- =================================================
+                 SIN RESULTADOS
+            ================================================== -->
+
+            <div class="empty-state">
+
+                <div class="empty-state-icon">
+
+                    <i class="bi bi-search"></i>
+
+                </div>
+
+
+                <div class="empty-state-title">
+
+                    No se encontraron materiales
+
+                </div>
+
+
+                <div class="empty-state-description">
+
+                    @if (hasFilters)
+                    {
+                        <span>
+
+                            No existen materiales que coincidan
+                            con los filtros seleccionados.
+
+                        </span>
+                    }
+                    else
+                    {
+                        <span>
+
+                            Todavía no existen materiales registrados
+                            en el inventario.
+
+                        </span>
+                    }
+
+                </div>
+
+
+                @if (hasFilters)
+                {
+                    <a asp-action="Index"
+                       class="btn btn-outline-secondary">
+
+                        <i class="bi bi-x-lg"></i>
+
+                        Limpiar Filtros
+
+                    </a>
+                }
+                else
+                {
+                    <a asp-action="Create"
+                       class="btn btn-primary">
+
+                        <i class="bi bi-plus-lg"></i>
+
+                        Crear Primer Material
+
+                    </a>
+                }
+
+            </div>
+        }
+
+
+        <!-- =================================================
+             PAGINACIÓN
+        ================================================== -->
+        @if (Model.TotalPages > 1)
+        {
+            <div class="card-footer">
+
+                <nav aria-label="Paginación de inventario">
+
+                    <ul class="pagination
+                        pagination-sm
+                        justify-content-center
+                        mb-0">
+
+                        <!-- =====================================
+                             ANTERIOR
+                        ====================================== -->
+
+                        <li class="page-item
+                            @(Model.CurrentPage == 1
+                                ? "disabled"
+                                : "")">
+
+                            <a class="page-link"
+                               asp-action="Index"
+                               asp-route-page="@(Model.CurrentPage - 1)"
+                               asp-route-searchText="@Model.SearchText"
+                               asp-route-rack="@Model.Rack"
+                               asp-route-partNumber="@Model.PartNumber"
+                               asp-route-productId="@Model.ProductId"
+                               asp-route-quantityOrder="@Model.QuantityOrder">
+
+                                <i class="bi bi-chevron-left me-1"></i>
+
+                                Anterior
+
+                            </a>
+
+                        </li>
+
+
+                        <!-- =====================================
+                             PÁGINAS
+                        ====================================== -->
+                        @for (int i = 1; i <= Model.TotalPages; i++)
+                        {
+                            if (
+                                i == 1 ||
+                                i == Model.TotalPages ||
+                                Math.Abs(i - Model.CurrentPage) <= 2
+                            )
+                            {
+                                <li class="page-item
+                                    @(i == Model.CurrentPage
+                                        ? "active"
+                                        : "")">
+
+                                    <a class="page-link"
+                                       asp-action="Index"
+                                       asp-route-page="@i"
+                                       asp-route-searchText="@Model.SearchText"
+                                       asp-route-rack="@Model.Rack"
+                                       asp-route-partNumber="@Model.PartNumber"
+                                       asp-route-productId="@Model.ProductId"
+                                       asp-route-quantityOrder="@Model.QuantityOrder">
+
+                                        @i
+
+                                    </a>
+
+                                </li>
+                            }
+                        }
+
+
+                        <!-- =====================================
+                             SIGUIENTE
+                        ====================================== -->
+
+                        <li class="page-item
+                            @(Model.CurrentPage == Model.TotalPages
+                                ? "disabled"
+                                : "")">
+
+                            <a class="page-link"
+                               asp-action="Index"
+                               asp-route-page="@(Model.CurrentPage + 1)"
+                               asp-route-searchText="@Model.SearchText"
+                               asp-route-rack="@Model.Rack"
+                               asp-route-partNumber="@Model.PartNumber"
+                               asp-route-productId="@Model.ProductId"
+                               asp-route-quantityOrder="@Model.QuantityOrder">
+
+                                Siguiente
+
+                                <i class="bi bi-chevron-right ms-1"></i>
+
+                            </a>
+
+                        </li>
+
+                    </ul>
+
+                </nav>
+
+            </div>
+        }
+
+    </div>
+
+</div>

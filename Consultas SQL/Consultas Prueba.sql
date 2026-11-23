@@ -1,0 +1,5 @@
+﻿DELETE FROM Movements;
+DELETE FROM Materials;
+
+DBCC CHECKIDENT ('Movements', RESEED, 0);
+DBCC CHECKIDENT ('Materials', RESEED, 0);

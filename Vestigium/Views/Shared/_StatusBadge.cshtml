@@ -1,0 +1,60 @@
+﻿@model Vestigium.ViewModels.StatusBadgeVM
+
+@{
+    string badgeClass = "badge-area badge-neutral";
+    string icon = "bi bi-circle-fill";
+
+    switch (Model.Type.ToLower())
+    {
+        case "warehouse":
+            badgeClass = "badge-area badge-warehouse";
+            icon = "bi bi-box-seam";
+            break;
+
+        case "engineering":
+            badgeClass = "badge-area badge-engineering";
+            icon = "bi bi-gear";
+            break;
+
+        case "quality":
+            badgeClass = "badge-area badge-quality";
+            icon = "bi bi-shield-check";
+            break;
+
+        case "production":
+            badgeClass = "badge-area badge-production";
+            icon = "bi bi-diagram-3";
+            break;
+
+        case "success":
+            badgeClass = "badge-area badge-success";
+            icon = "bi bi-check-circle";
+            break;
+
+        case "warning":
+            badgeClass = "badge-area badge-warning";
+            icon = "bi bi-exclamation-triangle";
+            break;
+
+        case "danger":
+            badgeClass = "badge-area badge-danger";
+            icon = "bi bi-x-circle";
+            break;
+
+        case "info":
+            badgeClass = "badge-area badge-info";
+            icon = "bi bi-info-circle";
+            break;
+    }
+}
+
+<span class="@badgeClass">
+
+    @if (Model.ShowIcon)
+    {
+        <i class="@icon me-1"></i>
+    }
+
+    @Model.Text
+
+</span>

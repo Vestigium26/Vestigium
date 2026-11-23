@@ -1,0 +1,372 @@
+﻿/* ==========================================================
+   VESTIGIUM
+   MOVEMENTS MODULE
+
+   Movement-specific components only.
+   Shared styles live in vestigium-theme.css.
+
+   Semantic convention:
+   Entry    = Green
+   Transfer = Blue
+   Output   = Red
+========================================================== */
+
+
+/* ==========================================================
+   1. MOVEMENT TYPE SELECTOR
+========================================================== */
+
+.movement-selector {
+	display: flex;
+	flex-wrap: wrap;
+	gap: .75rem;
+}
+
+
+/* Base option */
+
+.movement-pill {
+	flex: 1 1 160px;
+	min-width: 160px;
+	min-height: 56px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: .5rem;
+	padding: .75rem 1rem;
+	border: 1px solid transparent;
+	border-radius: var(--radius-sm);
+	font-weight: 600;
+	line-height: 1.2;
+	text-align: center;
+	cursor: pointer;
+	user-select: none;
+	transition: background-color .2s ease, border-color .2s ease, color .2s ease, box-shadow .2s ease, transform .2s ease;
+}
+
+	.movement-pill:hover {
+		transform: translateY(-1px);
+		box-shadow: var(--shadow-sm);
+	}
+
+	.movement-pill:focus-visible {
+		outline: none;
+		box-shadow: 0 0 0 .2rem rgba(13, 110, 253, .20);
+	}
+
+
+/* ==========================================================
+   2. MOVEMENT TYPE COLORS
+========================================================== */
+
+/* Entry */
+
+.movement-entry-pill {
+	background: rgba(25, 135, 84, .15);
+	color: var(--success);
+}
+
+
+/* Transfer */
+
+.movement-transfer-pill {
+	background: rgba(13, 110, 253, .15);
+	color: var(--engineering);
+}
+
+
+/* Output */
+
+.movement-output-pill {
+	background: rgba(220, 53, 69, .15);
+	color: var(--danger);
+}
+
+
+/* ==========================================================
+   3. SELECTED MOVEMENT TYPE
+========================================================== */
+
+.movement-entry-pill.movement-pill-selected {
+	background: var(--success);
+	border-color: var(--success);
+	color: #fff;
+	box-shadow: 0 0 0 .2rem rgba(25, 135, 84, .15);
+}
+
+.movement-transfer-pill.movement-pill-selected {
+	background: var(--engineering);
+	border-color: var(--engineering);
+	color: #fff;
+	box-shadow: 0 0 0 .2rem rgba(13, 110, 253, .15);
+}
+
+.movement-output-pill.movement-pill-selected {
+	background: var(--danger);
+	border-color: var(--danger);
+	color: #fff;
+	box-shadow: 0 0 0 .2rem rgba(220, 53, 69, .15);
+}
+
+
+/* ==========================================================
+   4. MOVEMENT BADGES
+========================================================== */
+
+.movement-badge {
+	display: inline-flex;
+	align-items: center;
+	gap: .35rem;
+	padding: .45rem .8rem;
+	border-radius: 999px;
+	font-size: .75rem;
+	font-weight: 600;
+	line-height: 1;
+	white-space: nowrap;
+}
+
+
+/* Entry */
+
+.movement-entry {
+	background: rgba(25, 135, 84, .15);
+	color: var(--success);
+}
+
+
+/* Transfer */
+
+.movement-transfer {
+	background: rgba(13, 110, 253, .15);
+	color: var(--engineering);
+}
+
+
+/* Output */
+
+.movement-output {
+	background: rgba(220, 53, 69, .15);
+	color: var(--danger);
+}
+
+
+/* ==========================================================
+   5. QUANTITY INPUT
+========================================================== */
+
+.quantity-input {
+	font-size: 1.25rem;
+	font-weight: 600;
+	font-variant-numeric: tabular-nums;
+}
+
+
+/* ==========================================================
+   6. MOVEMENT QUANTITIES
+========================================================== */
+
+.movement-required {
+	color: var(--text-primary);
+	font-weight: 600;
+	font-variant-numeric: tabular-nums;
+}
+
+.movement-received {
+	color: var(--success);
+	font-weight: 700;
+	font-variant-numeric: tabular-nums;
+}
+
+.movement-issued {
+	color: var(--danger);
+	font-weight: 700;
+	font-variant-numeric: tabular-nums;
+}
+
+.movement-picked {
+	color: var(--engineering);
+	font-weight: 700;
+	font-variant-numeric: tabular-nums;
+}
+
+.movement-quantity {
+	font-weight: 700;
+	font-variant-numeric: tabular-nums;
+}
+
+
+/* ==========================================================
+   7. MOVEMENT TABLE HELPERS
+========================================================== */
+
+#movementsTable td {
+	vertical-align: middle;
+}
+
+#movementsTable .badge {
+	font-size: .85rem;
+}
+
+.movement-type-cell,
+.movement-location-cell,
+.movement-user-cell,
+.movement-actions-cell,
+.movement-date {
+	white-space: nowrap;
+}
+
+.movement-reference {
+	font-family: Consolas, "Courier New", monospace;
+	font-weight: 600;
+	letter-spacing: .3px;
+	white-space: nowrap;
+}
+
+
+/* ==========================================================
+   8. MOVEMENT HISTORY
+========================================================== */
+
+.movement-history-table td {
+	vertical-align: middle;
+}
+
+.movement-history-table .badge {
+	font-size: .85rem;
+}
+
+
+/* ==========================================================
+   9. CRITICAL MOVEMENT STATE
+========================================================== */
+
+.critical-row {
+	background-color: rgba(220, 53, 69, .08);
+}
+
+
+/* ==========================================================
+   10. MOVEMENT SUMMARY
+========================================================== */
+
+.movement-summary-card {
+	height: 100%;
+}
+
+.movement-summary-icon {
+	font-size: 2rem;
+	line-height: 1;
+}
+
+.movement-summary-value {
+	font-size: 1.75rem;
+	font-weight: 700;
+	line-height: 1;
+	font-variant-numeric: tabular-nums;
+}
+
+.movement-summary-label {
+	color: var(--text-secondary);
+	font-size: .9rem;
+}
+
+
+/* ==========================================================
+   11. MOVEMENT FILTERS
+========================================================== */
+
+.movement-filters,
+.movement-filter-toolbar {
+	display: flex;
+	align-items: flex-end;
+	flex-wrap: wrap;
+	gap: .75rem;
+}
+
+	.movement-filters .form-control,
+	.movement-filters .form-select,
+	.movement-filter-toolbar .form-control,
+	.movement-filter-toolbar .form-select {
+		min-width: 180px;
+	}
+
+
+/* ==========================================================
+   12. PERIOD SELECTOR
+========================================================== */
+
+.period-selector {
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: .5rem;
+}
+
+	.period-selector .btn {
+		min-width: 100px;
+	}
+
+
+/* ==========================================================
+   13. RESPONSIVE
+========================================================== */
+
+@media (max-width: 767.98px) {
+
+	.movement-selector {
+		flex-direction: column;
+	}
+
+	.movement-pill {
+		width: 100%;
+		min-width: 100%;
+		min-height: 56px;
+	}
+
+	.movement-filters,
+	.movement-filter-toolbar {
+		flex-direction: column;
+		align-items: stretch;
+	}
+
+		.movement-filters .form-control,
+		.movement-filters .form-select,
+		.movement-filter-toolbar .form-control,
+		.movement-filter-toolbar .form-select {
+			width: 100%;
+			min-width: 100%;
+		}
+
+	.period-selector {
+		flex-direction: column;
+		align-items: stretch;
+	}
+
+		.period-selector .btn {
+			width: 100%;
+		}
+
+	.movement-actions-cell {
+		text-align: left;
+	}
+}
+
+
+/* ==========================================================
+   14. FUTURE MOVEMENT COMPONENTS
+========================================================== */
+
+/*
+
+.movement-kpi-card
+.movement-chart-card
+.movement-timeline
+.movement-approval-card
+.movement-scanner-panel
+.movement-transfer-card
+.movement-history-panel
+.movement-area-summary
+.movement-status-card
+.movement-audit-panel
+
+*/

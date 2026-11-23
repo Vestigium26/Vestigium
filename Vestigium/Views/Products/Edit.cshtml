@@ -1,0 +1,665 @@
+﻿@model Vestigium.Models.Product
+
+@{
+    ViewData["Title"] = "Editar Producto";
+}
+
+<div class="container-fluid px-0">
+
+
+    <!-- BREADCRUMB -->
+
+    <nav aria-label="breadcrumb">
+
+        <ol class="breadcrumb">
+
+            <li class="breadcrumb-item">
+
+                <a asp-action="Index">
+                    Catálogo de Productos
+                </a>
+
+            </li>
+
+            <li class="breadcrumb-item">
+
+                <a asp-action="Details"
+                   asp-route-id="@Model.Id">
+
+                    @Model.ProductNumber
+
+                </a>
+
+            </li>
+
+            <li class="breadcrumb-item active"
+                aria-current="page">
+
+                Editar
+
+            </li>
+
+        </ol>
+
+    </nav>
+
+
+    <!-- Encabezado -->
+
+    <div class="card hero-card mb-4">
+
+        <div class="card-body p-4">
+
+            <div class="d-flex flex-column flex-lg-row
+                align-items-lg-center
+                justify-content-between
+                gap-3">
+
+
+                <!-- Informacion -->
+
+                <div>
+
+                    <h1 class="hero-title d-flex align-items-center gap-2 mb-1">
+
+                        <i class="bi bi-pencil-square"></i>
+
+                        <span>
+                            Editar Producto
+                        </span>
+
+                    </h1>
+
+                    <p class="hero-subtitle">
+
+                        Actualiza la información general y disponibilidad del producto.
+
+                    </p>
+
+
+                    <div class="hero-meta">
+
+                        <span class="component-badge">
+
+                            <i class="bi bi-hash"></i>
+
+                            @Model.ProductNumber
+
+                        </span>
+
+
+                        @if (Model.IsActive)
+                        {
+                            <span class="status-badge production-pill">
+
+                                <i class="bi bi-check-circle-fill"></i>
+
+                                Activo
+
+                            </span>
+                        }
+                        else
+                        {
+                            <span class="status-badge badge-neutral">
+
+                                <i class="bi bi-dash-circle"></i>
+
+                                Inactivo
+
+                            </span>
+                        }
+
+                    </div>
+
+                </div>
+
+
+                <!-- Acciones contextuales -->
+
+                <div class="page-header-actions">
+
+                    <a asp-action="Index"
+                       class="btn btn-outline-secondary">
+
+                        <i class="bi bi-arrow-left"></i>
+
+                        Regresar
+
+                    </a>
+
+
+                    <a asp-action="Details"
+                       asp-route-id="@Model.Id"
+                       class="btn btn-outline-secondary">
+
+                        <i class="bi bi-eye"></i>
+
+                        Ver Detalle
+
+                    </a>
+
+
+                    <a asp-controller="ProductBom"
+                       asp-action="Index"
+                       asp-route-productId="@Model.Id"
+                       class="btn btn-outline-primary">
+
+                        <i class="bi bi-diagram-3"></i>
+
+                        Administrar BOM
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Formulario -->
+
+    <div class="card module-card">
+
+        <!-- Header -->
+
+        <div class="card-header">
+
+            <div>
+
+                <h2 class="card-title-standard d-flex align-items-center gap-2">
+
+                    <i class="bi bi-box-seam text-primary"></i>
+
+                    Información del Producto
+
+                </h2>
+
+                <div class="text-muted small mt-1">
+
+                    Modifica únicamente la información que requiera actualización.
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Body -->
+
+        <div class="card-body p-4">
+
+            <form asp-action="Edit"
+                  method="post"
+                  id="editProductForm">
+
+                <input asp-for="Id"
+                       type="hidden" />
+
+
+                <!-- Validaciones -->
+                @if (!ViewData.ModelState.IsValid)
+                {
+                    <div asp-validation-summary="ModelOnly"
+                         class="alert alert-danger mb-4"
+                         role="alert">
+                    </div>
+                }
+
+
+                <!-- Seccion 1: Datos generales -->
+
+                <section class="form-section">
+
+                    <div class="form-section-title">
+
+                        <span class="section-step">
+                            1
+                        </span>
+
+                        <div>
+
+                            <div>
+                                Datos Generales
+                            </div>
+
+                            <div class="text-muted small fw-normal mt-1">
+
+                                Información utilizada para identificar el producto.
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="row g-3">
+
+
+                        <!-- Numero de producto -->
+
+                        <div class="col-12 col-lg-4">
+
+                            <label asp-for="ProductNumber"
+                                   class="form-label">
+
+                                Número de Producto
+
+                            </label>
+
+
+                            <div class="input-group">
+
+                                <span class="input-group-text">
+
+                                    <i class="bi bi-hash"></i>
+
+                                </span>
+
+                                <input asp-for="ProductNumber"
+                                       class="form-control"
+                                       autocomplete="off"
+                                       autofocus
+                                       placeholder="Ej. FG-10001" />
+
+                            </div>
+
+
+                            <span asp-validation-for="ProductNumber"
+                                  class="text-danger small d-block mt-1">
+                            </span>
+
+
+                            <div class="form-text">
+
+                                Identificador único utilizado para reconocer
+                                el producto.
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- Descripcion -->
+
+                        <div class="col-12 col-lg-8">
+
+                            <label asp-for="ProductDescription"
+                                   class="form-label">
+
+                                Descripción
+
+                            </label>
+
+
+                            <div class="input-group">
+
+                                <span class="input-group-text">
+
+                                    <i class="bi bi-card-text"></i>
+
+                                </span>
+
+                                <input asp-for="ProductDescription"
+                                       class="form-control"
+                                       autocomplete="off"
+                                       placeholder="Ej. Fuel Pump Assembly" />
+
+                            </div>
+
+
+                            <span asp-validation-for="ProductDescription"
+                                  class="text-danger small d-block mt-1">
+                            </span>
+
+
+                            <div class="form-text">
+
+                                Descripción utilizada para identificar
+                                el producto dentro del catálogo.
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <!-- Seccion 2: Estado del producto -->
+
+                <section class="form-section">
+
+                    <div class="form-section-title">
+
+                        <span class="section-step">
+                            2
+                        </span>
+
+                        <div>
+
+                            <div>
+                                Estado del Producto
+                            </div>
+
+                            <div class="text-muted small fw-normal mt-1">
+
+                                Controla la disponibilidad del producto para
+                                nuevas operaciones.
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="p-3 border rounded-3 bg-body-tertiary">
+
+                        <div class="d-flex flex-column flex-md-row
+                            justify-content-between
+                            align-items-md-center
+                            gap-3">
+
+
+                            <!-- Selector -->
+
+                            <div>
+
+                                <div class="form-check form-switch mb-0">
+
+                                    <input asp-for="IsActive"
+                                           class="form-check-input"
+                                           role="switch"
+                                           id="productStatus" />
+
+                                    <label asp-for="IsActive"
+                                           class="form-check-label fw-semibold"
+                                           id="productStatusLabel">
+
+                                        Producto activo
+
+                                    </label>
+
+                                </div>
+
+
+                                <div class="small text-muted mt-2"
+                                     id="productStatusHelp">
+
+                                    El producto se encuentra disponible
+                                    para las operaciones del sistema.
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- Estado visual -->
+
+                            <span id="productStatusBadge"
+                                  class="status-badge">
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <!-- Seccion 3: Bills of Materials -->
+
+                <section class="form-section mb-0">
+
+                    <div class="form-section-title">
+
+                        <span class="section-step">
+                            3
+                        </span>
+
+                        <div>
+
+                            <div>
+                                Bill of Materials (BOM)
+                            </div>
+
+                            <div class="text-muted small fw-normal mt-1">
+
+                                La lista de materiales se administra
+                                independientemente de la información general.
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="help-panel">
+
+                        <div class="d-flex flex-column flex-md-row
+                            align-items-md-center
+                            justify-content-between
+                            gap-3">
+
+
+                            <div class="d-flex align-items-start gap-3">
+
+                                <div class="security-icon">
+
+                                    <i class="bi bi-diagram-3"></i>
+
+                                </div>
+
+
+                                <div>
+
+                                    <div class="help-panel-title">
+
+                                        Administración independiente del BOM
+
+                                    </div>
+
+                                    <p class="help-panel-text">
+
+                                        Guardar cambios en esta pantalla no modifica
+                                        los componentes ni las cantidades de la lista
+                                        de materiales.
+
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+
+                            <a asp-controller="ProductBom"
+                               asp-action="Index"
+                               asp-route-productId="@Model.Id"
+                               class="btn btn-outline-primary flex-shrink-0">
+
+                                <i class="bi bi-diagram-3"></i>
+
+                                Administrar BOM
+
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <!-- Acciones -->
+
+                <div class="d-flex flex-column flex-sm-row
+                    justify-content-end
+                    gap-2
+                    mt-4">
+
+                    <a asp-action="Details"
+                       asp-route-id="@Model.Id"
+                       class="btn btn-outline-secondary">
+
+                        <i class="bi bi-x-lg"></i>
+
+                        Cancelar
+
+                    </a>
+
+
+                    <button type="submit"
+                            id="updateProductSubmit"
+                            class="btn btn-primary">
+
+                        <i class="bi bi-check-lg"></i>
+
+                        Guardar Cambios
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+@section Scripts
+{
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+
+        (() => {
+
+            // Elementos
+
+            const productStatus =
+                document.getElementById("productStatus");
+
+            const productStatusLabel =
+                document.getElementById("productStatusLabel");
+
+            const productStatusHelp =
+                document.getElementById("productStatusHelp");
+
+            const productStatusBadge =
+                document.getElementById("productStatusBadge");
+
+            const editProductForm =
+                document.getElementById("editProductForm");
+
+            const updateProductSubmit =
+                document.getElementById("updateProductSubmit");
+
+
+            // Estado del producto
+
+            function updateProductStatus() {
+
+                if (!productStatus) {
+                    return;
+                }
+
+
+                if (productStatus.checked) {
+
+                    if (productStatusLabel) {
+                        productStatusLabel.textContent =
+                            "Producto activo";
+                    }
+
+                    if (productStatusHelp) {
+                        productStatusHelp.textContent =
+                            "El producto se encuentra disponible para nuevas operaciones del sistema.";
+                    }
+
+                    if (productStatusBadge) {
+
+                        productStatusBadge.className =
+                            "status-badge production-pill";
+
+                        productStatusBadge.innerHTML =
+                            '<i class="bi bi-check-circle-fill"></i> Activo';
+
+                    }
+
+                    return;
+                }
+
+
+                if (productStatusLabel) {
+                    productStatusLabel.textContent =
+                        "Producto inactivo";
+                }
+
+                if (productStatusHelp) {
+                    productStatusHelp.textContent =
+                        "El producto permanecerá registrado, pero no estará disponible para nuevas operaciones.";
+                }
+
+                if (productStatusBadge) {
+
+                    productStatusBadge.className =
+                        "status-badge badge-neutral";
+
+                    productStatusBadge.innerHTML =
+                        '<i class="bi bi-dash-circle"></i> Inactivo';
+
+                }
+
+            }
+
+
+            productStatus?.addEventListener(
+                "change",
+                updateProductStatus
+            );
+
+
+            updateProductStatus();
+
+
+            // Envio del formulario
+
+            editProductForm?.addEventListener(
+                "submit",
+                function() {
+
+                    if (!this.checkValidity()) {
+                        return;
+                    }
+
+
+                    if (!updateProductSubmit) {
+                        return;
+                    }
+
+
+                    updateProductSubmit.disabled = true;
+
+
+                    updateProductSubmit.innerHTML =
+                        '<span class="spinner-border spinner-border-sm me-2" ' +
+                        'role="status" aria-hidden="true"></span>' +
+                        'Guardando...';
+
+                }
+            );
+
+        })();
+
+    </script>
+}

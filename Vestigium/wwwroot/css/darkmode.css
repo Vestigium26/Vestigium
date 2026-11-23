@@ -1,0 +1,550 @@
+﻿/* ==========================================================
+   VESTIGIUM
+   DARK MODE
+
+   Dark-theme overrides only.
+
+   Base component styles live in:
+   - vestigium-theme.css
+   - module-specific CSS files
+========================================================== */
+
+
+/* ==========================================================
+   1. DARK DESIGN TOKENS
+========================================================== */
+
+[data-bs-theme="dark"] {
+	/* Backgrounds */
+	--bg-main: #0f172a;
+	--bg-card: #1e293b;
+	--bg-subtle: #243247;
+	/* Text */
+	--text-primary: #f8fafc;
+	--text-secondary: #cbd5e1;
+	/* Borders */
+	--border-light: #334155;
+	/* Shadows */
+	--shadow-sm: 0 .125rem .25rem rgba(0, 0, 0, .35);
+	--shadow-md: 0 .5rem 1rem rgba(0, 0, 0, .45);
+}
+
+
+	/* ==========================================================
+   2. GENERAL
+========================================================== */
+
+	[data-bs-theme="dark"] body {
+		background-color: var(--bg-main);
+		color: var(--text-primary);
+	}
+
+	[data-bs-theme="dark"] .text-muted {
+		color: var(--text-secondary) !important;
+	}
+
+	[data-bs-theme="dark"] footer {
+		border-color: var(--border-light) !important;
+	}
+
+		[data-bs-theme="dark"] footer a {
+			color: var(--text-secondary);
+		}
+
+	[data-bs-theme="dark"] .breadcrumb-item {
+		color: var(--text-secondary);
+	}
+
+
+	/* ==========================================================
+   3. CARDS
+========================================================== */
+
+	[data-bs-theme="dark"] .card,
+	[data-bs-theme="dark"] .v-card,
+	[data-bs-theme="dark"] .module-card,
+	[data-bs-theme="dark"] .auth-card {
+		background-color: var(--bg-card);
+		color: var(--text-primary);
+	}
+
+	[data-bs-theme="dark"] .card-header,
+	[data-bs-theme="dark"] .v-card-header,
+	[data-bs-theme="dark"] .auth-card-header {
+		background-color: #162032;
+		color: var(--text-primary);
+		border-bottom-color: var(--border-light);
+	}
+
+	[data-bs-theme="dark"] .card-footer,
+	[data-bs-theme="dark"] .auth-card-footer {
+		background-color: var(--bg-card);
+		border-top-color: var(--border-light);
+	}
+
+
+	/* ==========================================================
+   4. HERO CARDS
+========================================================== */
+
+	[data-bs-theme="dark"] .hero-card {
+		background: linear-gradient( 135deg, rgba(13, 110, 253, .12), rgba(13, 110, 253, .03) );
+	}
+
+		[data-bs-theme="dark"] .hero-card::after {
+			background: rgba(13, 110, 253, .12);
+		}
+
+
+	/* ==========================================================
+   5. TABLES
+========================================================== */
+
+	[data-bs-theme="dark"] .table {
+		--bs-table-color: var(--text-primary);
+		--bs-table-bg: transparent;
+		--bs-table-border-color: var(--border-light);
+		--bs-table-hover-color: var(--text-primary);
+		--bs-table-hover-bg: rgba(255, 255, 255, .04);
+		color: var(--text-primary);
+	}
+
+		[data-bs-theme="dark"] .table thead th,
+		[data-bs-theme="dark"] .table-modern thead th {
+			background-color: var(--bg-subtle);
+			color: var(--text-secondary);
+			border-color: var(--border-light);
+		}
+
+		[data-bs-theme="dark"] .table tbody td {
+			border-color: var(--border-light);
+		}
+
+	[data-bs-theme="dark"] .table-hover tbody tr:hover,
+	[data-bs-theme="dark"] .table-modern tbody tr:hover {
+		background-color: rgba(255, 255, 255, .04);
+	}
+
+
+	/* ==========================================================
+   6. FORMS
+========================================================== */
+
+	[data-bs-theme="dark"] .form-control,
+	[data-bs-theme="dark"] .form-select {
+		background-color: #162032;
+		border-color: var(--border-light);
+		color: var(--text-primary);
+	}
+
+		[data-bs-theme="dark"] .form-control:focus,
+		[data-bs-theme="dark"] .form-select:focus {
+			background-color: #162032;
+			border-color: #6ea8fe;
+			color: #fff;
+			box-shadow: 0 0 0 .15rem rgba(13, 110, 253, .25);
+		}
+
+		[data-bs-theme="dark"] .form-control::placeholder {
+			color: #94a3b8;
+			opacity: 1;
+		}
+
+		[data-bs-theme="dark"] .form-control:disabled,
+		[data-bs-theme="dark"] .form-select:disabled,
+		[data-bs-theme="dark"] .form-control[readonly] {
+			background-color: #1b2738;
+			color: #94a3b8;
+			opacity: 1;
+		}
+
+	[data-bs-theme="dark"] .input-group-text {
+		background-color: #162032;
+		border-color: var(--border-light);
+		color: var(--text-secondary);
+	}
+
+
+	/* ==========================================================
+   7. DROPDOWNS
+========================================================== */
+
+	[data-bs-theme="dark"] .dropdown-menu {
+		background-color: var(--bg-card);
+		border: 1px solid var(--border-light);
+	}
+
+	[data-bs-theme="dark"] .dropdown-item {
+		color: var(--text-primary);
+	}
+
+		[data-bs-theme="dark"] .dropdown-item:hover,
+		[data-bs-theme="dark"] .dropdown-item:focus {
+			background-color: var(--bg-subtle);
+			color: #fff;
+		}
+
+	[data-bs-theme="dark"] .dropdown-divider {
+		border-color: var(--border-light);
+	}
+
+
+	/* ==========================================================
+   8. SIDEBAR
+========================================================== */
+
+	[data-bs-theme="dark"] .offcanvas,
+	[data-bs-theme="dark"] .offcanvas-body {
+		background-color: var(--bg-card);
+		color: var(--text-primary);
+	}
+
+	[data-bs-theme="dark"] .sidebar-user {
+		background: linear-gradient( 180deg, rgba(13, 110, 253, .10), transparent );
+		border-bottom-color: var(--border-light);
+	}
+
+	[data-bs-theme="dark"] .sidebar-user-name {
+		color: var(--text-primary);
+	}
+
+	[data-bs-theme="dark"] .sidebar-user-id,
+	[data-bs-theme="dark"] .sidebar-section-title {
+		color: var(--text-secondary);
+	}
+
+	[data-bs-theme="dark"] .sidebar-menu .list-group-item {
+		background-color: transparent;
+		color: var(--text-primary);
+	}
+
+		[data-bs-theme="dark"] .sidebar-menu .list-group-item:hover {
+			background-color: var(--bg-subtle);
+		}
+
+		[data-bs-theme="dark"] .sidebar-menu .list-group-item.active {
+			background: linear-gradient( 90deg, rgba(13, 110, 253, .20), rgba(13, 110, 253, .06) );
+			color: #6ea8fe;
+			border-left-color: var(--engineering);
+		}
+
+	[data-bs-theme="dark"] .sidebar-divider {
+		background-color: var(--border-light);
+	}
+
+	[data-bs-theme="dark"] .sidebar-footer {
+		border-top-color: var(--border-light);
+	}
+
+
+	/* ==========================================================
+   9. PAGINATION
+========================================================== */
+
+	[data-bs-theme="dark"] .pagination {
+		background: transparent;
+	}
+
+	[data-bs-theme="dark"] .page-item .page-link {
+		background-color: var(--bg-card);
+		border-color: var(--border-light);
+		color: var(--text-primary);
+	}
+
+		[data-bs-theme="dark"] .page-item .page-link:hover {
+			background-color: var(--bg-subtle);
+			border-color: #475569;
+			color: #fff;
+		}
+
+	[data-bs-theme="dark"] .page-item.active .page-link {
+		background-color: var(--engineering);
+		border-color: var(--engineering);
+		color: #fff;
+	}
+
+	[data-bs-theme="dark"] .page-item.disabled .page-link {
+		background-color: #162032;
+		border-color: var(--border-light);
+		color: #64748b;
+	}
+
+
+	/* ==========================================================
+   10. BOOTSTRAP LIGHT UTILITIES
+========================================================== */
+
+	[data-bs-theme="dark"] .bg-light {
+		background-color: var(--bg-subtle) !important;
+	}
+
+	[data-bs-theme="dark"] .text-dark {
+		color: var(--text-primary) !important;
+	}
+
+	[data-bs-theme="dark"] .badge.bg-light {
+		background-color: var(--bg-subtle) !important;
+		color: var(--text-primary) !important;
+		border-color: var(--border-light) !important;
+	}
+
+	/*
+   Warning must preserve dark text for contrast
+   against Bootstrap yellow.
+*/
+	[data-bs-theme="dark"] .bg-warning.text-dark,
+	[data-bs-theme="dark"] .badge-warning {
+		color: #212529 !important;
+	}
+
+
+	/* ==========================================================
+   11. ALERTS
+========================================================== */
+
+	[data-bs-theme="dark"] .alert-light {
+		background-color: var(--bg-subtle);
+		color: var(--text-primary);
+		border-color: var(--border-light);
+	}
+
+	[data-bs-theme="dark"] .security-alert {
+		background: rgba(255, 193, 7, .15);
+	}
+
+
+	/* ==========================================================
+   12. EMPTY STATES
+========================================================== */
+
+	[data-bs-theme="dark"] .empty-state-icon {
+		color: #64748b;
+	}
+
+	[data-bs-theme="dark"] .empty-state-description {
+		color: var(--text-secondary);
+	}
+
+
+	/* ==========================================================
+   13. AREA PILLS
+========================================================== */
+
+	[data-bs-theme="dark"] .warehouse-pill {
+		background: rgba(255, 193, 7, .15);
+		color: #ffd54a;
+	}
+
+	[data-bs-theme="dark"] .engineering-pill {
+		background: rgba(13, 110, 253, .18);
+		color: #6ea8fe;
+	}
+
+	[data-bs-theme="dark"] .quality-pill {
+		background: rgba(220, 53, 69, .18);
+		color: #ff8b99;
+	}
+
+	[data-bs-theme="dark"] .production-pill {
+		background: rgba(25, 135, 84, .18);
+		color: #72e0aa;
+	}
+
+
+	/* ==========================================================
+   14. MOVEMENT COLORS
+========================================================== */
+
+	[data-bs-theme="dark"] .movement-entry,
+	[data-bs-theme="dark"] .movement-entry-pill {
+		background: rgba(25, 135, 84, .18);
+		color: #72e0aa;
+	}
+
+	[data-bs-theme="dark"] .movement-transfer,
+	[data-bs-theme="dark"] .movement-transfer-pill {
+		background: rgba(13, 110, 253, .18);
+		color: #6ea8fe;
+	}
+
+	[data-bs-theme="dark"] .movement-output,
+	[data-bs-theme="dark"] .movement-output-pill {
+		background: rgba(220, 53, 69, .18);
+		color: #ff8b99;
+	}
+
+
+	/* Selected states retain solid semantic colors */
+
+	[data-bs-theme="dark"]
+	.movement-entry-pill.movement-pill-selected {
+		background: var(--success);
+		border-color: var(--success);
+		color: #fff;
+	}
+
+	[data-bs-theme="dark"]
+	.movement-transfer-pill.movement-pill-selected {
+		background: var(--engineering);
+		border-color: var(--engineering);
+		color: #fff;
+	}
+
+	[data-bs-theme="dark"]
+	.movement-output-pill.movement-pill-selected {
+		background: var(--danger);
+		border-color: var(--danger);
+		color: #fff;
+	}
+
+
+	/* ==========================================================
+   15. INVENTORY
+========================================================== */
+
+	[data-bs-theme="dark"] .location-badge {
+		background-color: var(--bg-subtle);
+		color: var(--text-primary);
+		border-color: var(--border-light);
+	}
+
+	[data-bs-theme="dark"] .destination-badge {
+		background-color: rgba(13, 110, 253, .18);
+		color: #8ab4ff;
+		border-color: rgba(13, 110, 253, .35);
+	}
+
+	[data-bs-theme="dark"] .inventory-highlight {
+		background: linear-gradient( 135deg, rgba(255, 255, 255, .04), rgba(13, 110, 253, .08) );
+		border-color: rgba(255, 255, 255, .08);
+	}
+
+	[data-bs-theme="dark"] .inventory-value {
+		color: #6ea8fe;
+	}
+
+	[data-bs-theme="dark"] .material-status-card {
+		background: linear-gradient( 135deg, rgba(13, 110, 253, .10), rgba(13, 110, 253, .03) );
+		border-color: rgba(13, 110, 253, .25);
+	}
+
+
+	/* Stock states */
+
+	[data-bs-theme="dark"] .inventory-stock-good {
+		background-color: rgba(25, 135, 84, .12);
+	}
+
+	[data-bs-theme="dark"] .inventory-stock-low {
+		background-color: rgba(255, 193, 7, .12);
+	}
+
+	[data-bs-theme="dark"] .inventory-stock-critical {
+		background-color: rgba(220, 53, 69, .12);
+	}
+
+
+	/* ==========================================================
+   16. BOM TREE
+========================================================== */
+
+	
+
+	/* ==========================================================
+   17. PROFILE
+========================================================== */
+
+	[data-bs-theme="dark"] .profile-hero {
+		background: linear-gradient( 135deg, rgba(13, 110, 253, .14), rgba(13, 110, 253, .04) );
+	}
+
+	[data-bs-theme="dark"] .profile-avatar-large {
+		background: rgba(13, 110, 253, .18);
+		color: #6ea8fe;
+	}
+
+
+	/* ==========================================================
+   18. USERS
+========================================================== */
+
+	[data-bs-theme="dark"] .user-avatar {
+		background: rgba(13, 110, 253, .18);
+		color: #6ea8fe;
+	}
+
+	[data-bs-theme="dark"] .user-role {
+		background: var(--bg-subtle);
+		color: var(--text-primary);
+	}
+
+	[data-bs-theme="dark"] .user-role-admin {
+		background: rgba(13, 110, 253, .18);
+		color: #6ea8fe;
+	}
+
+
+	/* ==========================================================
+   19. AUTH
+========================================================== */
+
+	[data-bs-theme="dark"] .quality-statement,
+	[data-bs-theme="dark"] .help-panel {
+		background: rgba(13, 110, 253, .10);
+	}
+
+	[data-bs-theme="dark"] .login-logo-wrapper {
+		background: var(--bg-subtle);
+	}
+
+	[data-bs-theme="dark"] .login-help,
+	[data-bs-theme="dark"] .auth-message {
+		background: var(--bg-subtle);
+	}
+
+	[data-bs-theme="dark"] .upload-zone {
+		background: rgba(13, 110, 253, .05);
+		border-color: rgba(110, 168, 254, .30);
+	}
+
+		[data-bs-theme="dark"] .upload-zone:hover {
+			background: rgba(13, 110, 253, .08);
+			border-color: rgba(110, 168, 254, .55);
+		}
+
+
+	/* ==========================================================
+   20. SUMMARY / CRITICAL ROWS
+========================================================== */
+
+	[data-bs-theme="dark"] .summary-row {
+		background-color: var(--bg-subtle);
+		color: var(--text-primary);
+	}
+
+	[data-bs-theme="dark"] .critical-row {
+		background-color: rgba(220, 53, 69, .14);
+	}
+
+
+	/* ==========================================================
+   21. SCROLLBARS
+========================================================== */
+
+	[data-bs-theme="dark"] ::-webkit-scrollbar {
+		width: 10px;
+		height: 10px;
+	}
+
+	[data-bs-theme="dark"] ::-webkit-scrollbar-track {
+		background: #162032;
+	}
+
+	[data-bs-theme="dark"] ::-webkit-scrollbar-thumb {
+		background: #334155;
+		border-radius: 999px;
+	}
+
+		[data-bs-theme="dark"] ::-webkit-scrollbar-thumb:hover {
+			background: #475569;
+		}

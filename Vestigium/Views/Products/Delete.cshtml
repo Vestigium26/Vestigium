@@ -1,0 +1,557 @@
+﻿@model Vestigium.Models.ViewModels.ProductDeleteVM
+
+@{
+    ViewData["Title"] = "Eliminar Producto";
+
+    var hasBom = Model.BomCount > 0;
+}
+
+<div class="container-fluid px-0">
+
+
+    <!-- BREADCRUMB -->
+
+    <nav aria-label="breadcrumb">
+
+        <ol class="breadcrumb">
+
+            <li class="breadcrumb-item">
+
+                <a asp-action="Index">
+                    Catálogo de Productos
+                </a>
+
+            </li>
+
+            <li class="breadcrumb-item active"
+                aria-current="page">
+
+                Eliminar @Model.ProductNumber
+
+            </li>
+
+        </ol>
+
+    </nav>
+
+
+    <!-- Encabezado -->
+
+    <div class="card hero-card mb-4">
+
+        <div class="card-body p-4">
+
+            <div class="d-flex flex-column flex-lg-row
+                align-items-lg-center
+                justify-content-between
+                gap-3">
+
+
+                <!-- Informacion -->
+
+                <div>
+
+                    <h1 class="hero-title d-flex align-items-center gap-2 mb-1">
+
+                        <i class="bi bi-trash text-danger"></i>
+
+                        <span>
+                            Eliminar Producto
+                        </span>
+
+                    </h1>
+
+                    <p class="hero-subtitle">
+
+                        Confirma la eliminación permanente del producto seleccionado.
+
+                    </p>
+
+
+                    <div class="hero-meta">
+
+                        <span class="component-badge">
+
+                            <i class="bi bi-hash"></i>
+
+                            @Model.ProductNumber
+
+                        </span>
+
+
+                        @if (hasBom)
+                        {
+                            <span class="status-badge badge-warning">
+
+                                <i class="bi bi-exclamation-triangle-fill"></i>
+
+                                @Model.BomCount
+                                @(Model.BomCount == 1
+                                    ? "componente BOM"
+                                    : "componentes BOM")
+
+                            </span>
+                        }
+
+                    </div>
+
+                </div>
+
+
+                <!-- Regresar -->
+
+                <div class="page-header-actions">
+
+                    <a asp-action="Index"
+                       class="btn btn-outline-secondary">
+
+                        <i class="bi bi-arrow-left"></i>
+
+                        Regresar
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Confirmacion -->
+
+    <div class="card module-card">
+
+        <div class="card-header">
+
+            <h2 class="card-title-standard d-flex align-items-center gap-2">
+
+                <i class="bi bi-shield-exclamation text-danger"></i>
+
+                Confirmación de Eliminación
+
+            </h2>
+
+        </div>
+
+
+        <div class="card-body p-4">
+
+            <!-- Advertencia -->
+
+            <div class="alert alert-danger mb-4"
+                 role="alert">
+
+                <div class="d-flex align-items-start gap-3">
+
+                    <i class="bi bi-exclamation-triangle-fill fs-4 flex-shrink-0"></i>
+
+                    <div>
+
+                        <div class="fw-semibold">
+                            Esta acción es irreversible
+                        </div>
+
+                        <div class="small mt-1">
+
+                            Una vez eliminado, el producto dejará de estar
+                            disponible en el catálogo. Revise cuidadosamente
+                            la información y el impacto antes de continuar.
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- Formulario -->
+
+            <form asp-action="Delete"
+                  method="post"
+                  id="deleteProductForm">
+
+                <input asp-for="Id"
+                       type="hidden" />
+
+
+                <!-- Validaciones -->
+                @if (!ViewData.ModelState.IsValid)
+                {
+                    <div asp-validation-summary="ModelOnly"
+                         class="alert alert-danger mb-4"
+                         role="alert">
+                    </div>
+                }
+
+
+                <!-- Producto seleccionado -->
+
+                <section class="form-section">
+
+                    <div class="form-section-title">
+
+                        <span class="section-step">
+                            1
+                        </span>
+
+                        <div>
+
+                            <div>
+                                Producto Seleccionado
+                            </div>
+
+                            <div class="text-muted small fw-normal mt-1">
+
+                                Verifique que la información corresponda
+                                al producto que desea eliminar.
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="product-summary">
+
+                        <!-- Numero -->
+
+                        <div class="product-summary-item">
+
+                            <span class="detail-label">
+                                Número de Producto
+                            </span>
+
+                            <div class="detail-value
+                                product-part-number
+                                table-reference">
+
+                                @Model.ProductNumber
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- Descripcion -->
+
+                        <div class="product-summary-item">
+
+                            <span class="detail-label">
+                                Descripción
+                            </span>
+
+                            <div class="detail-value">
+
+                                @if (!string.IsNullOrWhiteSpace(Model.ProductDescription))
+                                {
+                                    @Model.ProductDescription
+                                }
+                                else
+                                {
+                                    <span class="text-muted">
+                                        Sin descripción
+                                    </span>
+                                }
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <!-- Impacto -->
+
+                <section class="form-section">
+
+                    <div class="form-section-title">
+
+                        <span class="section-step">
+                            2
+                        </span>
+
+                        <div>
+
+                            <div>
+                                Impacto de la Eliminación
+                            </div>
+
+                            <div class="text-muted small fw-normal mt-1">
+
+                                Información relacionada que será afectada
+                                por esta operación.
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    @if (hasBom)
+                    {
+                        <!-- Con Bom -->
+
+                        <div class="security-alert">
+
+                            <div class="d-flex align-items-start gap-3">
+
+                                <div class="security-icon">
+
+                                    <i class="bi bi-diagram-3"></i>
+
+                                </div>
+
+
+                                <div>
+
+                                    <div class="fw-semibold mb-1">
+
+                                        El producto tiene un BOM configurado
+
+                                    </div>
+
+
+                                    <div class="text-muted small">
+
+                                        Se encontraron
+
+                                        <strong class="text-body">
+                                            @Model.BomCount
+                                            @(Model.BomCount == 1
+                                                ? "componente asociado"
+                                                : "componentes asociados")
+                                        </strong>.
+
+                                        Al confirmar la eliminación también
+                                        se afectarán las relaciones BOM
+                                        vinculadas a este producto.
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+                    }
+                    else
+                    {
+                        <!-- Sin Bom -->
+
+                        <div class="help-panel">
+
+                            <div class="d-flex align-items-start gap-3">
+
+                                <div class="security-icon">
+
+                                    <i class="bi bi-check-circle"></i>
+
+                                </div>
+
+
+                                <div>
+
+                                    <div class="help-panel-title">
+
+                                        Sin componentes BOM asociados
+
+                                    </div>
+
+                                    <p class="help-panel-text">
+
+                                        Este producto no contiene componentes
+                                        registrados en su lista de materiales.
+
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+                    }
+
+                </section>
+
+                <!-- Seguridad solo si exite Bom -->
+                @if (hasBom)
+                {
+                    <section class="form-section mb-0">
+
+                        <div class="form-section-title">
+
+                            <span class="section-step">
+                                3
+                            </span>
+
+                            <div>
+
+                                <div>
+                                    Confirmación de Seguridad
+                                </div>
+
+                                <div class="text-muted small fw-normal mt-1">
+
+                                    Esta operación requiere reautenticación
+                                    porque el producto tiene un BOM asociado.
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="row g-3">
+
+                            <div class="col-12 col-lg-6">
+
+                                <label asp-for="Password"
+                                       class="form-label">
+
+                                    Contraseña de Administrador
+
+                                </label>
+
+
+                                <div class="input-group">
+
+                                    <span class="input-group-text">
+
+                                        <i class="bi bi-key"></i>
+
+                                    </span>
+
+
+                                    <input asp-for="Password"
+                                           type="password"
+                                           class="form-control"
+                                           autocomplete="current-password"
+                                           placeholder="Ingrese su contraseña"
+                                           required />
+
+                                </div>
+
+
+                                <span asp-validation-for="Password"
+                                      class="text-danger small d-block mt-1">
+                                </span>
+
+
+                                <div class="form-text">
+
+                                    La contraseña se solicita únicamente para
+                                    autorizar la eliminación de un producto
+                                    que ya tiene componentes BOM asociados.
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </section>
+                }
+
+
+                <!-- Acciones -->
+
+                <div class="d-flex flex-column flex-sm-row
+                    justify-content-end
+                    gap-2
+                    mt-4">
+
+                    <a asp-action="Index"
+                       class="btn btn-outline-secondary">
+
+                        <i class="bi bi-x-lg"></i>
+
+                        Cancelar
+
+                    </a>
+
+
+                    <button type="submit"
+                            id="deleteProductSubmit"
+                            class="btn btn-danger">
+
+                        <i class="bi bi-trash"></i>
+
+                        Eliminar Producto
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+@section Scripts
+{
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+
+        (() => {
+
+            const deleteProductForm =
+                document.getElementById("deleteProductForm");
+
+            const deleteProductSubmit =
+                document.getElementById("deleteProductSubmit");
+
+
+            deleteProductForm?.addEventListener(
+                "submit",
+                function(event) {
+
+                    // Validacion HTML
+
+                    if (!this.checkValidity()) {
+
+                        event.preventDefault();
+
+                        this.reportValidity();
+
+                        return;
+
+                    }
+
+
+                    // Prevenir doble envio
+
+                    if (!deleteProductSubmit) {
+                        return;
+                    }
+
+
+                    deleteProductSubmit.disabled = true;
+
+
+                    deleteProductSubmit.innerHTML =
+                        '<span class="spinner-border spinner-border-sm me-2" ' +
+                        'role="status" aria-hidden="true"></span>' +
+                        'Eliminando...';
+
+                }
+            );
+
+        })();
+
+    </script>
+}

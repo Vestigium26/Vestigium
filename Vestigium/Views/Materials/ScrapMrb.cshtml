@@ -1,0 +1,616 @@
+﻿@model IEnumerable<Vestigium.Models.ViewModels.ScrapMrbInventoryVM>
+@using Vestigium.ViewModels
+
+@{
+    ViewData["Title"] = "Historial Scrap / MRB";
+
+    var items =
+        Model?.ToList()
+        ?? new List<Vestigium.Models.ViewModels.ScrapMrbInventoryVM>();
+
+    var totalMaterials =
+        items.Count;
+
+    var totalScrap =
+        items.Sum(x =>
+            x.ScrapQuantity);
+
+    var totalMrb =
+        items.Sum(x =>
+            x.MrbQuantity);
+}
+
+<div class="container-fluid px-0">
+
+    <!-- =====================================================
+         BREADCRUMB
+    ====================================================== -->
+
+    <nav aria-label="breadcrumb">
+
+        <ol class="breadcrumb">
+
+            <li class="breadcrumb-item">
+
+                <a asp-action="Index">
+                    Inventario
+                </a>
+
+            </li>
+
+            <li class="breadcrumb-item active"
+                aria-current="page">
+
+                Scrap / MRB
+
+            </li>
+
+        </ol>
+
+    </nav>
+
+
+    <!-- =====================================================
+         ENCABEZADO
+    ====================================================== -->
+
+    <div class="card hero-card mb-4">
+
+        <div class="card-body p-4">
+
+            <div class="d-flex flex-column flex-lg-row
+                justify-content-between
+                align-items-lg-center
+                gap-3">
+
+                <!-- Información -->
+
+                <div>
+
+                    <h1 class="hero-title
+                        d-flex
+                        align-items-center
+                        gap-2
+                        mb-1">
+
+                        <i class="bi bi-recycle"></i>
+
+                        <span>
+                            Historial Scrap / MRB
+                        </span>
+
+                    </h1>
+
+
+                    <p class="hero-subtitle">
+
+                        Resumen histórico de material enviado
+                        a Scrap y MRB.
+
+                    </p>
+
+
+                    <div class="hero-meta">
+
+                        <span class="component-badge">
+
+                            <i class="bi bi-box-seam"></i>
+
+                            @totalMaterials
+
+                            @(totalMaterials == 1
+                                ? "material"
+                                : "materiales")
+
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Acciones -->
+
+                <div class="page-header-actions">
+
+                    <a asp-action="Index"
+                       class="btn btn-outline-secondary">
+
+                        <i class="bi bi-arrow-left"></i>
+
+                        Regresar al Inventario
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         INDICADORES
+    ====================================================== -->
+
+    <div class="row g-3 mb-4">
+
+        <!-- Materiales -->
+
+        <div class="col-12 col-md-4">
+
+            @await Html.PartialAsync(
+                "_KpiCard",
+                new KpiCardVM
+                {
+                    Title = "Materiales",
+                    Value = totalMaterials.ToString("N0"),
+                    Subtitle = "Con movimientos Scrap / MRB",
+                    Icon = "bi bi-box-seam",
+                    ColorClass = "kpi-primary"
+                })
+
+        </div>
+
+
+        <!-- Scrap -->
+
+        <div class="col-12 col-md-4">
+
+            @await Html.PartialAsync(
+                "_KpiCard",
+                new KpiCardVM
+                {
+                    Title = "Total Enviado a Scrap",
+                    Value = totalScrap.ToString("N0"),
+                    Subtitle = "Piezas registradas históricamente",
+                    Icon = "bi bi-trash",
+                    ColorClass = "kpi-danger"
+                })
+
+        </div>
+
+
+        <!-- MRB -->
+
+        <div class="col-12 col-md-4">
+
+            @await Html.PartialAsync(
+                "_KpiCard",
+                new KpiCardVM
+                {
+                    Title = "Total Enviado a MRB",
+                    Value = totalMrb.ToString("N0"),
+                    Subtitle = "Piezas registradas históricamente",
+                    Icon = "bi bi-exclamation-triangle",
+                    ColorClass = "kpi-warning"
+                })
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         INFORMACIÓN
+    ====================================================== -->
+
+    <div class="help-panel mb-4">
+
+        <div class="d-flex align-items-start gap-3">
+
+            <i class="bi bi-info-circle
+            text-primary
+            fs-5
+            flex-shrink-0"></i>
+
+
+            <div>
+
+                <div class="help-panel-title">
+
+                    Interpretación de la información
+
+                </div>
+
+
+                <p class="help-panel-text">
+
+                    Las cantidades mostradas representan el acumulado
+                    histórico de piezas registradas como salida hacia
+                    Scrap o MRB. No representan inventario disponible
+                    actualmente en esas áreas.
+
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         HISTORIAL
+    ====================================================== -->
+
+    <div class="card module-card">
+
+        <!-- Header -->
+
+        <div class="card-header">
+
+            <div class="d-flex flex-column flex-md-row
+                justify-content-between
+                align-items-md-center
+                gap-3">
+
+                <div>
+
+                    <h2 class="card-title-standard
+                        d-flex
+                        align-items-center
+                        gap-2">
+
+                        <i class="bi bi-recycle text-primary"></i>
+
+                        Materiales Scrap / MRB
+
+                    </h2>
+
+
+                    <div class="text-muted small mt-1">
+
+                        Acumulado histórico por número de parte
+                        y último movimiento especial registrado.
+
+                    </div>
+
+                </div>
+
+
+                <span class="component-badge">
+
+                    <i class="bi bi-boxes"></i>
+
+                    @totalMaterials
+
+                    @(totalMaterials == 1
+                        ? "material"
+                        : "materiales")
+
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             TABLA
+        ================================================== -->
+        @if (items.Any())
+        {
+            <div class="table-responsive">
+
+                <table class="table
+                    table-modern
+                    table-hover
+                    align-middle">
+
+                    <thead>
+
+                        <tr>
+
+                            <th style="width: 16%;">
+
+                                Número de Parte
+
+                            </th>
+
+
+                            <th style="width: 27%;">
+
+                                Descripción
+
+                            </th>
+
+
+                            <th class="text-nowrap"
+                                style="width: 18%;">
+
+                                Último Movimiento
+
+                            </th>
+
+
+                            <th style="width: 19%;">
+
+                                Responsable
+
+                            </th>
+
+
+                            <th class="text-end text-nowrap"
+                                style="width: 10%;">
+
+                                Enviado a Scrap
+
+                            </th>
+
+
+                            <th class="text-end text-nowrap"
+                                style="width: 10%;">
+
+                                Enviado a MRB
+
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        @foreach (var item in items)
+                        {
+                            <tr>
+
+                                <!-- =================================
+                 NÚMERO DE PARTE
+            ================================== -->
+
+                                <td>
+
+                                    <span class="table-reference fw-semibold">
+
+                                        @item.PartNumber
+
+                                    </span>
+
+                                </td>
+
+
+                                <!-- =================================
+                 DESCRIPCIÓN
+            ================================== -->
+
+                                <td>
+
+                                    @if (!string.IsNullOrWhiteSpace(
+                                        item.Description))
+                                    {
+                                        <div class="table-primary-text">
+
+                                            @item.Description
+
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted small">
+
+                                            Sin descripción
+
+                                        </span>
+                                    }
+
+                                </td>
+
+
+                                <!-- =================================
+                 ÚLTIMO MOVIMIENTO
+            ================================== -->
+
+                                <td>
+
+                                    @if (item.LastMovementDate.HasValue)
+                                    {
+                                        <span class="table-reference text-nowrap">
+
+                                            @(item.LastMovementDate.Value.ToString("dd/MM/yyyy HH:mm"))
+
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted small">
+
+                                            <i class="bi bi-dash-circle me-1"></i>
+
+                                            Sin registro
+
+                                        </span>
+                                    }
+
+                                </td>
+
+
+                                <!-- =================================
+                 RESPONSABLE
+            ================================== -->
+
+                                <td>
+
+                                    @if (!string.IsNullOrWhiteSpace(
+                                        item.LastMovementBy))
+                                    {
+                                        <div class="d-flex align-items-center gap-2">
+
+                                            <i class="bi bi-person text-muted"></i>
+
+                                            <span>
+
+                                                @item.LastMovementBy
+
+                                            </span>
+
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted small">
+
+                                            <i class="bi bi-dash-circle me-1"></i>
+
+                                            Sin registro
+
+                                        </span>
+                                    }
+
+                                </td>
+
+
+                                <!-- =================================
+                 SCRAP
+            ================================== -->
+
+                                <td class="text-end">
+
+                                    @if (item.ScrapQuantity > 0)
+                                    {
+                                        <span class="quantity-negative table-reference">
+
+                                            @(item.ScrapQuantity.ToString("N0"))
+
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted table-reference">
+
+                                            0
+
+                                        </span>
+                                    }
+
+                                </td>
+
+
+                                <!-- =================================
+                 MRB
+            ================================== -->
+
+                                <td class="text-end">
+
+                                    @if (item.MrbQuantity > 0)
+                                    {
+                                        <span class="quantity-warning table-reference">
+
+                                            @(item.MrbQuantity.ToString("N0"))
+
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted table-reference">
+
+                                            0
+
+                                        </span>
+                                    }
+
+                                </td>
+
+                            </tr>
+                        }
+
+                    </tbody>
+
+
+                    <!-- =============================================
+                         TOTALES
+                    ============================================== -->
+
+                    <tfoot>
+
+                        <tr class="summary-row">
+
+                            <th colspan="4">
+
+                                Total Histórico
+
+                            </th>
+
+
+                            <th class="text-end">
+
+                                <span class="quantity-negative
+                                    table-reference
+                                    fw-bold">
+
+                                    @totalScrap.ToString("N0")
+
+                                </span>
+
+                            </th>
+
+
+                            <th class="text-end">
+
+                                <span class="quantity-warning
+                                    table-reference
+                                    fw-bold">
+
+                                    @totalMrb.ToString("N0")
+
+                                </span>
+
+                            </th>
+
+                        </tr>
+
+                    </tfoot>
+
+                </table>
+
+            </div>
+        }
+        else
+        {
+            <!-- =================================================
+                 EMPTY STATE
+            ================================================== -->
+
+            <div class="empty-state">
+
+                <div class="empty-state-icon">
+
+                    <i class="bi bi-recycle"></i>
+
+                </div>
+
+
+                <div class="empty-state-title">
+
+                    Sin movimientos Scrap / MRB
+
+                </div>
+
+
+                <div class="empty-state-description">
+
+                    Todavía no existen salidas registradas
+                    hacia Scrap o MRB.
+
+                </div>
+
+
+                <a asp-action="Index"
+                   class="btn btn-outline-secondary">
+
+                    <i class="bi bi-arrow-left"></i>
+
+                    Regresar al Inventario
+
+                </a>
+
+            </div>
+        }
+
+    </div>
+
+</div>

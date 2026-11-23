@@ -1,0 +1,958 @@
+﻿@model Vestigium.Models.ViewModels.TraceabilityVM
+@using Vestigium.Models.Enums
+@using Vestigium.ViewModels
+
+@{
+    ViewData["Title"] = "Trazabilidad";
+
+    var activeLocations =
+        Model.Locations
+            .Where(x => x.Quantity > 0)
+            .OrderByDescending(x => x.Quantity)
+            .ThenBy(x => x.LocationCode)
+            .ToList();
+
+    var totalLocations =
+        activeLocations.Count;
+
+    var totalMovements =
+        Model.Movements.Count;
+
+    var totalEntries =
+        Model.Movements.Count(x =>
+            x.MovementType == MovementType.Entry);
+
+    var totalTransfers =
+        Model.Movements.Count(x =>
+            x.MovementType == MovementType.Transfer);
+
+    var totalOutputs =
+        Model.Movements.Count(x =>
+            x.MovementType == MovementType.Output);
+}
+
+<div class="container-fluid px-0">
+
+    <!-- =====================================================
+         BREADCRUMB
+    ====================================================== -->
+
+    <nav aria-label="breadcrumb">
+
+        <ol class="breadcrumb">
+
+            <li class="breadcrumb-item">
+
+                <a asp-action="Index">
+                    Inventario
+                </a>
+
+            </li>
+
+            <li class="breadcrumb-item">
+
+                <a asp-action="Locations"
+                   asp-route-id="@Model.MaterialId">
+
+                    Ubicaciones
+
+                </a>
+
+            </li>
+
+            <li class="breadcrumb-item active"
+                aria-current="page">
+
+                Trazabilidad
+
+            </li>
+
+        </ol>
+
+    </nav>
+
+
+    <!-- =====================================================
+         ENCABEZADO
+    ====================================================== -->
+
+    <div class="card hero-card mb-4">
+
+        <div class="card-body p-4">
+
+            <div class="d-flex flex-column flex-lg-row
+                justify-content-between
+                align-items-lg-center
+                gap-3">
+
+                <!-- Información -->
+
+                <div>
+
+                    <div class="text-muted small mb-1">
+
+                        Trazabilidad de Material
+
+                    </div>
+
+
+                    <h1 class="hero-title
+                        d-flex
+                        align-items-center
+                        gap-2
+                        mb-1">
+
+                        <i class="bi bi-clock-history"></i>
+
+                        <span>
+                            @Model.PartNumber
+                        </span>
+
+                    </h1>
+
+
+                    <p class="hero-subtitle">
+
+                        @if (!string.IsNullOrWhiteSpace(Model.Description))
+                        {
+                            @Model.Description
+                        }
+                        else
+                        {
+                            <span>Sin descripción</span>
+                        }
+
+                    </p>
+
+
+                    <div class="hero-meta">
+
+                        <span class="component-badge">
+
+                            <i class="bi bi-boxes"></i>
+
+                            @Model.CurrentInventory.ToString("N0")
+
+                            @(Model.CurrentInventory == 1
+                                ? "pieza disponible"
+                                : "piezas disponibles")
+
+                        </span>
+
+
+                        <span class="status-badge engineering-pill">
+
+                            <i class="bi bi-geo-alt"></i>
+
+                            @totalLocations
+
+                            @(totalLocations == 1
+                                ? "ubicación"
+                                : "ubicaciones")
+
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Acciones -->
+
+                <div class="page-header-actions">
+
+                    <a asp-action="Index"
+                       class="btn btn-outline-secondary">
+
+                        <i class="bi bi-arrow-left"></i>
+
+                        Regresar al Inventario
+
+                    </a>
+
+
+                    <a asp-action="Locations"
+                       asp-route-id="@Model.MaterialId"
+                       class="btn btn-outline-primary">
+
+                        <i class="bi bi-geo-alt"></i>
+
+                        Ubicaciones
+
+                    </a>
+
+
+                    <a asp-action="DownloadQr"
+                       asp-route-id="@Model.MaterialId"
+                       class="btn btn-primary">
+
+                        <i class="bi bi-qr-code"></i>
+
+                        Descargar QR
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         INDICADORES
+    ====================================================== -->
+
+    <div class="row g-3 mb-4">
+
+        <!-- Inventario -->
+
+        <div class="col-12 col-sm-6 col-xl-3">
+
+            @await Html.PartialAsync(
+                "_KpiCard",
+                new KpiCardVM
+                {
+                    Title = "Inventario Actual",
+                    Value = Model.CurrentInventory.ToString("N0"),
+                    Subtitle = "Piezas disponibles",
+                    Icon = "bi bi-boxes",
+                    ColorClass = "kpi-success"
+                })
+
+        </div>
+
+
+        <!-- Ubicaciones -->
+
+        <div class="col-12 col-sm-6 col-xl-3">
+
+            @await Html.PartialAsync(
+                "_KpiCard",
+                new KpiCardVM
+                {
+                    Title = "Ubicaciones Activas",
+                    Value = totalLocations.ToString("N0"),
+                    Subtitle = "Posiciones con inventario",
+                    Icon = "bi bi-geo-alt",
+                    ColorClass = "kpi-info"
+                })
+
+        </div>
+
+
+        <!-- Principal -->
+
+        <div class="col-12 col-sm-6 col-xl-3">
+
+            @await Html.PartialAsync(
+                "_KpiCard",
+                new KpiCardVM
+                {
+                    Title = "Ubicación Principal",
+                    Value = string.IsNullOrWhiteSpace(Model.Rack)
+                        ? "-"
+                        : Model.Rack,
+                    Subtitle = "Mayor existencia disponible",
+                    Icon = "bi bi-pin-map",
+                    ColorClass = "kpi-primary"
+                })
+
+        </div>
+
+
+        <!-- Movimientos -->
+
+        <div class="col-12 col-sm-6 col-xl-3">
+
+            @await Html.PartialAsync(
+                "_KpiCard",
+                new KpiCardVM
+                {
+                    Title = "Movimientos",
+                    Value = totalMovements.ToString("N0"),
+                    Subtitle = "Registros históricos",
+                    Icon = "bi bi-clock-history",
+                    ColorClass = "kpi-secondary"
+                })
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         UBICACIONES ACTUALES
+    ====================================================== -->
+
+    <div class="card module-card mb-4">
+
+        <div class="card-header">
+
+            <div class="d-flex flex-column flex-md-row
+                justify-content-between
+                align-items-md-center
+                gap-3">
+
+                <div>
+
+                    <h2 class="card-title-standard
+                        d-flex
+                        align-items-center
+                        gap-2">
+
+                        <i class="bi bi-geo-alt text-primary"></i>
+
+                        Distribución Actual
+
+                    </h2>
+
+
+                    <div class="text-muted small mt-1">
+
+                        Inventario disponible actualmente
+                        en cada ubicación física.
+
+                    </div>
+
+                </div>
+
+
+                <span class="component-badge">
+
+                    <i class="bi bi-pin-map"></i>
+
+                    @totalLocations
+
+                    @(totalLocations == 1
+                        ? "ubicación"
+                        : "ubicaciones")
+
+                </span>
+
+            </div>
+
+        </div>
+
+
+        @if (activeLocations.Any())
+        {
+            <div class="card-body p-4">
+
+                <div class="row g-3">
+
+                    @foreach (var location in activeLocations)
+                    {
+                        var isPrincipal =
+                            location.LocationCode ==
+                            Model.Rack;
+
+                        var percentage =
+                            Model.CurrentInventory > 0
+                                ? location.Quantity *
+                                  100.0 /
+                                  Model.CurrentInventory
+                                : 0;
+
+
+                        <div class="col-12
+                            col-sm-6
+                            col-lg-4
+                            col-xl-3">
+
+                            <div class="p-3
+                                border
+                                rounded-3
+                                bg-body-tertiary
+                                h-100">
+
+                                <!-- Ubicación -->
+
+                                <div class="d-flex
+                                    justify-content-between
+                                    align-items-start
+                                    gap-2
+                                    mb-3">
+
+                                    <div class="fs-4
+                                        fw-bold
+                                        text-primary
+                                        table-reference">
+
+                                        @location.LocationCode
+
+                                    </div>
+
+
+                                    @if (isPrincipal)
+                                    {
+                                        <span class="status-badge
+                                            badge-success">
+
+                                            <i class="bi bi-star-fill"></i>
+
+                                            Principal
+
+                                        </span>
+                                    }
+
+                                </div>
+
+
+                                <!-- Cantidad -->
+
+                                <div class="d-flex
+                                    align-items-baseline
+                                    gap-2">
+
+                                    <div class="fs-5
+                                        fw-semibold
+                                        table-reference">
+
+                                        @location.Quantity.ToString("N0")
+
+                                    </div>
+
+
+                                    <div class="small text-muted">
+
+                                        @(location.Quantity == 1
+                                            ? "pieza"
+                                            : "piezas")
+
+                                    </div>
+
+                                </div>
+
+
+                                <!-- Participación -->
+
+                                <div class="progress mt-3"
+                                     style="height: 6px;">
+
+                                    <div class="progress-bar"
+                                         role="progressbar"
+                                         style="width: @percentage.ToString("0.##", System.Globalization.CultureInfo.InvariantCulture)%"
+                                         aria-valuenow="@percentage.ToString("0.##", System.Globalization.CultureInfo.InvariantCulture)"
+                                         aria-valuemin="0"
+                                         aria-valuemax="100">
+                                    </div>
+
+                                </div>
+
+
+                                <div class="small
+                                    text-muted
+                                    mt-2">
+
+                                    @percentage.ToString("N1")%
+                                    del inventario actual
+
+                                </div>
+
+                            </div>
+
+                        </div>
+                    }
+
+                </div>
+
+            </div>
+        }
+        else
+        {
+            <div class="empty-state">
+
+                <div class="empty-state-icon">
+
+                    <i class="bi bi-geo-alt"></i>
+
+                </div>
+
+
+                <div class="empty-state-title">
+
+                    Sin inventario disponible
+
+                </div>
+
+
+                <div class="empty-state-description">
+
+                    Este material no tiene ubicaciones
+                    con inventario disponible actualmente.
+
+                </div>
+
+            </div>
+        }
+
+    </div>
+
+
+    <!-- =====================================================
+         HISTORIAL DE MOVIMIENTOS
+    ====================================================== -->
+
+    <div class="card module-card">
+
+        <!-- Header -->
+
+        <div class="card-header">
+
+            <div class="d-flex flex-column flex-xl-row
+                justify-content-between
+                align-items-xl-center
+                gap-3">
+
+                <div>
+
+                    <h2 class="card-title-standard
+                        d-flex
+                        align-items-center
+                        gap-2">
+
+                        <i class="bi bi-clock-history text-primary"></i>
+
+                        Historial de Movimientos
+
+                    </h2>
+
+
+                    <div class="text-muted small mt-1">
+
+                        Registro cronológico de entradas,
+                        transferencias y salidas del material.
+
+                    </div>
+
+                </div>
+
+
+                <div class="d-flex
+                    flex-wrap
+                    align-items-center
+                    gap-2">
+
+                    <span class="component-badge">
+
+                        <i class="bi bi-box-arrow-in-down"></i>
+
+                        @totalEntries entradas
+
+                    </span>
+
+
+                    <span class="component-badge">
+
+                        <i class="bi bi-arrow-left-right"></i>
+
+                        @totalTransfers transferencias
+
+                    </span>
+
+
+                    <span class="component-badge">
+
+                        <i class="bi bi-box-arrow-up"></i>
+
+                        @totalOutputs salidas
+
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        @if (Model.Movements.Any())
+        {
+            <div class="table-responsive">
+
+                <table class="table
+                    table-modern
+                    table-hover
+                    align-middle">
+
+                    <thead>
+
+                        <tr>
+
+                            <th class="text-nowrap">
+                                Folio
+                            </th>
+
+                            <th class="text-nowrap">
+                                Fecha
+                            </th>
+
+                            <th>
+                                Registrado Por
+                            </th>
+
+                            <th>
+                                Recibido Por
+                            </th>
+
+                            <th>
+                                Tipo
+                            </th>
+
+                            <th class="text-end">
+                                Cantidad
+                            </th>
+
+                            <th>
+                                Origen
+                            </th>
+
+                            <th>
+                                Destino
+                            </th>
+
+                            <th>
+                                Comentarios
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        @foreach (var item in Model.Movements)
+                        {
+                            var isInternalTransfer =
+                                item.MovementType ==
+                                    MovementType.Transfer &&
+                                !string.IsNullOrWhiteSpace(
+                                    item.Comments) &&
+                                item.Comments.Contains(
+                                    "Transferencia interna",
+                                    StringComparison.OrdinalIgnoreCase);
+
+
+                            <tr>
+
+                                <!-- =============================
+                                     FOLIO
+                                ============================== -->
+
+                                <td>
+
+                                    @if (!string.IsNullOrWhiteSpace(
+                                        item.ReportNumber))
+                                    {
+                                        <span class="table-reference
+                                            text-nowrap">
+
+                                            @item.ReportNumber
+
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">
+
+                                            -
+
+                                        </span>
+                                    }
+
+                                </td>
+
+
+                                <!-- =============================
+                                     FECHA
+                                ============================== -->
+
+                                <td>
+
+                                    <span class="table-reference
+                                        text-nowrap">
+
+                                        @(item.MovementDate.ToString(
+                                            "dd/MM/yyyy HH:mm"))
+
+                                    </span>
+
+                                </td>
+
+
+                                <!-- =============================
+                                     REGISTRADO POR
+                                ============================== -->
+
+                                <td>
+
+                                    @if (!string.IsNullOrWhiteSpace(
+                                        item.RegisteredByName))
+                                    {
+                                        <div class="fw-semibold">
+
+                                            @item.RegisteredByName
+
+                                        </div>
+
+
+                                        @if (!string.IsNullOrWhiteSpace(
+                                            item.UserName))
+                                        {
+                                            <div class="small text-muted">
+
+                                                @item.UserName
+
+                                            </div>
+                                        }
+                                    }
+                                    else if (!string.IsNullOrWhiteSpace(
+                                        item.UserName))
+                                    {
+                                        <span>
+                                            @item.UserName
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">
+                                            -
+                                        </span>
+                                    }
+
+                                </td>
+
+
+                                <!-- =============================
+                                     RECIBIDO POR
+                                ============================== -->
+
+                                <td>
+
+                                    @if (!string.IsNullOrWhiteSpace(
+                                        item.ReceivedByName))
+                                    {
+                                        <div class="fw-semibold">
+
+                                            @item.ReceivedByName
+
+                                        </div>
+
+
+                                        @if (!string.IsNullOrWhiteSpace(
+                                            item.ReceivedByEmployeeNumber))
+                                        {
+                                            <div class="small text-muted">
+
+                                                @item.ReceivedByEmployeeNumber
+
+                                            </div>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">
+                                            -
+                                        </span>
+                                    }
+
+                                </td>
+
+
+                                <!-- =============================
+                                     TIPO
+                                ============================== -->
+
+                                <td>
+
+                                    @if (item.MovementType ==
+                                        MovementType.Entry)
+                                    {
+                                        <span class="status-badge
+                                            badge-success">
+
+                                            <i class="bi bi-box-arrow-in-down"></i>
+
+                                            Entrada
+
+                                        </span>
+                                    }
+                                    else if (
+                                        item.MovementType ==
+                                            MovementType.Transfer &&
+                                        isInternalTransfer)
+                                    {
+                                        <span class="status-badge">
+
+                                            <i class="bi bi-arrow-left-right"></i>
+
+                                            Reubicación
+
+                                        </span>
+                                    }
+                                    else if (
+                                        item.MovementType ==
+                                            MovementType.Transfer)
+                                    {
+                                        <span class="status-badge
+                                            engineering-pill">
+
+                                            <i class="bi bi-arrow-right"></i>
+
+                                            Transferencia
+
+                                        </span>
+                                    }
+                                    else if (
+                                        item.MovementType ==
+                                            MovementType.Output)
+                                    {
+                                        <span class="status-badge
+                                            badge-danger">
+
+                                            <i class="bi bi-box-arrow-up"></i>
+
+                                            Salida
+
+                                        </span>
+                                    }
+
+                                </td>
+
+
+                                <!-- =============================
+                                     CANTIDAD
+                                ============================== -->
+
+                                <td class="text-end">
+
+                                    <span class="fw-semibold
+                                        table-reference">
+
+                                        @item.Quantity.ToString("N0")
+
+                                    </span>
+
+                                </td>
+
+
+                                <!-- =============================
+                                     ORIGEN
+                                ============================== -->
+
+                                <td>
+
+                                    @if (!string.IsNullOrWhiteSpace(
+                                        item.OriginLocation))
+                                    {
+                                        <span class="location-badge">
+
+                                            @item.OriginLocation
+
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">
+                                            -
+                                        </span>
+                                    }
+
+                                </td>
+
+
+                                <!-- =============================
+                                     DESTINO
+                                ============================== -->
+
+                                <td>
+
+                                    @if (!string.IsNullOrWhiteSpace(
+                                        item.DestinationLocation))
+                                    {
+                                        <span class="location-badge">
+
+                                            @item.DestinationLocation
+
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">
+                                            -
+                                        </span>
+                                    }
+
+                                </td>
+
+
+                                <!-- =============================
+                                     COMENTARIOS
+                                ============================== -->
+
+                                <td>
+
+                                    @if (!string.IsNullOrWhiteSpace(
+                                        item.Comments))
+                                    {
+                                        <span>
+                                            @item.Comments
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">
+                                            -
+                                        </span>
+                                    }
+
+                                </td>
+
+                            </tr>
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+        }
+        else
+        {
+            <!-- =================================================
+                 EMPTY STATE
+            ================================================== -->
+
+            <div class="empty-state">
+
+                <div class="empty-state-icon">
+
+                    <i class="bi bi-clock-history"></i>
+
+                </div>
+
+
+                <div class="empty-state-title">
+
+                    Sin movimientos registrados
+
+                </div>
+
+
+                <div class="empty-state-description">
+
+                    Todavía no existe historial de movimientos
+                    para este material.
+
+                </div>
+
+            </div>
+        }
+
+    </div>
+
+</div>

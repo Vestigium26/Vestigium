@@ -1,0 +1,331 @@
+﻿/* ==========================================================
+   VESTIGIUM
+   INVENTORY MODULE
+
+   Inventory-specific components only.
+   Shared styles live in vestigium-theme.css.
+========================================================== */
+
+
+/* ==========================================================
+   1. INVENTORY LAYOUT
+========================================================== */
+
+.inventory-section {
+	margin-bottom: 1.5rem;
+}
+
+.inventory-card {
+	min-height: 700px;
+}
+
+.inventory-table-container {
+	width: 100%;
+	overflow-x: auto;
+}
+
+
+/* ==========================================================
+   2. LOCATION BADGES
+========================================================== */
+
+.location-badge,
+.destination-badge {
+	display: inline-flex;
+	align-items: center;
+	gap: .35rem;
+	padding: .35rem .75rem;
+	border-radius: 999px;
+	font-size: .8rem;
+	font-weight: 600;
+	white-space: nowrap;
+}
+
+.location-badge {
+	background-color: var(--bg-subtle);
+	color: var(--text-primary);
+	border: 1px solid var(--border-light);
+}
+
+.destination-badge {
+	background-color: rgba(13, 110, 253, .10);
+	color: var(--engineering);
+	border: 1px solid rgba(13, 110, 253, .20);
+}
+
+
+/* ==========================================================
+   3. INVENTORY SUMMARY
+========================================================== */
+
+.inventory-highlight {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: .5rem;
+	margin-top: 1.5rem;
+	padding: 1.5rem;
+	border: 1px solid rgba(13, 110, 253, .15);
+	border-radius: var(--radius-lg);
+	background: linear-gradient( 135deg, var(--bg-subtle), rgba(13, 110, 253, .04) );
+	box-shadow: var(--shadow-sm);
+	text-align: center;
+}
+
+.inventory-value {
+	color: var(--engineering);
+	font-size: clamp(2rem, 5vw, 3rem);
+	font-weight: 700;
+	line-height: 1;
+	font-variant-numeric: tabular-nums;
+}
+
+.inventory-label {
+	color: var(--text-secondary);
+	font-size: .95rem;
+	line-height: 1.4;
+	text-align: center;
+	overflow-wrap: anywhere;
+}
+
+
+/* ==========================================================
+   4. MATERIAL STATUS
+========================================================== */
+
+.material-status-card {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	height: 100%;
+	padding: 1.25rem;
+	border: 1px solid rgba(13, 110, 253, .15);
+	border-radius: var(--radius-md);
+	background: linear-gradient( 135deg, rgba(13, 110, 253, .05), rgba(13, 110, 253, .01) );
+	transition: border-color .2s ease, box-shadow .2s ease;
+}
+
+	.material-status-card:hover {
+		border-color: rgba(13, 110, 253, .25);
+		box-shadow: var(--shadow-sm);
+	}
+
+
+/* ==========================================================
+   5. MATERIAL INFORMATION
+========================================================== */
+
+.material-info {
+	display: flex;
+	flex-direction: column;
+	gap: .2rem;
+}
+
+.material-part-number {
+	color: var(--engineering);
+	font-size: 1rem;
+	font-weight: 700;
+}
+
+#selectedPartNumber {
+	color: var(--engineering);
+	font-size: 1.3rem;
+	font-weight: 700;
+	overflow-wrap: anywhere;
+}
+
+
+/* ==========================================================
+   6. SCANNER / PART NUMBER INPUT
+========================================================== */
+
+#partNumberInput {
+	border-width: 2px;
+	font-size: 1.15rem;
+	font-weight: 600;
+	letter-spacing: .03em;
+	transition: border-color .2s ease, box-shadow .2s ease;
+}
+
+.input-group-lg .input-group-text {
+	min-width: 56px;
+	justify-content: center;
+	font-size: 1.1rem;
+}
+
+
+/* ==========================================================
+   7. QR RESULT
+========================================================== */
+
+#qrResult {
+	border-radius: var(--radius-md);
+	box-shadow: var(--shadow-sm);
+	font-weight: 500;
+}
+
+
+/* ==========================================================
+   8. STOCK STATUS
+========================================================== */
+
+.inventory-stock-good {
+	background-color: rgba(25, 135, 84, .08);
+}
+
+.inventory-stock-low {
+	background-color: rgba(255, 193, 7, .10);
+}
+
+.inventory-stock-critical {
+	background-color: rgba(220, 53, 69, .08);
+}
+
+
+/* ==========================================================
+   9. QUANTITY STATES
+========================================================== */
+
+.quantity-positive {
+	color: var(--success);
+	font-weight: 700;
+}
+
+.quantity-negative {
+	color: var(--danger);
+	font-weight: 700;
+}
+
+.quantity-neutral {
+	color: var(--text-primary);
+	font-weight: 700;
+}
+
+
+/* ==========================================================
+   10. INVENTORY TABLE HELPERS
+========================================================== */
+
+.inventory-number {
+	font-weight: 700;
+	font-variant-numeric: tabular-nums;
+}
+
+.inventory-location,
+.inventory-actions {
+	white-space: nowrap;
+}
+
+
+/* ==========================================================
+   11. INVENTORY STATS
+========================================================== */
+
+.inventory-stat-card {
+	height: 100%;
+}
+
+.inventory-stat-value {
+	font-size: 1.8rem;
+	font-weight: 700;
+	line-height: 1;
+	font-variant-numeric: tabular-nums;
+}
+
+.inventory-stat-label {
+	color: var(--text-secondary);
+	font-size: .9rem;
+}
+
+
+/* ==========================================================
+   12. SUMMARY ROW
+========================================================== */
+
+.summary-row {
+	background-color: var(--bg-subtle);
+	color: var(--text-primary);
+	font-weight: 600;
+}
+
+
+/* ==========================================================
+   13. BOM TREE
+========================================================== */
+
+
+/* ==========================================================
+   14. RESPONSIVE
+========================================================== */
+
+@media (max-width: 991.98px) {
+
+	.inventory-card {
+		min-height: auto;
+	}
+}
+
+
+@media (max-width: 767.98px) {
+
+	.inventory-highlight {
+		padding: 1.25rem;
+	}
+
+	.inventory-value {
+		font-size: 2rem;
+	}
+
+	.material-status-card {
+		min-height: 80px;
+	}
+
+	#selectedPartNumber {
+		font-size: 1.15rem;
+	}
+
+	#reader {
+		max-width: 100% !important;
+	}
+
+	.inventory-actions {
+		text-align: left;
+	}
+}
+
+
+@media (max-width: 575.98px) {
+
+	.inventory-highlight {
+		padding: 1rem;
+	}
+
+	.inventory-value {
+		font-size: 1.8rem;
+	}
+
+	#partNumberInput {
+		font-size: 1rem;
+	}
+
+}
+
+
+/* ==========================================================
+   15. FUTURE INVENTORY COMPONENTS
+========================================================== */
+
+/*
+
+.inventory-kpi-grid
+.inventory-filter-panel
+.inventory-location-summary
+.inventory-transfer-widget
+.inventory-scanner-panel
+.inventory-audit-card
+.inventory-movement-summary
+.inventory-bom-card
+.inventory-product-card
+
+*/

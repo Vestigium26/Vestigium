@@ -1,0 +1,791 @@
+﻿@model Vestigium.Models.ViewModels.EditBomItemViewModel
+
+@{
+    ViewData["Title"] = "Editar Componente BOM";
+
+    var hasServerErrors =
+        !ViewData.ModelState.IsValid;
+}
+
+<div class="container-fluid px-0">
+
+    <!-- =====================================================
+         BREADCRUMB
+    ====================================================== -->
+
+    <nav aria-label="breadcrumb">
+
+        <ol class="breadcrumb">
+
+            <li class="breadcrumb-item">
+
+                <a asp-controller="Products"
+                   asp-action="Index">
+
+                    Catálogo de Productos
+
+                </a>
+
+            </li>
+
+
+            <li class="breadcrumb-item">
+
+                <a asp-action="Index"
+                   asp-route-productId="@Model.ProductId">
+
+                    BOM
+
+                </a>
+
+            </li>
+
+
+            <li class="breadcrumb-item active"
+                aria-current="page">
+
+                Editar Componente
+
+            </li>
+
+        </ol>
+
+    </nav>
+
+
+    <!-- =====================================================
+         ENCABEZADO
+    ====================================================== -->
+
+    <div class="card hero-card mb-4">
+
+        <div class="card-body p-4">
+
+            <div class="d-flex flex-column flex-lg-row
+                align-items-lg-center
+                justify-content-between
+                gap-3">
+
+                <div>
+
+                    <h1 class="hero-title
+                        d-flex
+                        align-items-center
+                        gap-2
+                        mb-1">
+
+                        <i class="bi bi-pencil-square"></i>
+
+                        <span>
+                            Editar Componente BOM
+                        </span>
+
+                    </h1>
+
+
+                    <p class="hero-subtitle">
+
+                        Actualiza la cantidad requerida del componente
+                        dentro de la lista de materiales.
+
+                    </p>
+
+
+                    <div class="hero-meta">
+
+                        <span class="component-badge">
+
+                            <i class="bi bi-box-seam"></i>
+
+                            @Model.MaterialNumber
+
+                        </span>
+
+
+                        <span class="status-badge engineering-pill">
+
+                            <i class="bi bi-diagram-3"></i>
+
+                            Componente BOM
+
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="page-header-actions">
+
+                    <a asp-action="Index"
+                       asp-route-productId="@Model.ProductId"
+                       class="btn btn-outline-secondary">
+
+                        <i class="bi bi-arrow-left"></i>
+
+                        Regresar al BOM
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         FORMULARIO
+    ====================================================== -->
+
+    <div class="card module-card">
+
+        <div class="card-header">
+
+            <div>
+
+                <h2 class="card-title-standard
+                    d-flex
+                    align-items-center
+                    gap-2">
+
+                    <i class="bi bi-box-seam text-primary"></i>
+
+                    Información del Componente
+
+                </h2>
+
+
+                <div class="text-muted small mt-1">
+
+                    El material asociado permanecerá sin cambios.
+                    Únicamente puede modificarse su cantidad requerida.
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="card-body p-4">
+
+            <form asp-action="Edit"
+                  method="post"
+                  id="editBomItemForm">
+
+                <!-- =================================================
+                     CAMPOS INTERNOS
+                ================================================== -->
+
+                <input asp-for="Id"
+                       type="hidden" />
+
+                <input asp-for="ProductId"
+                       type="hidden" />
+
+                <input asp-for="MaterialId"
+                       type="hidden" />
+
+
+                <!-- =================================================
+                     VALIDACIONES GENERALES
+                ================================================== -->
+                @if (!ViewData.ModelState.IsValid)
+                {
+                    <div asp-validation-summary="ModelOnly"
+                         class="alert alert-danger mb-4"
+                         role="alert">
+                    </div>
+                }
+
+
+                <!-- =================================================
+                     1. COMPONENTE
+                ================================================== -->
+
+                <section class="form-section">
+
+                    <div class="form-section-title">
+
+                        <span class="section-step">
+                            1
+                        </span>
+
+
+                        <div>
+
+                            <div>
+                                Componente Seleccionado
+                            </div>
+
+
+                            <div class="text-muted small fw-normal mt-1">
+
+                                Verifique el material cuya cantidad será modificada.
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="product-summary">
+
+                        <div class="product-summary-item">
+
+                            <span class="detail-label">
+
+                                Número de Parte
+
+                            </span>
+
+
+                            <div class="detail-value
+                                material-number
+                                table-reference">
+
+                                @Model.MaterialNumber
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="product-summary-item">
+
+                            <span class="detail-label">
+
+                                Descripción
+
+                            </span>
+
+
+                            <div class="detail-value">
+
+                                @if (!string.IsNullOrWhiteSpace(
+                                    Model.MaterialDescription))
+                                {
+                                    @Model.MaterialDescription
+                                }
+                                else
+                                {
+                                    <span class="text-muted">
+                                        Sin descripción
+                                    </span>
+                                }
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <!-- =================================================
+                     2. CANTIDAD
+                ================================================== -->
+
+                <section class="form-section">
+
+                    <div class="form-section-title">
+
+                        <span class="section-step">
+                            2
+                        </span>
+
+
+                        <div>
+
+                            <div>
+                                Cantidad Requerida
+                            </div>
+
+
+                            <div class="text-muted small fw-normal mt-1">
+
+                                Indique la cantidad necesaria para fabricar
+                                una unidad del producto.
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="row g-3">
+
+                        <div class="col-12 col-md-6 col-lg-4">
+
+                            <label asp-for="Quantity"
+                                   class="form-label">
+
+                                Cantidad
+
+                            </label>
+
+
+                            <div class="input-group">
+
+                                <span class="input-group-text">
+
+                                    <i class="bi bi-123"></i>
+
+                                </span>
+
+
+                                <input asp-for="Quantity"
+                                       class="form-control quantity-input"
+                                       autocomplete="off"
+                                       autofocus
+                                       step="any"
+                                       inputmode="decimal" />
+
+                            </div>
+
+
+                            <span asp-validation-for="Quantity"
+                                  id="quantityValidation"
+                                  class="text-danger small d-block mt-1">
+                            </span>
+
+
+                            <div class="form-text">
+
+                                La cantidad debe ser mayor que cero.
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <!-- =================================================
+                     3. SEGURIDAD
+                ================================================== -->
+
+                <section class="form-section mb-0">
+
+                    <div class="form-section-title">
+
+                        <span class="section-step">
+                            3
+                        </span>
+
+
+                        <div>
+
+                            <div>
+                                Confirmación de Seguridad
+                            </div>
+
+
+                            <div class="text-muted small fw-normal mt-1">
+
+                                Modificar la cantidad altera un BOM existente.
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="security-alert mb-4">
+
+                        <div class="d-flex align-items-start gap-3">
+
+                            <div class="security-icon">
+
+                                <i class="bi bi-shield-lock"></i>
+
+                            </div>
+
+
+                            <div>
+
+                                <div class="fw-semibold mb-1">
+
+                                    Confirmación requerida
+
+                                </div>
+
+
+                                <div class="small">
+
+                                    Confirme su contraseña de administrador
+                                    para autorizar el cambio de cantidad
+                                    de este componente.
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="row g-3">
+
+                        <div class="col-12 col-md-6">
+
+                            <label asp-for="Password"
+                                   class="form-label">
+
+                                Contraseña
+
+                            </label>
+
+
+                            <div class="input-group">
+
+                                <span class="input-group-text">
+
+                                    <i class="bi bi-key"></i>
+
+                                </span>
+
+
+                                <input asp-for="Password"
+                                       type="password"
+                                       class="form-control"
+                                       autocomplete="current-password"
+                                       placeholder="Ingrese su contraseña" />
+
+                            </div>
+
+
+                            <span asp-validation-for="Password"
+                                  class="text-danger small d-block mt-1">
+                            </span>
+
+
+                            <div class="form-text">
+
+                                La contraseña solamente se utiliza para
+                                confirmar esta modificación.
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <!-- =================================================
+                     ACCIONES
+                ================================================== -->
+
+                <div class="d-flex flex-column flex-sm-row
+                    justify-content-end
+                    gap-2
+                    mt-4">
+
+                    <a asp-action="Index"
+                       asp-route-productId="@Model.ProductId"
+                       class="btn btn-outline-secondary">
+
+                        <i class="bi bi-x-lg"></i>
+
+                        Cancelar
+
+                    </a>
+
+
+                    <button type="submit"
+                            id="updateBomItemSubmit"
+                            class="btn btn-primary">
+
+                        <i class="bi bi-check-lg"></i>
+
+                        Guardar Cambios
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+@section Scripts
+{
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+
+        (() => {
+
+            const editBomItemForm =
+                document.getElementById("editBomItemForm");
+
+            const quantityInput =
+                document.getElementById("Quantity");
+
+            const quantityValidation =
+                document.getElementById("quantityValidation");
+
+            const updateBomItemSubmit =
+                document.getElementById("updateBomItemSubmit");
+
+
+            // ==============================================
+            // LIMPIAR ERROR DE CANTIDAD
+            // ==============================================
+
+            quantityInput?.addEventListener(
+                "input",
+                () => {
+
+                    if (quantityValidation) {
+
+                        quantityValidation.textContent =
+                            "";
+
+                    }
+
+                }
+            );
+
+
+            // ==============================================
+            // ENVÍO
+            // ==============================================
+
+            editBomItemForm?.addEventListener(
+                "submit",
+                function(event) {
+
+                    // ======================================
+                    // CANTIDAD
+                    // ======================================
+
+                    const quantityText =
+                        quantityInput?.value?.trim() ??
+                        "";
+
+
+                    const quantity =
+                        Number(quantityText);
+
+
+                    if (
+                        quantityText.length === 0 ||
+                        !Number.isFinite(quantity) ||
+                        quantity <= 0
+                    ) {
+
+                        event.preventDefault();
+
+
+                        if (quantityValidation) {
+
+                            quantityValidation.textContent =
+                                "Ingrese una cantidad mayor que cero.";
+
+                        }
+
+
+                        quantityInput?.scrollIntoView({
+                            behavior: "smooth",
+                            block: "center"
+                        });
+
+
+                        setTimeout(
+                            () => {
+
+                                quantityInput?.focus({
+                                    preventScroll: true
+                                });
+
+                            },
+                            300
+                        );
+
+
+                        return;
+
+                    }
+
+
+                    // ======================================
+                    // HTML
+                    // ======================================
+
+                    if (!this.checkValidity()) {
+
+                        event.preventDefault();
+
+                        this.reportValidity();
+
+                        return;
+
+                    }
+
+
+                    // ======================================
+                    // JQUERY VALIDATION
+                    // ======================================
+
+                    if (
+                        typeof $ !== "undefined" &&
+                        typeof $.validator !== "undefined" &&
+                        $(this).data("validator") &&
+                        !$(this).valid()
+                    ) {
+
+                        event.preventDefault();
+
+                        return;
+
+                    }
+
+
+                    // ======================================
+                    // ENVÍO REAL
+                    // ======================================
+
+                    if (!updateBomItemSubmit) {
+                        return;
+                    }
+
+
+                    updateBomItemSubmit.disabled =
+                        true;
+
+
+                    updateBomItemSubmit.innerHTML =
+                        '<span class="spinner-border spinner-border-sm me-2" ' +
+                        'role="status" aria-hidden="true"></span>' +
+                        'Guardando...';
+
+                }
+            );
+
+
+            // ==============================================
+            // ENFOCAR PRIMER ERROR DEL SERVIDOR
+            // ==============================================
+
+            const hasServerErrors =
+                @Html.Raw(
+                hasServerErrors
+                ? "true"
+                : "false"
+                );
+
+
+            if (hasServerErrors) {
+
+                requestAnimationFrame(
+                    () => {
+
+                        const firstValidationError =
+                            document.querySelector(
+                                ".field-validation-error"
+                            );
+
+
+                        if (firstValidationError) {
+
+                            const fieldName =
+                                firstValidationError.getAttribute(
+                                    "data-valmsg-for"
+                                );
+
+
+                            let field =
+                                null;
+
+
+                            if (fieldName) {
+
+                                field =
+                                    document.querySelector(
+                                        `[name="${CSS.escape(fieldName)}"]`
+                                    );
+
+                            }
+
+
+                            if (
+                                field &&
+                                field.type !== "hidden"
+                            ) {
+
+                                field.scrollIntoView({
+                                    behavior: "smooth",
+                                    block: "center"
+                                });
+
+
+                                setTimeout(
+                                    () => {
+
+                                        field.focus({
+                                            preventScroll: true
+                                        });
+
+                                    },
+                                    350
+                                );
+
+
+                                return;
+
+                            }
+
+
+                            firstValidationError.scrollIntoView({
+                                behavior: "smooth",
+                                block: "center"
+                            });
+
+
+                            return;
+
+                        }
+
+
+                        const validationSummary =
+                            document.querySelector(
+                                ".validation-summary-errors"
+                            );
+
+
+                        if (validationSummary) {
+
+                            validationSummary.scrollIntoView({
+                                behavior: "smooth",
+                                block: "center"
+                            });
+
+                        }
+
+                    }
+                );
+
+            }
+
+        })();
+
+    </script>
+}

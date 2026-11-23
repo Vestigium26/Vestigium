@@ -1,0 +1,196 @@
+﻿/* ==========================================================
+   VESTIGIUM
+   DASHBOARD MODULE
+
+   Dashboard-specific components only.
+   Shared styles live in vestigium-theme.css.
+========================================================== */
+
+
+/* ==========================================================
+   1. DASHBOARD USER INFORMATION
+========================================================== */
+
+.dashboard-user-name {
+	word-break: break-word;
+}
+
+
+/* ==========================================================
+   2. DASHBOARD CLOCK
+========================================================== */
+
+#clock {
+	font-size: 1.9rem;
+	font-weight: 700;
+	line-height: 1;
+	letter-spacing: .04em;
+	font-variant-numeric: tabular-nums;
+}
+
+
+/* ==========================================================
+   3. QUICK ACTIONS
+========================================================== */
+
+.quick-action-card {
+	position: relative;
+	overflow: hidden;
+	height: 100%;
+	cursor: pointer;
+	transition: transform .2s ease, box-shadow .2s ease;
+}
+
+	.quick-action-card:hover {
+		transform: translateY(-3px);
+		box-shadow: var(--shadow-md);
+	}
+
+	.quick-action-card::after {
+		content: "\2192";
+		position: absolute;
+		right: 20px;
+		bottom: 15px;
+		color: var(--text-secondary);
+		font-size: 1.4rem;
+		opacity: .25;
+		pointer-events: none;
+	}
+
+.quick-action-icon {
+	margin-bottom: .75rem;
+	font-size: 2.5rem;
+	line-height: 1;
+}
+
+.quick-action-title {
+	margin-bottom: .25rem;
+	font-size: 1.1rem;
+	font-weight: 600;
+}
+
+.quick-action-description {
+	margin-bottom: 0;
+	padding-right: 2rem;
+	color: var(--text-secondary);
+	font-size: .9rem;
+}
+
+
+/* Quick action colors */
+
+.quick-action-inventory .quick-action-icon {
+	color: var(--warehouse);
+}
+
+.quick-action-history .quick-action-icon {
+	color: var(--engineering);
+}
+
+.quick-action-products .quick-action-icon {
+	color: var(--engineering);
+}
+
+.quick-action-users .quick-action-icon {
+	color: var(--info);
+}
+
+
+/* ==========================================================
+   4. DASHBOARD CHARTS
+========================================================== */
+
+.chart-container {
+	position: relative;
+	width: 100%;
+	height: 400px;
+}
+
+
+/* ==========================================================
+   5. DASHBOARD TABLE SECTIONS
+========================================================== */
+
+.dashboard-table-section {
+	height: 100%;
+}
+
+
+/* ==========================================================
+   6. DASHBOARD STATES
+========================================================== */
+
+.critical-row {
+	background-color: rgba(220, 53, 69, .08);
+}
+
+
+/* ==========================================================
+   7. RESPONSIVE
+========================================================== */
+
+@media (max-width: 991.98px) {
+
+	.chart-container {
+		height: 340px;
+	}
+
+	.dashboard-table-section {
+		margin-bottom: 1.5rem;
+	}
+}
+
+
+@media (max-width: 767.98px) {
+
+	#clock {
+		font-size: 1.4rem;
+	}
+
+	.quick-action-card {
+		min-height: auto;
+	}
+
+	.quick-action-icon {
+		font-size: 2rem;
+	}
+
+	.chart-container {
+		height: 300px;
+	}
+}
+
+
+@media (max-width: 575.98px) {
+
+	#clock {
+		font-size: 1.25rem;
+	}
+
+	.quick-action-description {
+		padding-right: 1.5rem;
+	}
+
+	.chart-container {
+		height: 260px;
+	}
+}
+
+
+/* ==========================================================
+   8. FUTURE DASHBOARD COMPONENTS
+========================================================== */
+
+/*
+
+.dashboard-alert-card
+.dashboard-area-summary
+.dashboard-timeline
+.dashboard-activity-feed
+.dashboard-widget
+.dashboard-kpi-grid
+.dashboard-summary-panel
+.dashboard-production-card
+.dashboard-engineering-card
+
+*/

@@ -1,0 +1,1326 @@
+﻿@model Vestigium.ViewModels.ProductBomViewModel
+
+@{
+    ViewData["Title"] = "Lista de Materiales";
+
+    var items = Model.Items
+        .OrderBy(x => x.MaterialNumber)
+        .ToList();
+
+    var totalComponents = items.Count;
+
+    var isAdmin =
+        User.IsInRole("Admin");
+
+    var deleteBomError =
+        TempData["DeleteBomError"] as string;
+
+    var failedDeleteBomId =
+        TempData["DeleteBomId"] as int?;
+}
+
+<div class="container-fluid px-0">
+
+    <!-- =====================================================
+         BREADCRUMB
+    ====================================================== -->
+
+    <nav aria-label="breadcrumb">
+
+        <ol class="breadcrumb">
+
+            <li class="breadcrumb-item">
+
+                <a asp-controller="Products"
+                   asp-action="Index">
+
+                    Catálogo de Productos
+
+                </a>
+
+            </li>
+
+            <li class="breadcrumb-item">
+
+                <a asp-controller="Products"
+                   asp-action="Details"
+                   asp-route-id="@Model.ProductId">
+
+                    @Model.ProductNumber
+
+                </a>
+
+            </li>
+
+            <li class="breadcrumb-item active"
+                aria-current="page">
+
+                BOM
+
+            </li>
+
+        </ol>
+
+    </nav>
+
+
+    <!-- =====================================================
+         PRODUCT / BOM HERO
+    ====================================================== -->
+
+    <div class="card hero-card mb-4">
+
+        <div class="card-body p-4">
+
+            <div class="d-flex flex-column flex-lg-row
+                align-items-lg-center
+                justify-content-between
+                gap-3">
+
+                <!-- Producto -->
+
+                <div>
+
+                    <div class="text-muted small mb-1">
+
+                        Bill of Materials
+
+                    </div>
+
+                    <h1 class="hero-title mb-1">
+
+                        @Model.ProductNumber
+
+                    </h1>
+
+                    <p class="hero-subtitle">
+
+                        @if (!string.IsNullOrWhiteSpace(Model.ProductDescription))
+                        {
+                            @Model.ProductDescription
+                        }
+                        else
+                        {
+                            <span>Sin descripción</span>
+                        }
+
+                    </p>
+
+
+                    <div class="hero-meta">
+
+                        <span class="component-badge">
+
+                            <i class="bi bi-boxes"></i>
+
+                            @totalComponents
+
+                            @(totalComponents == 1
+                                ? "componente"
+                                : "componentes")
+
+                        </span>
+
+                        <span class="status-badge engineering-pill">
+
+                            <i class="bi bi-diagram-3"></i>
+
+                            BOM
+
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Acciones principales -->
+
+                <div class="page-header-actions">
+
+                    <a asp-controller="Products"
+                       asp-action="Details"
+                       asp-route-id="@Model.ProductId"
+                       class="btn btn-outline-secondary">
+
+                        <i class="bi bi-arrow-left"></i>
+
+                        Regresar
+
+                    </a>
+
+
+                    @if (isAdmin)
+                    {
+                        <a asp-action="Create"
+                           asp-route-productId="@Model.ProductId"
+                           class="btn btn-primary">
+
+                            <i class="bi bi-plus-lg"></i>
+
+                            Agregar Material
+
+                        </a>
+                    }
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         HERRAMIENTAS DEL BOM
+    ====================================================== -->
+
+    <div class="card module-card mb-4">
+
+        <div class="card-body">
+
+            <div class="page-toolbar mb-0">
+
+                <!-- Análisis -->
+
+                <div class="page-toolbar-left">
+
+                    <span class="small text-muted me-1">
+
+                        Análisis:
+
+                    </span>
+
+
+                    <a asp-action="Explosion"
+                       asp-route-productId="@Model.ProductId"
+                       class="btn btn-outline-secondary">
+
+                        <i class="bi bi-calculator"></i>
+
+                        Análisis de Requerimientos
+
+                    </a>
+
+                </div>
+
+
+                <!-- Importación -->
+                @if (isAdmin)
+                {
+                    <div class="page-toolbar-right">
+
+                        <span class="small text-muted me-1">
+
+                            Administración:
+
+                        </span>
+
+
+                        <a asp-action="BulkImport"
+                           asp-route-productId="@Model.ProductId"
+                           class="btn btn-outline-primary">
+
+                            <i class="bi bi-file-earmark-arrow-up"></i>
+
+                            Importar BOM
+
+                        </a>
+
+                    </div>
+                }
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         COMPONENTES
+    ====================================================== -->
+
+    <div class="card module-card">
+
+        <!-- =================================================
+             HEADER
+        ================================================== -->
+
+        <div class="card-header">
+
+            <div class="d-flex flex-column gap-3">
+
+                <div class="d-flex flex-column flex-md-row
+                    justify-content-between
+                    align-items-md-center
+                    gap-2">
+
+                    <div>
+
+                        <h2 class="card-title-standard
+                            d-flex
+                            align-items-center
+                            gap-2">
+
+                            <i class="bi bi-boxes text-primary"></i>
+
+                            Componentes del BOM
+
+                        </h2>
+
+
+                        <div class="text-muted small mt-1">
+
+                            Materiales y cantidades requeridas por unidad
+                            del producto.
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="text-muted small text-nowrap">
+
+                        <span id="visibleBomCount">
+
+                            @totalComponents
+
+                        </span>
+
+                        <span id="visibleBomCountLabel">
+
+                            @(totalComponents == 1
+                                ? "componente"
+                                : "componentes")
+
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =========================================
+                     BÚSQUEDA
+                ========================================== -->
+                @if (totalComponents > 0)
+                {
+                    <div class="search-box">
+
+                        <div class="input-group">
+
+                            <span class="input-group-text">
+
+                                <i class="bi bi-search"></i>
+
+                            </span>
+
+
+                            <input type="search"
+                                   id="bomSearch"
+                                   class="form-control"
+                                   autocomplete="off"
+                                   placeholder="Buscar número de parte o descripción..."
+                                   aria-label="Buscar materiales del BOM" />
+
+
+                            <button type="button"
+                                    id="clearBomSearch"
+                                    class="btn btn-outline-secondary d-none"
+                                    title="Limpiar búsqueda"
+                                    aria-label="Limpiar búsqueda">
+
+                                <i class="bi bi-x-lg"></i>
+
+                            </button>
+
+                        </div>
+
+                    </div>
+                }
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             TABLA
+        ================================================== -->
+        @if (totalComponents > 0)
+        {
+            <div class="table-responsive">
+
+                <table id="bomTable"
+                       class="table table-modern table-hover align-middle">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                Número de Parte
+                            </th>
+
+                            <th>
+                                Descripción
+                            </th>
+
+                            <th class="text-end text-nowrap">
+                                Cantidad Requerida
+                            </th>
+
+
+                            @if (isAdmin)
+                            {
+                                <th class="text-center text-nowrap">
+                                    Acciones
+                                </th>
+                            }
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        @foreach (var item in items)
+                        {
+                            <tr class="bom-row bom-component-row">
+
+                                <!-- =================================
+                                     MATERIAL
+                                ================================== -->
+
+                                <td>
+
+                                    <div class="material-display">
+
+                                        <span class="material-number table-reference">
+
+                                            @item.MaterialNumber
+
+                                        </span>
+
+                                    </div>
+
+                                </td>
+
+
+                                <!-- =================================
+                                     DESCRIPCIÓN
+                                ================================== -->
+
+                                <td>
+
+                                    @if (!string.IsNullOrWhiteSpace(item.Description))
+                                    {
+                                        <div class="material-description">
+
+                                            @item.Description
+
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">
+
+                                            Sin descripción
+
+                                        </span>
+                                    }
+
+                                </td>
+
+
+                                <!-- =================================
+                                     CANTIDAD
+                                ================================== -->
+
+                                <td class="text-end">
+
+                                    <span class="bom-quantity">
+
+                                        @item.Quantity.ToString("0.####")
+
+                                    </span>
+
+                                </td>
+
+
+                                <!-- =================================
+                                     ACCIONES
+                                ================================== -->
+                                @if (isAdmin)
+                                {
+                                    <td class="text-center table-actions">
+
+                                        <div class="action-buttons">
+
+                                            <!-- Editar -->
+
+                                            <a asp-action="Edit"
+                                               asp-route-id="@item.ProductBomId"
+                                               class="btn btn-outline-secondary"
+                                               title="Editar componente"
+                                               aria-label="Editar componente @item.MaterialNumber">
+
+                                                <i class="bi bi-pencil"></i>
+
+                                            </a>
+
+
+                                            <!-- Eliminar -->
+
+                                            <button type="button"
+                                                    class="btn btn-outline-danger"
+                                                    title="Eliminar componente"
+                                                    aria-label="Eliminar componente @item.MaterialNumber"
+                                                    data-bs-toggle="modal"
+                                                    data-bs-target="#deleteBomModal"
+                                                    data-bom-id="@item.ProductBomId"
+                                                    data-material="@item.MaterialNumber">
+
+                                                <i class="bi bi-trash"></i>
+
+                                            </button>
+
+                                        </div>
+
+                                    </td>
+                                }
+
+                            </tr>
+                        }
+
+
+                        <!-- =========================================
+                             SIN RESULTADOS DE BÚSQUEDA
+                        ========================================== -->
+
+                        <tr id="noBomSearchResults"
+                            class="d-none">
+
+                            <td colspan="@(isAdmin ? 4 : 3)">
+
+                                <div class="empty-state py-5">
+
+                                    <div class="empty-state-icon">
+
+                                        <i class="bi bi-search"></i>
+
+                                    </div>
+
+
+                                    <div class="empty-state-title">
+
+                                        No se encontraron componentes
+
+                                    </div>
+
+
+                                    <div class="empty-state-description mb-0">
+
+                                        No existen componentes que coincidan
+                                        con la búsqueda ingresada.
+
+                                    </div>
+
+                                </div>
+
+                            </td>
+
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+        }
+        else
+        {
+            <!-- =================================================
+                 EMPTY STATE
+            ================================================== -->
+
+            <div class="empty-state">
+
+                <div class="empty-state-icon">
+
+                    <i class="bi bi-boxes"></i>
+
+                </div>
+
+
+                <div class="empty-state-title">
+
+                    Este producto todavía no tiene componentes
+
+                </div>
+
+
+                <div class="empty-state-description">
+
+                    @if (isAdmin)
+                    {
+                        <span>
+
+                            Agrega el primer material para comenzar
+                            a construir el Bill of Materials del producto.
+
+                        </span>
+                    }
+                    else
+                    {
+                        <span>
+
+                            Actualmente no existen materiales registrados
+                            en el Bill of Materials de este producto.
+
+                        </span>
+                    }
+
+                </div>
+
+
+                @if (isAdmin)
+                {
+                    <a asp-action="Create"
+                       asp-route-productId="@Model.ProductId"
+                       class="btn btn-primary">
+
+                        <i class="bi bi-plus-lg"></i>
+
+                        Agregar Primer Material
+
+                    </a>
+                }
+
+            </div>
+        }
+
+    </div>
+
+
+    <!-- =====================================================
+         MODAL ELIMINAR COMPONENTE
+    ====================================================== -->
+    @if (isAdmin)
+    {
+        <div class="modal fade"
+             id="deleteBomModal"
+             tabindex="-1"
+             aria-labelledby="deleteBomModalLabel"
+             aria-hidden="true">
+
+            <div class="modal-dialog modal-dialog-centered">
+
+                <div class="modal-content">
+
+                    <!-- =========================================
+                         HEADER
+                    ========================================== -->
+
+                    <div class="modal-header">
+
+                        <h2 class="modal-title fs-5"
+                            id="deleteBomModalLabel">
+
+                            <i class="bi bi-exclamation-triangle
+                            text-danger
+                            me-2"></i>
+
+                            Eliminar Componente
+
+                        </h2>
+
+
+                        <button type="button"
+                                class="btn-close"
+                                data-bs-dismiss="modal"
+                                aria-label="Cerrar">
+                        </button>
+
+                    </div>
+
+
+                    <!-- =========================================
+                         FORMULARIO
+                    ========================================== -->
+
+                    <form asp-action="Delete"
+                          method="post"
+                          id="deleteBomForm">
+
+                        <!-- =====================================
+                             BODY
+                        ====================================== -->
+
+                        <div class="modal-body">
+
+                            <!-- Advertencia -->
+
+                            <div class="alert alert-danger"
+                                 role="alert">
+
+                                <div class="d-flex align-items-start gap-3">
+
+                                    <i class="bi bi-exclamation-triangle-fill
+                                    fs-5
+                                    flex-shrink-0"></i>
+
+
+                                    <div>
+
+                                        <div class="fw-semibold">
+
+                                            El componente será removido del BOM
+
+                                        </div>
+
+
+                                        <div class="small mt-1">
+
+                                            Esta operación eliminará la relación
+                                            entre el material seleccionado y
+                                            @Model.ProductNumber.
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- =================================
+                                 MATERIAL SELECCIONADO
+                            ================================== -->
+
+                            <div class="p-3
+                                border
+                                rounded-3
+                                bg-body-tertiary">
+
+                                <span class="detail-label">
+
+                                    Material seleccionado
+
+                                </span>
+
+
+                                <div id="deleteMaterialNumber"
+                                     class="detail-value
+                                    product-part-number
+                                    table-reference">
+
+                                    -
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- =================================
+                                 SEGURIDAD
+                            ================================== -->
+
+                            <div class="mt-4">
+
+                                <div class="d-flex
+                                    align-items-start
+                                    gap-3
+                                    mb-3">
+
+                                    <div class="security-icon">
+
+                                        <i class="bi bi-shield-lock"></i>
+
+                                    </div>
+
+
+                                    <div>
+
+                                        <div class="fw-semibold">
+
+                                            Confirmación de Seguridad
+
+                                        </div>
+
+
+                                        <div class="small text-muted mt-1">
+
+                                            Confirme su contraseña de administrador
+                                            para autorizar esta eliminación.
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+
+                                <label for="deleteBomPassword"
+                                       class="form-label">
+
+                                    Contraseña
+
+                                </label>
+
+
+                                <div class="input-group">
+
+                                    <span class="input-group-text">
+
+                                        <i class="bi bi-key"></i>
+
+                                    </span>
+
+
+                                    <input type="password"
+                                           name="Password"
+                                           id="deleteBomPassword"
+                                           class="form-control"
+                                           autocomplete="current-password"
+                                           placeholder="Ingrese su contraseña" />
+
+                                </div>
+
+
+                                <div id="deleteBomPasswordError"
+                                     class="text-danger small mt-1">
+
+                                    @deleteBomError
+
+                                </div>
+
+
+                                <div class="form-text">
+
+                                    La contraseña únicamente se utiliza
+                                    para confirmar esta modificación del BOM.
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- =================================
+                                 ID
+                            ================================== -->
+
+                            <input type="hidden"
+                                   name="Id"
+                                   id="deleteBomId" />
+
+                        </div>
+
+
+                        <!-- =====================================
+                             FOOTER
+                        ====================================== -->
+
+                        <div class="modal-footer">
+
+                            <button type="button"
+                                    class="btn btn-outline-secondary"
+                                    data-bs-dismiss="modal">
+
+                                <i class="bi bi-x-lg"></i>
+
+                                Cancelar
+
+                            </button>
+
+
+                            <button type="submit"
+                                    class="btn btn-danger"
+                                    id="deleteBomSubmit">
+
+                                <i class="bi bi-trash"></i>
+
+                                Eliminar Componente
+
+                            </button>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+    }
+
+</div>
+
+
+@section Scripts
+{
+    <script>
+
+        (() => {
+
+            // ==============================================
+            // BÚSQUEDA
+            // ==============================================
+
+            const bomSearch =
+                document.getElementById("bomSearch");
+
+            const clearBomSearch =
+                document.getElementById("clearBomSearch");
+
+            const bomRows =
+                Array.from(
+                    document.querySelectorAll(
+                        "#bomTable tbody .bom-row"
+                    )
+                );
+
+            const noBomSearchResults =
+                document.getElementById("noBomSearchResults");
+
+            const visibleBomCount =
+                document.getElementById("visibleBomCount");
+
+            const visibleBomCountLabel =
+                document.getElementById("visibleBomCountLabel");
+
+
+            function updateBomTable() {
+
+                if (!bomSearch) {
+                    return;
+                }
+
+
+                const search =
+                    bomSearch.value
+                        .trim()
+                        .toLocaleLowerCase();
+
+
+                let visibleRows =
+                    0;
+
+
+                bomRows.forEach(row => {
+
+                    const text =
+                        row.textContent
+                            .toLocaleLowerCase();
+
+
+                    const matches =
+                        text.includes(search);
+
+
+                    row.classList.toggle(
+                        "d-none",
+                        !matches
+                    );
+
+
+                    if (matches) {
+                        visibleRows++;
+                    }
+
+                });
+
+
+                // ==========================================
+                // CONTADOR
+                // ==========================================
+
+                if (visibleBomCount) {
+
+                    visibleBomCount.textContent =
+                        visibleRows.toString();
+
+                }
+
+
+                if (visibleBomCountLabel) {
+
+                    visibleBomCountLabel.textContent =
+                        visibleRows === 1
+                            ? "componente"
+                            : "componentes";
+
+                }
+
+
+                // ==========================================
+                // SIN RESULTADOS
+                // ==========================================
+
+                noBomSearchResults?.classList.toggle(
+                    "d-none",
+                    visibleRows !== 0
+                );
+
+
+                // ==========================================
+                // BOTÓN LIMPIAR
+                // ==========================================
+
+                clearBomSearch?.classList.toggle(
+                    "d-none",
+                    search.length === 0
+                );
+
+            }
+
+
+            bomSearch?.addEventListener(
+                "input",
+                updateBomTable
+            );
+
+
+            clearBomSearch?.addEventListener(
+                "click",
+                () => {
+
+                    if (!bomSearch) {
+                        return;
+                    }
+
+
+                    bomSearch.value =
+                        "";
+
+
+                    updateBomTable();
+
+
+                    bomSearch.focus();
+
+                }
+            );
+
+
+            // ==============================================
+            // MODAL DELETE
+            // ==============================================
+
+            const deleteBomModal =
+                document.getElementById("deleteBomModal");
+
+            const deleteBomId =
+                document.getElementById("deleteBomId");
+
+            const deleteMaterialNumber =
+                document.getElementById("deleteMaterialNumber");
+
+            const deleteBomPassword =
+                document.getElementById("deleteBomPassword");
+
+            const deleteBomPasswordError =
+                document.getElementById("deleteBomPasswordError");
+
+            const deleteBomForm =
+                document.getElementById("deleteBomForm");
+
+            const deleteBomSubmit =
+                document.getElementById("deleteBomSubmit");
+
+
+            // ==============================================
+            // CARGAR COMPONENTE EN MODAL
+            // ==============================================
+
+            deleteBomModal?.addEventListener(
+                "show.bs.modal",
+                event => {
+
+                    const button =
+                        event.relatedTarget;
+
+
+                    /*
+                     * Cuando el modal se abre automáticamente
+                     * después de un error del servidor,
+                     * relatedTarget puede no existir.
+                     */
+
+                    if (!button) {
+                        return;
+                    }
+
+
+                    if (deleteBomId) {
+
+                        deleteBomId.value =
+                            button.getAttribute(
+                                "data-bom-id"
+                            ) ?? "";
+
+                    }
+
+
+                    if (deleteMaterialNumber) {
+
+                        deleteMaterialNumber.textContent =
+                            button.getAttribute(
+                                "data-material"
+                            ) ?? "-";
+
+                    }
+
+
+                    if (deleteBomPassword) {
+
+                        deleteBomPassword.value =
+                            "";
+
+                    }
+
+
+                    if (deleteBomPasswordError) {
+
+                        deleteBomPasswordError.textContent =
+                            "";
+
+                    }
+
+                }
+            );
+
+
+            // ==============================================
+            // LIMPIAR ERROR AL ESCRIBIR PASSWORD
+            // ==============================================
+
+            deleteBomPassword?.addEventListener(
+                "input",
+                () => {
+
+                    if (deleteBomPasswordError) {
+
+                        deleteBomPasswordError.textContent =
+                            "";
+
+                    }
+
+                }
+            );
+
+
+            // ==============================================
+            // LIMPIAR MODAL AL CERRAR
+            // ==============================================
+
+            deleteBomModal?.addEventListener(
+                "hidden.bs.modal",
+                () => {
+
+                    if (deleteBomId) {
+                        deleteBomId.value = "";
+                    }
+
+
+                    if (deleteMaterialNumber) {
+                        deleteMaterialNumber.textContent = "-";
+                    }
+
+
+                    if (deleteBomPassword) {
+                        deleteBomPassword.value = "";
+                    }
+
+
+                    if (deleteBomPasswordError) {
+                        deleteBomPasswordError.textContent = "";
+                    }
+
+
+                    /*
+                     * Si el botón estaba deshabilitado por
+                     * un submit anterior, restablecemos su estado.
+                     */
+
+                    if (deleteBomSubmit) {
+
+                        deleteBomSubmit.disabled =
+                            false;
+
+
+                        deleteBomSubmit.innerHTML =
+                            '<i class="bi bi-trash"></i> Eliminar Componente';
+
+                    }
+
+                }
+            );
+
+
+            // ==============================================
+            // SUBMIT DELETE
+            // ==============================================
+
+            deleteBomForm?.addEventListener(
+                "submit",
+                function(event) {
+
+                    // ======================================
+                    // ID
+                    // ======================================
+
+                    if (!deleteBomId?.value) {
+
+                        event.preventDefault();
+
+                        return;
+
+                    }
+
+
+                    // ======================================
+                    // PASSWORD
+                    // ======================================
+
+                    if (!deleteBomPassword?.value.trim()) {
+
+                        event.preventDefault();
+
+
+                        if (deleteBomPasswordError) {
+
+                            deleteBomPasswordError.textContent =
+                                "Ingrese su contraseña para continuar.";
+
+                        }
+
+
+                        deleteBomPassword?.focus();
+
+                        return;
+
+                    }
+
+
+                    // ======================================
+                    // EVITAR DOBLE ENVÍO
+                    // ======================================
+
+                    if (!deleteBomSubmit) {
+                        return;
+                    }
+
+
+                    deleteBomSubmit.disabled =
+                        true;
+
+
+                    deleteBomSubmit.innerHTML =
+                        '<span class="spinner-border spinner-border-sm me-2" ' +
+                        'role="status" aria-hidden="true"></span>' +
+                        'Eliminando...';
+
+                }
+            );
+
+
+            // ==============================================
+            // ERROR DEVUELTO POR EL SERVIDOR
+            // REABRIR MODAL
+            // ==============================================
+
+            const failedDeleteBomId =
+                @Html.Raw(
+                failedDeleteBomId.HasValue
+                ? failedDeleteBomId.Value.ToString()
+                : "null"
+                );
+
+
+            if (
+                failedDeleteBomId !== null &&
+                deleteBomModal
+            ) {
+
+                /*
+                 * Recuperamos el botón perteneciente
+                 * al componente que falló.
+                 */
+
+                const failedDeleteButton =
+                    document.querySelector(
+                        `[data-bom-id="${failedDeleteBomId}"]`
+                    );
+
+
+                if (failedDeleteButton) {
+
+                    if (deleteBomId) {
+
+                        deleteBomId.value =
+                            failedDeleteBomId.toString();
+
+                    }
+
+
+                    if (deleteMaterialNumber) {
+
+                        deleteMaterialNumber.textContent =
+                            failedDeleteButton.getAttribute(
+                                "data-material"
+                            ) ?? "-";
+
+                    }
+
+                }
+
+
+                /*
+                 * Mostramos nuevamente el modal.
+                 */
+
+                const modal =
+                    bootstrap.Modal.getOrCreateInstance(
+                        deleteBomModal
+                    );
+
+
+                modal.show();
+
+
+                /*
+                 * Una vez visible, llevamos el foco
+                 * directamente a Password.
+                 */
+
+                const focusDeletePassword =
+                    () => {
+
+                        deleteBomPassword?.focus();
+
+
+                        deleteBomModal.removeEventListener(
+                            "shown.bs.modal",
+                            focusDeletePassword
+                        );
+
+                    };
+
+
+                deleteBomModal.addEventListener(
+                    "shown.bs.modal",
+                    focusDeletePassword
+                );
+
+            }
+
+        })();
+
+    </script>
+}

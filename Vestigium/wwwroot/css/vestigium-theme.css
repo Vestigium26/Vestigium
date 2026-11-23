@@ -1,0 +1,1231 @@
+﻿/* ==========================================================
+   VESTIGIUM DESIGN SYSTEM
+   GLOBAL THEME
+   Bootstrap 5 Extensions
+========================================================== */
+
+
+/* ==========================================================
+   1. DESIGN TOKENS
+========================================================== */
+
+:root {
+	/* Areas */
+	--warehouse: #ffc107;
+	--engineering: #0d6efd;
+	--quality: #dc3545;
+	--production: #198754;
+	/* Semantic colors */
+	--success: #198754;
+	--warning: #ffc107;
+	--danger: #dc3545;
+	--info: #0dcaf0;
+	--neutral: #6c757d;
+	/* Backgrounds */
+	--bg-main: #f5f7fa;
+	--bg-card: #ffffff;
+	--bg-subtle: #f8fafc;
+	/* Text */
+	--text-primary: #212529;
+	--text-secondary: #6c757d;
+	/* Borders */
+	--border-light: #e5e7eb;
+	/* Shadows */
+	--shadow-sm: 0 .125rem .25rem rgba(0, 0, 0, .075);
+	--shadow-md: 0 .35rem .90rem rgba(0, 0, 0, .10);
+	/* Radius */
+	--radius-sm: 10px;
+	--radius-md: 14px;
+	--radius-lg: 18px;
+}
+
+
+/* ==========================================================
+   2. BASE
+========================================================== */
+
+html {
+	font-size: 14px;
+}
+
+body {
+	background-color: var(--bg-main);
+	color: var(--text-primary);
+	font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+main {
+	padding-top: 1rem;
+	padding-bottom: 2rem;
+}
+
+a {
+	text-decoration: none;
+}
+
+.text-muted {
+	color: var(--text-secondary) !important;
+}
+
+
+/* ==========================================================
+   3. TYPOGRAPHY
+========================================================== */
+
+.page-title {
+	margin-bottom: .25rem;
+	font-size: 1.8rem;
+	font-weight: 700;
+}
+
+.page-subtitle {
+	margin-bottom: 0;
+	color: var(--text-secondary);
+}
+
+.section-title {
+	display: flex;
+	align-items: center;
+	gap: .75rem;
+	margin-bottom: 1rem;
+	font-weight: 600;
+}
+
+.card-title-standard {
+	margin-bottom: 0;
+	font-size: 1rem;
+	font-weight: 600;
+}
+
+
+/* ==========================================================
+   4. PAGE STRUCTURE
+========================================================== */
+
+.page-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	flex-wrap: wrap;
+	gap: 1rem;
+	margin-bottom: 1.5rem;
+}
+
+.page-header-left {
+	display: flex;
+	flex-direction: column;
+}
+
+.page-header-actions,
+.page-actions {
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: .5rem;
+}
+
+	.page-actions .btn {
+		min-width: 120px;
+	}
+
+.module-section {
+	margin-bottom: 1.5rem;
+}
+
+.section-divider {
+	margin: 2rem 0;
+	border-top: 1px solid var(--border-light);
+}
+
+
+/* ==========================================================
+   5. NAVBAR
+========================================================== */
+
+.navbar-vestigium {
+	height: 60px;
+	background: linear-gradient( 90deg, #0f172a, #162032 ) !important;
+	border-bottom: 1px solid rgba(255, 255, 255, .05);
+}
+
+.navbar-brand {
+	display: flex;
+	align-items: center;
+	gap: .65rem;
+	font-size: 1.1rem;
+	font-weight: 700;
+}
+
+.navbar-brand-icon {
+	width: 36px;
+	height: 36px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: 10px;
+	background: rgba(13, 110, 253, .15);
+	color: #fff;
+}
+
+.navbar-user {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-end;
+	text-align: right;
+}
+
+.navbar-user-name {
+	font-size: .95rem;
+	font-weight: 600;
+	line-height: 1.1;
+}
+
+.navbar-user-role {
+	font-size: .75rem;
+	opacity: .75;
+}
+
+
+/* ==========================================================
+   6. SIDEBAR
+========================================================== */
+
+.offcanvas {
+	width: 320px;
+	border-right: 0;
+}
+
+.offcanvas-header {
+	height: 56px;
+	background: #0f172a;
+	color: #fff;
+	border-bottom: 0;
+}
+
+.offcanvas-body {
+	display: flex;
+	flex-direction: column;
+	padding: 0;
+	background: var(--bg-card);
+}
+
+.sidebar-brand {
+	color: #fff;
+	font-size: 1.1rem;
+	font-weight: 700;
+	text-decoration: none;
+}
+
+	.sidebar-brand:hover {
+		color: #fff;
+	}
+
+	.sidebar-brand i {
+		color: #fff;
+	}
+
+
+/* User */
+
+.sidebar-user {
+	padding: 2rem 1.5rem 1rem;
+	text-align: center;
+	background: linear-gradient( 180deg, rgba(13, 110, 253, .05), transparent );
+	border-bottom: 1px solid var(--border-light);
+}
+
+.sidebar-user-avatar {
+	width: 80px;
+	height: 80px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	margin: 0 auto;
+	border-radius: 50%;
+	color: #fff;
+	font-size: 1.5rem;
+	font-weight: 700;
+	box-shadow: 0 10px 25px rgba(0, 0, 0, .15);
+	transition: transform .25s ease;
+}
+
+	.sidebar-user-avatar:hover {
+		transform: scale(1.05);
+	}
+
+.sidebar-user-name {
+	margin-top: .75rem;
+	color: var(--text-primary);
+	font-weight: 600;
+}
+
+.sidebar-user-id {
+	color: var(--text-secondary);
+	font-size: .85rem;
+}
+
+.sidebar-user-divider {
+	margin: 1rem 0 0;
+	opacity: .15;
+}
+
+
+/* Avatar colors */
+
+.avatar-warehouse {
+	background: linear-gradient( 135deg, #8a6200, #ffc107 );
+}
+
+.avatar-engineering {
+	background: linear-gradient( 135deg, #0d6efd, #6ea8fe );
+}
+
+.avatar-quality {
+	background: linear-gradient( 135deg, #dc3545, #f58a94 );
+}
+
+.avatar-production {
+	background: linear-gradient( 135deg, #198754, #69c58e );
+}
+
+.avatar-neutral {
+	background: linear-gradient( 135deg, #6c757d, #adb5bd );
+}
+
+
+/* Sidebar sections */
+
+.sidebar-section-title {
+	padding: .5rem 1rem;
+	color: var(--text-secondary);
+	font-size: .72rem;
+	letter-spacing: .08em;
+	text-transform: uppercase;
+}
+
+.sidebar-divider {
+	height: 1px;
+	margin: .75rem 1rem;
+	background: var(--border-light);
+}
+
+
+/* Dashboard */
+
+.sidebar-dashboard-link {
+	display: flex;
+	align-items: center;
+	margin: 1rem;
+	padding: .9rem 1rem;
+	border-radius: 12px;
+	background: linear-gradient( 135deg, #0d6efd, #4f8cff );
+	color: #fff;
+	font-weight: 600;
+	text-decoration: none;
+	transition: transform .2s ease, box-shadow .2s ease;
+}
+
+	.sidebar-dashboard-link:hover {
+		color: #fff;
+		transform: translateY(-1px);
+		box-shadow: var(--shadow-sm);
+	}
+
+
+/* Menu */
+
+.sidebar-menu .list-group-item {
+	display: flex;
+	align-items: center;
+	gap: .8rem;
+	margin: .15rem .75rem;
+	padding: .9rem 1.2rem;
+	border: 0;
+	border-radius: 12px;
+	font-weight: 500;
+	transition: background-color .2s ease, color .2s ease, transform .2s ease;
+}
+
+	.sidebar-menu .list-group-item:hover {
+		background: rgba(13, 110, 253, .08);
+		transform: translateX(4px);
+	}
+
+	.sidebar-menu .list-group-item.active {
+		background: linear-gradient( 90deg, rgba(13, 110, 253, .12), rgba(13, 110, 253, .04) );
+		color: var(--engineering);
+		border-left: 4px solid var(--engineering);
+		font-weight: 600;
+	}
+
+
+/* Area */
+
+.sidebar-area-pill {
+	display: inline-flex;
+	align-items: center;
+	gap: .4rem;
+	padding: .45rem .9rem;
+	border-radius: 999px;
+	font-size: .8rem;
+	font-weight: 600;
+}
+
+
+/* Footer */
+
+.sidebar-footer {
+	margin-top: auto;
+	padding: 1rem;
+	border-top: 1px solid var(--border-light);
+	text-align: center;
+}
+
+
+/* ==========================================================
+   7. CARDS
+========================================================== */
+
+.card,
+.v-card,
+.module-card {
+	border: 0;
+	border-radius: var(--radius-md);
+	background-color: var(--bg-card);
+	box-shadow: var(--shadow-sm);
+}
+
+.v-card,
+.module-card {
+	transition: box-shadow .2s ease;
+}
+
+	.v-card:hover,
+	.module-card:hover {
+		box-shadow: var(--shadow-md);
+	}
+
+.v-card-header,
+.card-header {
+	padding: .85rem 1rem;
+	background: var(--bg-card);
+	border-bottom: 1px solid var(--border-light);
+	font-weight: 600;
+}
+
+.v-card-body,
+.card-body {
+	padding: 1rem;
+}
+
+.section-card {
+	height: 100%;
+}
+
+	.section-card .card-header {
+		background-color: var(--bg-card);
+	}
+
+.section-card-icon {
+	font-size: 1.2rem;
+}
+
+
+/* Interactive cards */
+
+.hover-card {
+	transition: transform .25s ease, box-shadow .25s ease;
+}
+
+	.hover-card:hover {
+		transform: translateY(-3px);
+		box-shadow: var(--shadow-md) !important;
+	}
+
+
+/* ==========================================================
+   8. HERO
+========================================================== */
+
+.hero-card {
+	position: relative;
+	overflow: hidden;
+	border: 0;
+	border-radius: var(--radius-lg);
+	background: linear-gradient( 135deg, rgba(13, 110, 253, .06), rgba(13, 110, 253, .01) );
+}
+
+	.hero-card::after {
+		content: "";
+		position: absolute;
+		top: -80px;
+		right: -80px;
+		width: 240px;
+		height: 240px;
+		border-radius: 50%;
+		background: rgba(13, 110, 253, .08);
+		pointer-events: none;
+	}
+
+.hero-title {
+	margin-bottom: .25rem;
+	font-size: 1.8rem;
+	font-weight: 700;
+}
+
+.hero-subtitle {
+	margin-bottom: 0;
+	color: var(--text-secondary);
+}
+
+.hero-meta {
+	display: flex;
+	flex-wrap: wrap;
+	gap: .5rem;
+	margin-top: .75rem;
+}
+
+.hero-icon {
+	color: var(--engineering);
+	font-size: 3rem;
+	opacity: .85;
+}
+
+
+/* ==========================================================
+   9. KPI / STAT CARDS
+========================================================== */
+
+.stat-card {
+	height: 100%;
+	border: 0;
+	border-radius: var(--radius-md);
+	box-shadow: var(--shadow-sm);
+	transition: transform .2s ease, box-shadow .2s ease;
+}
+
+	.stat-card:hover {
+		transform: translateY(-2px);
+		box-shadow: var(--shadow-md);
+	}
+
+.stat-icon {
+	font-size: 2rem;
+}
+
+.stat-value {
+	margin: .35rem 0;
+	font-size: 1.85rem;
+	font-weight: 700;
+	line-height: 1;
+}
+
+.stat-label {
+	color: var(--text-secondary);
+	font-size: .9rem;
+}
+
+.stat-primary .stat-icon {
+	color: var(--engineering);
+}
+
+.stat-success .stat-icon {
+	color: var(--success);
+}
+
+.stat-warning .stat-icon {
+	color: var(--warning);
+}
+
+.stat-danger .stat-icon {
+	color: var(--danger);
+}
+
+.stat-info .stat-icon {
+	color: var(--info);
+}
+
+
+/* ==========================================================
+   10. INFO CARDS
+========================================================== */
+
+.info-card {
+	border-left: 4px solid var(--engineering);
+}
+
+.info-card-value {
+	font-size: 1.5rem;
+	font-weight: 700;
+}
+
+.info-card-label {
+	color: var(--text-secondary);
+	font-size: .85rem;
+}
+
+
+/* ==========================================================
+   11. AREA IDENTIFICATION
+========================================================== */
+
+.area-warehouse {
+	border-left: 5px solid var(--warehouse);
+}
+
+.area-engineering {
+	border-left: 5px solid var(--engineering);
+}
+
+.area-quality {
+	border-left: 5px solid var(--quality);
+}
+
+.area-production {
+	border-left: 5px solid var(--production);
+}
+
+
+/* ==========================================================
+   12. BADGES
+========================================================== */
+
+.badge-area,
+.status-badge {
+	display: inline-flex;
+	align-items: center;
+	gap: .35rem;
+	border-radius: 999px;
+	font-size: .75rem;
+	font-weight: 600;
+}
+
+.badge-area {
+	padding: .45rem .75rem;
+}
+
+.status-badge {
+	padding: .5rem .8rem;
+}
+
+
+/* Solid semantic badges */
+
+.badge-warehouse {
+	background: var(--warehouse);
+	color: #212529;
+}
+
+.badge-engineering {
+	background: var(--engineering);
+	color: #fff;
+}
+
+.badge-quality {
+	background: var(--quality);
+	color: #fff;
+}
+
+.badge-production {
+	background: var(--production);
+	color: #fff;
+}
+
+.badge-success {
+	background: var(--success);
+	color: #fff;
+}
+
+.badge-warning {
+	background: var(--warning);
+	color: #212529;
+}
+
+.badge-danger {
+	background: var(--danger);
+	color: #fff;
+}
+
+.badge-info {
+	background: var(--info);
+	color: #212529;
+}
+
+.badge-neutral {
+	background: var(--neutral);
+	color: #fff;
+}
+
+
+/* Soft area pills */
+
+.warehouse-pill {
+	background: rgba(255, 193, 7, .15);
+	color: #8a6200;
+}
+
+.engineering-pill {
+	background: rgba(13, 110, 253, .15);
+	color: var(--engineering);
+}
+
+.quality-pill {
+	background: rgba(220, 53, 69, .15);
+	color: var(--quality);
+}
+
+.production-pill {
+	background: rgba(25, 135, 84, .15);
+	color: var(--production);
+}
+
+
+/* ==========================================================
+   13. BUTTONS
+========================================================== */
+
+.btn {
+	border-radius: var(--radius-sm);
+	font-weight: 500;
+}
+
+	.btn i {
+		margin-right: .35rem;
+	}
+
+.btn-save,
+.btn-back {
+	min-width: 120px;
+}
+
+.btn-icon {
+	width: 36px;
+	height: 36px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	padding: 0;
+	border: 1px solid var(--border-light);
+	border-radius: .75rem;
+	background: transparent;
+}
+
+	.btn-icon i {
+		margin: 0;
+	}
+
+	.btn-icon:hover {
+		background: rgba(13, 110, 253, .08);
+	}
+
+
+/* Table actions */
+
+.action-buttons {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: .5rem;
+}
+
+	.action-buttons .btn {
+		width: 34px;
+		height: 34px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		padding: 0;
+	}
+
+		.action-buttons .btn i {
+			margin: 0;
+		}
+
+
+/* ==========================================================
+   14. FORMS
+========================================================== */
+
+.form-label {
+	font-weight: 600;
+}
+
+.form-control,
+.form-select {
+	border-radius: var(--radius-sm);
+}
+
+	.form-control:focus,
+	.form-select:focus {
+		border-color: #86b7fe;
+		box-shadow: 0 0 0 .15rem rgba(13, 110, 253, .15);
+	}
+
+.form-section {
+	margin-bottom: 1.5rem;
+	padding: 1.5rem;
+	border: 1px solid var(--border-light);
+	border-radius: var(--radius-md);
+	background: var(--bg-card);
+}
+
+.form-section-title {
+	display: flex;
+	align-items: center;
+	gap: .75rem;
+	margin-bottom: 1rem;
+	font-weight: 600;
+}
+
+.form-section-icon {
+	color: var(--engineering);
+}
+
+
+/* Step indicator */
+
+.section-step {
+	width: 28px;
+	height: 28px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+	border-radius: 50%;
+	background: var(--engineering);
+	color: #fff;
+	font-size: .8rem;
+	font-weight: 600;
+}
+
+
+/* ==========================================================
+   15. TABLES
+========================================================== */
+
+.table {
+	margin-bottom: 0;
+}
+
+	.table thead th {
+		background: var(--bg-subtle);
+		border-bottom: 2px solid var(--border-light);
+		font-weight: 600;
+		white-space: nowrap;
+	}
+
+	.table tbody td {
+		vertical-align: middle;
+	}
+
+.table-hover tbody tr:hover {
+	background-color: rgba(13, 110, 253, .04);
+}
+
+
+/* Modern enterprise table */
+
+.table-modern {
+	margin-bottom: 0;
+}
+
+	.table-modern thead th {
+		background: var(--bg-subtle);
+		border-bottom: 2px solid var(--border-light);
+		color: var(--text-secondary);
+		font-size: .78rem;
+		font-weight: 700;
+		letter-spacing: .05em;
+		text-transform: uppercase;
+		white-space: nowrap;
+	}
+
+	.table-modern tbody td {
+		vertical-align: middle;
+	}
+
+	.table-modern tbody tr {
+		transition: background-color .15s ease;
+	}
+
+		.table-modern tbody tr:hover {
+			background: rgba(13, 110, 253, .04);
+		}
+
+
+/* Sticky header */
+
+.table-sticky thead th {
+	position: sticky;
+	top: 0;
+	z-index: 10;
+}
+
+
+/* Common table content */
+
+.table-primary-text {
+	font-weight: 600;
+}
+
+.table-secondary-text {
+	color: var(--text-secondary);
+	font-size: .85rem;
+}
+
+.table-number {
+	font-weight: 700;
+}
+
+.table-reference {
+	font-family: Consolas, "Courier New", monospace;
+	font-weight: 600;
+	letter-spacing: .3px;
+	white-space: nowrap;
+}
+
+.table-date,
+.table-actions {
+	white-space: nowrap;
+}
+
+
+/* ==========================================================
+   16. TABLE / PAGE TOOLBARS
+========================================================== */
+
+.table-toolbar,
+.page-toolbar {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	flex-wrap: wrap;
+	gap: .75rem;
+}
+
+.table-toolbar {
+	margin-bottom: 0;
+}
+
+.page-toolbar {
+	gap: 1rem;
+	margin-bottom: 1rem;
+}
+
+.table-toolbar-left,
+.table-toolbar-right,
+.page-toolbar-left,
+.page-toolbar-right {
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: .5rem;
+}
+
+.page-toolbar-left,
+.page-toolbar-right {
+	gap: .75rem;
+}
+
+.filter-toolbar {
+	margin-bottom: 1rem;
+	padding: 1rem;
+	border: 1px solid var(--border-light);
+	border-radius: var(--radius-md);
+	background: var(--bg-card);
+}
+
+
+/* ==========================================================
+   17. SEARCH
+========================================================== */
+
+.search-box {
+	min-width: 320px;
+}
+
+	.search-box .input-group-text {
+		background: transparent;
+		border-right: 0;
+	}
+
+	.search-box .form-control {
+		border-left: 0;
+	}
+
+
+/* ==========================================================
+   18. DETAILS / METRICS
+========================================================== */
+
+.metric-value {
+	font-size: 1.15rem;
+	font-weight: 700;
+}
+
+.metric-label {
+	color: var(--text-secondary);
+	font-size: .85rem;
+}
+
+.detail-label {
+	display: block;
+	margin-bottom: .2rem;
+	color: var(--text-secondary);
+	font-size: .8rem;
+}
+
+.detail-value {
+	font-weight: 600;
+}
+
+
+/* ==========================================================
+   19. DROPDOWNS
+========================================================== */
+
+.dropdown-menu {
+	border: 0;
+	border-radius: .75rem;
+	box-shadow: var(--shadow-md);
+}
+
+.dropdown-item {
+	padding: .65rem 1rem;
+}
+
+	.dropdown-item i {
+		width: 18px;
+	}
+
+
+/* ==========================================================
+   20. ALERTS
+========================================================== */
+
+.alert {
+	border: 0;
+	border-radius: var(--radius-sm);
+}
+
+	.alert i {
+		margin-right: .5rem;
+	}
+
+
+/* Security */
+
+.security-alert {
+	padding: 1rem;
+	border-left: 4px solid var(--warning);
+	border-radius: var(--radius-sm);
+	background: rgba(255, 193, 7, .12);
+}
+
+.security-icon {
+	width: 48px;
+	height: 48px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+	border-radius: 12px;
+	background: rgba(13, 110, 253, .10);
+	color: var(--engineering);
+	font-size: 1.2rem;
+}
+
+
+/* ==========================================================
+   21. EMPTY STATES
+========================================================== */
+
+.empty-state {
+	padding: 4rem 1rem;
+	text-align: center;
+}
+
+.empty-state-icon {
+	margin-bottom: 1rem;
+	color: #adb5bd;
+	font-size: 4rem;
+}
+
+.empty-state-title {
+	margin-bottom: .75rem;
+	font-weight: 600;
+}
+
+.empty-state-description {
+	max-width: 500px;
+	margin: 0 auto 1.5rem;
+	color: var(--text-secondary);
+}
+
+
+/* ==========================================================
+   22. LOADING STATES
+========================================================== */
+
+.loading-state {
+	padding: 3rem 1rem;
+	text-align: center;
+}
+
+	.loading-state .spinner-border {
+		width: 3rem;
+		height: 3rem;
+	}
+
+
+/* ==========================================================
+   23. BREADCRUMBS
+========================================================== */
+
+.breadcrumb {
+	margin-bottom: 1rem;
+}
+
+.breadcrumb-item a {
+	color: var(--engineering);
+}
+
+
+/* ==========================================================
+   24. PAGINATION
+========================================================== */
+
+.pagination .page-link {
+	margin: 0 2px;
+	border-radius: 8px;
+}
+
+
+/* ==========================================================
+   25. UPLOAD
+========================================================== */
+
+.upload-zone {
+	padding: 1.5rem;
+	border: 2px dashed rgba(13, 110, 253, .25);
+	border-radius: 1rem;
+	background: rgba(13, 110, 253, .03);
+	text-align: center;
+	transition: border-color .2s ease, background-color .2s ease;
+}
+
+	.upload-zone:hover {
+		border-color: rgba(13, 110, 253, .50);
+		background: rgba(13, 110, 253, .05);
+	}
+
+.upload-icon-wrapper {
+	width: 72px;
+	height: 72px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	margin-inline: auto;
+	border-radius: 50%;
+	background: rgba(25, 135, 84, .12);
+	color: var(--success);
+}
+
+.upload-icon {
+	display: block;
+	color: var(--success);
+	font-size: 2rem;
+}
+
+
+/* ==========================================================
+   26. RESPONSIVE
+========================================================== */
+
+@media (max-width: 991.98px) {
+
+	.search-box {
+		min-width: 260px;
+	}
+}
+
+
+@media (max-width: 767.98px) {
+
+	.page-header {
+		flex-direction: column;
+		align-items: stretch;
+	}
+
+	.page-header-actions,
+	.page-actions {
+		width: 100%;
+	}
+
+		.page-header-actions .btn,
+		.page-actions .btn {
+			width: 100%;
+		}
+
+	.page-toolbar,
+	.table-toolbar {
+		flex-direction: column;
+		align-items: stretch;
+	}
+
+	.page-toolbar-left,
+	.page-toolbar-right,
+	.table-toolbar-left,
+	.table-toolbar-right {
+		width: 100%;
+	}
+
+	.search-box {
+		width: 100%;
+		min-width: 100%;
+	}
+
+	.navbar-user {
+		display: none;
+	}
+
+	.hero-title {
+		font-size: 1.4rem;
+	}
+
+	.stat-value {
+		font-size: 1.5rem;
+	}
+
+	.action-buttons {
+		justify-content: flex-start;
+	}
+
+	.form-section {
+		padding: 1rem;
+	}
+}
+
+
+@media (max-width: 575.98px) {
+
+	main {
+		padding-top: .75rem;
+	}
+
+	.page-title {
+		font-size: 1.5rem;
+	}
+
+	.hero-title {
+		font-size: 1.3rem;
+	}
+
+	.empty-state {
+		padding: 3rem 1rem;
+	}
+
+	.empty-state-icon {
+		font-size: 3rem;
+	}
+}

@@ -1,0 +1,541 @@
+﻿@model IEnumerable<Vestigium.Models.Product>
+
+@{
+	ViewData["Title"] = "Catálogo de Productos";
+
+	var products = Model?.ToList() ?? new List<Vestigium.Models.Product>();
+	var totalProducts = products.Count;
+}
+
+<div class="container-fluid px-0">
+
+	<!-- Encabezado -->
+
+	<div class="card hero-card mb-4">
+
+		<div class="card-body p-4">
+
+			<div class="d-flex flex-column flex-md-row
+				align-items-md-center
+				justify-content-between
+				gap-3">
+
+				<!-- Informacion -->
+
+				<div>
+
+					<h1 class="hero-title d-flex align-items-center gap-2 mb-1">
+
+						<i class="bi bi-diagram-3"></i>
+
+						<span>
+							Catálogo de Productos
+						</span>
+
+					</h1>
+
+					<p class="hero-subtitle">
+						Administra los productos fabricados y sus listas de materiales.
+					</p>
+
+					<div class="hero-meta">
+
+						<span class="status-badge engineering-pill">
+
+							<i class="bi bi-box-seam"></i>
+
+							@totalProducts
+							@(totalProducts == 1 ? "producto" : "productos")
+
+						</span>
+
+					</div>
+
+				</div>
+
+
+				<!-- Accion principal -->
+				@if (User.IsInRole("Admin"))
+				{
+					<div class="page-header-actions">
+
+						<a asp-action="Create"
+						   class="btn btn-primary">
+
+							<i class="bi bi-plus-lg"></i>
+
+							Crear Producto
+
+						</a>
+
+					</div>
+				}
+
+			</div>
+
+		</div>
+
+	</div>
+
+
+	<!-- Catalogo -->
+
+	<div class="card module-card">
+
+		<!-- HEADER / TOOLBAR -->
+
+		<div class="card-header">
+
+			<div class="d-flex flex-column gap-3">
+
+				<!-- Titulo -->
+
+				<div class="d-flex flex-column flex-md-row
+					justify-content-between
+					align-items-md-center
+					gap-2">
+
+					<div>
+
+						<h2 class="card-title-standard d-flex align-items-center gap-2">
+
+							<i class="bi bi-boxes text-primary"></i>
+
+							Productos registrados
+
+						</h2>
+
+						<div class="text-muted small mt-1">
+
+							Consulta la información de cada producto y accede a su Bill of Materials (BOM).
+
+						</div>
+
+					</div>
+
+
+					<div class="text-muted small text-nowrap">
+
+						<span id="visibleProductsCount">
+							@totalProducts
+						</span>
+
+						<span id="productsCountLabel">
+							@(totalProducts == 1 ? "producto" : "productos")
+						</span>
+
+					</div>
+
+				</div>
+
+
+				<!-- Busqueda -->
+				@if (totalProducts > 0)
+				{
+					<div class="search-box">
+
+						<div class="input-group">
+
+							<span class="input-group-text">
+
+								<i class="bi bi-search"></i>
+
+							</span>
+
+							<input type="search"
+								   id="productSearch"
+								   class="form-control"
+								   autocomplete="off"
+								   placeholder="Buscar por número de parte o descripción..."
+								   aria-label="Buscar productos" />
+
+							<button type="button"
+									id="clearProductSearch"
+									class="btn btn-outline-secondary d-none"
+									title="Limpiar búsqueda"
+									aria-label="Limpiar búsqueda">
+
+								<i class="bi bi-x-lg"></i>
+
+							</button>
+
+						</div>
+
+					</div>
+				}
+
+			</div>
+
+		</div>
+
+
+		<!-- Contenido -->
+		@if (totalProducts > 0)
+		{
+			<div class="table-responsive">
+
+				<table id="productsTable"
+					   class="table table-modern table-hover align-middle">
+
+					<thead>
+
+						<tr>
+
+							<th>
+								Número de parte
+							</th>
+
+							<th>
+								Descripción
+							</th>
+
+							<th class="text-center text-nowrap">
+								BOM
+							</th>
+
+							<th class="text-center text-nowrap">
+								Acciones
+							</th>
+
+						</tr>
+
+					</thead>
+
+
+					<tbody>
+
+						@foreach (var item in products)
+						{
+							<tr class="product-row">
+
+								<!-- N. parte -->
+
+								<td>
+
+									<div class="product-part-number table-reference">
+
+										@item.ProductNumber
+
+									</div>
+
+								</td>
+
+								<!-- Descripcion -->
+
+								<td>
+
+									@if (!string.IsNullOrWhiteSpace(item.ProductDescription))
+									{
+										<div class="product-description">
+
+											@item.ProductDescription
+
+										</div>
+									}
+									else
+									{
+										<span class="text-muted">
+											Sin descripción
+										</span>
+									}
+
+								</td>
+
+
+								<!-- BILL OF MATERIALS -->
+
+								<td class="text-center">
+
+									<a asp-action="Details"
+									   asp-route-id="@item.Id"
+									   class="component-badge"
+									   title="Consultar Bill of Materials">
+
+										<i class="bi bi-diagram-3"></i>
+
+										Ver BOM
+
+									</a>
+
+								</td>
+
+
+								<!-- Acciones -->
+
+								<td class="text-center table-actions">
+
+									<div class="action-buttons">
+
+										<!-- Consultar -->
+
+										<a asp-action="Details"
+										   asp-route-id="@item.Id"
+										   class="btn btn-outline-primary"
+										   title="Consultar producto"
+										   aria-label="Consultar producto @item.ProductNumber">
+
+											<i class="bi bi-eye"></i>
+
+										</a>
+
+
+										@if (User.IsInRole("Admin"))
+										{
+											<!-- Editar -->
+
+											<a asp-action="Edit"
+											   asp-route-id="@item.Id"
+											   class="btn btn-outline-secondary"
+											   title="Editar producto"
+											   aria-label="Editar producto @item.ProductNumber">
+
+												<i class="bi bi-pencil"></i>
+
+											</a>
+
+
+											<!-- Eliminar -->
+
+											<a asp-action="Delete"
+											   asp-route-id="@item.Id"
+											   class="btn btn-outline-danger"
+											   title="Eliminar producto"
+											   aria-label="Eliminar producto @item.ProductNumber">
+
+												<i class="bi bi-trash"></i>
+
+											</a>
+										}
+
+									</div>
+
+								</td>
+
+							</tr>
+						}
+
+
+						<!-- Sin resultado de busqueda -->
+
+						<tr id="noSearchResults"
+							class="d-none">
+
+							<td colspan="4">
+
+								<div class="empty-state py-5">
+
+									<div class="empty-state-icon">
+
+										<i class="bi bi-search"></i>
+
+									</div>
+
+									<div class="empty-state-title">
+
+										No se encontraron productos
+
+									</div>
+
+									<div class="empty-state-description mb-0">
+
+										No existen productos que coincidan con la búsqueda ingresada.
+
+									</div>
+
+								</div>
+
+							</td>
+
+						</tr>
+
+					</tbody>
+
+				</table>
+
+			</div>
+		}
+		else
+		{
+			<!-- Catalogo vacio -->
+
+			<div class="empty-state">
+
+				<div class="empty-state-icon">
+
+					<i class="bi bi-diagram-3"></i>
+
+				</div>
+
+				<div class="empty-state-title">
+
+					No hay productos registrados
+
+				</div>
+
+				<div class="empty-state-description">
+
+					El catálogo todavía no contiene productos registrados.
+
+					@if (User.IsInRole("Admin"))
+					{
+						<span>
+							Registra el primer producto para comenzar a configurar sus listas de materiales.
+						</span>
+					}
+
+				</div>
+
+
+				@if (User.IsInRole("Admin"))
+				{
+					<a asp-action="Create"
+					   class="btn btn-primary">
+
+						<i class="bi bi-plus-lg"></i>
+
+						Crear Primer Producto
+
+					</a>
+				}
+
+			</div>
+		}
+
+	</div>
+
+</div>
+
+
+@section Scripts
+{
+	<script>
+
+		(() => {
+
+			const productSearch =
+				document.getElementById("productSearch");
+
+			const clearProductSearch =
+				document.getElementById("clearProductSearch");
+
+			const productRows =
+				Array.from(
+					document.querySelectorAll(
+						"#productsTable tbody .product-row"
+					)
+				);
+
+			const noSearchResults =
+				document.getElementById("noSearchResults");
+
+			const visibleProductsCount =
+				document.getElementById("visibleProductsCount");
+
+			const productsCountLabel =
+				document.getElementById("productsCountLabel");
+
+			// Actualizar catalogo
+
+			function updateProducts() {
+
+				if (!productSearch) {
+					return;
+				}
+
+				const search =
+					productSearch.value
+						.trim()
+						.toLocaleLowerCase();
+
+
+				let visibleRows = 0;
+
+
+				productRows.forEach(row => {
+
+					const rowText =
+						row.textContent
+							.toLocaleLowerCase();
+
+
+					const matches =
+						rowText.includes(search);
+
+
+					row.classList.toggle(
+						"d-none",
+						!matches
+					);
+
+
+					if (matches) {
+						visibleRows++;
+					}
+
+				});
+
+				// Contador
+
+				if (visibleProductsCount) {
+
+					visibleProductsCount.textContent =
+						visibleRows.toString();
+
+				}
+
+
+				if (productsCountLabel) {
+
+					productsCountLabel.textContent =
+						visibleRows === 1
+							? "producto"
+							: "productos";
+
+				}
+
+				// Sin resultados
+
+				noSearchResults?.classList.toggle(
+					"d-none",
+					visibleRows !== 0
+				);
+
+				// Limpiar busqueda
+
+				clearProductSearch?.classList.toggle(
+					"d-none",
+					search.length === 0
+				);
+
+			}
+
+			// Buscar
+
+			productSearch?.addEventListener(
+				"input",
+				updateProducts
+			);
+
+			// Limpiar
+
+			clearProductSearch?.addEventListener(
+				"click",
+				() => {
+
+					if (!productSearch) {
+						return;
+					}
+
+					productSearch.value = "";
+
+					updateProducts();
+
+					productSearch.focus();
+
+				}
+			);
+
+		})();
+
+	</script>
+}

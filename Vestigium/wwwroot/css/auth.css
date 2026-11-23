@@ -1,0 +1,467 @@
+﻿/* ==========================================================
+   VESTIGIUM
+   AUTHENTICATION MODULE
+
+   Login, account security and authentication-specific
+   components only.
+
+   Shared styles live in vestigium-theme.css.
+========================================================== */
+
+
+/* ==========================================================
+   1. LANDING / AUTH HERO
+========================================================== */
+
+.landing-hero {
+	background: linear-gradient( 135deg, #0f172a, #1e293b );
+	color: #fff;
+}
+
+.hero-brand-icon {
+	margin-bottom: 1rem;
+	font-size: 5rem;
+	line-height: 1;
+	opacity: .20;
+}
+
+
+/* ==========================================================
+   2. QUALITY & PRIVACY
+========================================================== */
+
+.quality-statement {
+	padding: 1rem;
+	border-left: 4px solid var(--engineering);
+	border-radius: var(--radius-sm);
+	background: rgba(13, 110, 253, .05);
+}
+
+.quality-title {
+	margin-bottom: .5rem;
+	font-weight: 600;
+}
+
+.quality-description {
+	margin-bottom: 0;
+	color: var(--text-secondary);
+}
+
+
+/* ==========================================================
+   3. AUTH CARD
+========================================================== */
+
+.auth-card {
+	border: 0;
+	border-radius: var(--radius-md);
+	background: var(--bg-card);
+	box-shadow: var(--shadow-sm);
+	overflow: hidden;
+}
+
+.auth-card-header {
+	padding: 1rem 1.5rem;
+	border-bottom: 1px solid var(--border-light);
+	background: var(--bg-card);
+	font-weight: 600;
+}
+
+.auth-card-body {
+	padding: 1.5rem;
+}
+
+.auth-card-footer {
+	padding: 1rem 1.5rem;
+	border-top: 1px solid var(--border-light);
+	background: var(--bg-card);
+}
+
+
+/* ==========================================================
+   4. LOGIN CARD
+========================================================== */
+
+.login-card {
+	width: 100%;
+	max-width: 500px;
+	margin: 0 auto;
+	border-radius: var(--radius-lg);
+	overflow: hidden;
+}
+
+.login-header {
+	text-align: center;
+}
+
+
+/* ==========================================================
+   5. LOGIN BRAND
+========================================================== */
+
+.login-logo-wrapper {
+	width: 96px;
+	height: 96px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	margin-inline: auto;
+	border-radius: 50%;
+	background: var(--bg-subtle);
+}
+
+.login-logo {
+	width: 76px;
+	height: 76px;
+	object-fit: contain;
+}
+
+.login-title {
+	margin-bottom: .25rem;
+	font-size: 2rem;
+	font-weight: 700;
+	line-height: 1.2;
+	letter-spacing: -.02em;
+}
+
+.login-subtitle {
+	margin-bottom: 0;
+	color: var(--text-secondary);
+}
+
+.login-divider {
+	width: 48px;
+	height: 3px;
+	margin-inline: auto;
+	border-radius: 999px;
+	background: var(--engineering);
+}
+
+
+/* ==========================================================
+   6. LOGIN FORM
+========================================================== */
+
+.login-card .input-group-text {
+	min-width: 48px;
+	justify-content: center;
+	background: transparent;
+}
+
+.login-card .form-control,
+.login-card .input-group-text {
+	min-height: 48px;
+}
+
+	.login-card .input-group-text i {
+		margin: 0;
+	}
+
+.login-submit {
+	min-height: 50px;
+	font-weight: 600;
+}
+
+
+/* ==========================================================
+   7. LOGIN HELP
+========================================================== */
+
+.login-help {
+	padding: 1rem;
+	border: 1px solid var(--border-light);
+	border-radius: var(--radius-sm);
+	background: var(--bg-subtle);
+	color: var(--text-secondary);
+	font-size: .9rem;
+}
+
+	.login-help i {
+		color: var(--engineering);
+	}
+
+.login-footer {
+	margin-top: 1rem;
+	color: var(--text-secondary);
+	font-size: .85rem;
+	text-align: center;
+}
+
+
+/* ==========================================================
+   8. CREDENTIALS / PASSWORD
+========================================================== */
+
+.credential-section {
+	padding: 1rem;
+	border: 1px solid var(--border-light);
+	border-radius: var(--radius-sm);
+	background: var(--bg-card);
+}
+
+.security-requirements {
+	padding: 1rem;
+	border: 1px solid var(--border-light);
+	border-radius: var(--radius-sm);
+	background: var(--bg-card);
+}
+
+.security-alert-title {
+	margin-bottom: .25rem;
+	font-weight: 600;
+}
+
+
+/* ==========================================================
+   9. PASSWORD STRENGTH
+========================================================== */
+
+.password-strength {
+	margin-top: .75rem;
+}
+
+.password-strength-bar {
+	height: 6px;
+	overflow: hidden;
+	border-radius: 999px;
+	background: var(--border-light);
+}
+
+.password-strength-value {
+	height: 100%;
+	width: 0;
+	border-radius: inherit;
+	transition: width .2s ease, background-color .2s ease;
+}
+
+
+/* Strength states */
+
+.password-strength-weak .password-strength-value {
+	background: var(--danger);
+}
+
+.password-strength-medium .password-strength-value {
+	background: var(--warning);
+}
+
+.password-strength-strong .password-strength-value {
+	background: var(--success);
+}
+
+
+/* ==========================================================
+   10. PASSWORD REQUIREMENTS
+========================================================== */
+
+.password-requirement {
+	display: flex;
+	align-items: flex-start;
+	gap: .5rem;
+	margin-bottom: .5rem;
+	color: var(--text-secondary);
+	font-size: .85rem;
+}
+
+	.password-requirement:last-child {
+		margin-bottom: 0;
+	}
+
+	.password-requirement i {
+		flex-shrink: 0;
+		margin-top: .05rem;
+	}
+
+.password-requirement-valid {
+	color: var(--success);
+}
+
+.password-requirement-invalid {
+	color: var(--text-secondary);
+}
+
+
+/* ==========================================================
+   11. HELP PANEL
+========================================================== */
+
+.help-panel {
+	padding: 1rem;
+	border-left: 4px solid var(--engineering);
+	border-radius: var(--radius-sm);
+	background: rgba(13, 110, 253, .05);
+}
+
+.help-panel-title {
+	margin-bottom: .35rem;
+	font-weight: 600;
+}
+
+.help-panel-text {
+	margin-bottom: 0;
+	color: var(--text-secondary);
+}
+
+
+/* ==========================================================
+   12. IMPORT / UPLOAD CONTENT
+========================================================== */
+
+/*
+   .upload-zone
+   .upload-icon-wrapper
+   .upload-icon
+
+   These components are global and live in
+   vestigium-theme.css.
+*/
+
+.upload-title {
+	margin-bottom: .5rem;
+	font-weight: 600;
+}
+
+.upload-description {
+	margin-bottom: 0;
+	color: var(--text-secondary);
+}
+
+.upload-file-name {
+	margin-top: .5rem;
+	font-weight: 600;
+	overflow-wrap: anywhere;
+}
+
+
+/* ==========================================================
+   13. AUTH MESSAGE
+========================================================== */
+
+.auth-message {
+	display: flex;
+	align-items: flex-start;
+	gap: .75rem;
+	padding: 1rem;
+	border: 1px solid var(--border-light);
+	border-radius: var(--radius-sm);
+	background: var(--bg-subtle);
+}
+
+.auth-message-icon {
+	flex-shrink: 0;
+	color: var(--engineering);
+	font-size: 1.2rem;
+	line-height: 1;
+}
+
+.auth-message-content {
+	min-width: 0;
+	flex: 1;
+}
+
+.auth-message-title {
+	margin-bottom: .2rem;
+	font-weight: 600;
+}
+
+.auth-message-description {
+	margin-bottom: 0;
+	color: var(--text-secondary);
+	font-size: .85rem;
+}
+
+
+/* ==========================================================
+   14. AUTH ACTIONS
+========================================================== */
+
+.auth-actions {
+	display: flex;
+	align-items: center;
+	justify-content: flex-end;
+	flex-wrap: wrap;
+	gap: .75rem;
+}
+
+
+/* ==========================================================
+   15. RESPONSIVE
+========================================================== */
+
+@media (max-width: 767.98px) {
+
+	.hero-brand-icon {
+		font-size: 3.5rem;
+	}
+
+	.auth-card-header,
+	.auth-card-body,
+	.auth-card-footer {
+		padding: 1.25rem;
+	}
+
+	.login-title {
+		font-size: 1.75rem;
+	}
+
+	.credential-section,
+	.security-requirements {
+		padding: .85rem;
+	}
+
+	.auth-actions {
+		flex-direction: column-reverse;
+		align-items: stretch;
+	}
+
+		.auth-actions .btn {
+			width: 100%;
+		}
+}
+
+
+@media (max-width: 575.98px) {
+
+	.login-logo-wrapper {
+		width: 84px;
+		height: 84px;
+	}
+
+	.login-logo {
+		width: 66px;
+		height: 66px;
+	}
+
+	.login-title {
+		font-size: 1.6rem;
+	}
+
+	.auth-card-header,
+	.auth-card-body,
+	.auth-card-footer {
+		padding: 1rem;
+	}
+
+	.login-card .form-control,
+	.login-card .input-group-text {
+		min-height: 46px;
+	}
+}
+
+
+/* ==========================================================
+   16. FUTURE AUTH COMPONENTS
+========================================================== */
+
+/*
+
+.auth-two-factor-card
+.auth-recovery-card
+.auth-device-history
+.auth-session-list
+.auth-security-score
+.auth-password-history
+.auth-notifications
+.auth-terms-panel
+
+*/

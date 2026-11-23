@@ -1,0 +1,1505 @@
+﻿@model Vestigium.Models.ViewModels.TransferLocationVM
+
+@{
+    ViewData["Title"] = "Transferir Inventario";
+
+    var hasServerErrors =
+        !ViewData.ModelState.IsValid;
+}
+
+<div class="container-fluid px-0">
+
+    <!-- =====================================================
+         BREADCRUMB
+    ====================================================== -->
+
+    <nav aria-label="breadcrumb">
+
+        <ol class="breadcrumb">
+
+            <li class="breadcrumb-item">
+
+                <a asp-action="Index">
+                    Inventario
+                </a>
+
+            </li>
+
+            <li class="breadcrumb-item">
+
+                <a asp-action="Locations"
+                   asp-route-id="@Model.MaterialId">
+
+                    Ubicaciones
+
+                </a>
+
+            </li>
+
+            <li class="breadcrumb-item active"
+                aria-current="page">
+
+                Transferir Inventario
+
+            </li>
+
+        </ol>
+
+    </nav>
+
+
+    <!-- =====================================================
+         ENCABEZADO
+    ====================================================== -->
+
+    <div class="card hero-card mb-4">
+
+        <div class="card-body p-4">
+
+            <div class="d-flex flex-column flex-lg-row
+                justify-content-between
+                align-items-lg-center
+                gap-3">
+
+                <div>
+
+                    <div class="text-muted small mb-1">
+
+                        Redistribución interna
+
+                    </div>
+
+
+                    <h1 class="hero-title
+                        d-flex
+                        align-items-center
+                        gap-2
+                        mb-1">
+
+                        <i class="bi bi-arrow-left-right"></i>
+
+                        <span>
+                            Transferir Inventario
+                        </span>
+
+                    </h1>
+
+
+                    <p class="hero-subtitle">
+
+                        Mueva inventario entre ubicaciones físicas
+                        sin modificar la existencia total del material.
+
+                    </p>
+
+
+                    <div class="hero-meta">
+
+                        <span class="component-badge">
+
+                            <i class="bi bi-box-seam"></i>
+
+                            @Model.PartNumber
+
+                        </span>
+
+
+                        <span class="status-badge engineering-pill">
+
+                            <i class="bi bi-geo-alt"></i>
+
+                            @ViewBag.Locations.Count
+
+                            @(ViewBag.Locations.Count == 1
+                                ? "ubicación"
+                                : "ubicaciones")
+
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="page-header-actions">
+
+                    <a asp-action="Locations"
+                       asp-route-id="@Model.MaterialId"
+                       class="btn btn-outline-secondary">
+
+                        <i class="bi bi-arrow-left"></i>
+
+                        Regresar a Ubicaciones
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         FORMULARIO
+    ====================================================== -->
+
+    <div class="card module-card">
+
+        <div class="card-header">
+
+            <div>
+
+                <h2 class="card-title-standard
+                    d-flex
+                    align-items-center
+                    gap-2">
+
+                    <i class="bi bi-arrow-left-right text-primary"></i>
+
+                    Transferencia entre Ubicaciones
+
+                </h2>
+
+
+                <div class="text-muted small mt-1">
+
+                    Seleccione el origen, defina el destino
+                    e indique la cantidad a transferir.
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="card-body p-4">
+
+            <form asp-action="TransferLocation"
+                  method="post"
+                  id="transferLocationForm"
+                  data-has-server-errors="@(hasServerErrors ? "true" : "false")"
+                  data-initial-origin="@Model.OriginLocation"
+                  data-initial-rack="@Model.DestinationRack"
+                  data-initial-level="@Model.DestinationLevel">
+
+                <!-- =================================================
+                     CAMPOS INTERNOS
+                ================================================== -->
+
+                <input asp-for="MaterialId"
+                       type="hidden" />
+
+                <input asp-for="PartNumber"
+                       type="hidden" />
+
+                <input asp-for="DestinationLocation"
+                       type="hidden"
+                       id="destinationLocation" />
+
+
+                <!-- =================================================
+                     VALIDACIÓN GENERAL
+                ================================================== -->
+                @if (!ViewData.ModelState.IsValid)
+                {
+                    <div asp-validation-summary="ModelOnly"
+                         class="alert alert-danger mb-4"
+                         role="alert">
+                    </div>
+                }
+
+
+                <!-- =================================================
+                     PASO 1
+                     UBICACIÓN ORIGEN
+                ================================================== -->
+
+                <section class="form-section">
+
+                    <div class="form-section-title">
+
+                        <span class="section-step">
+                            1
+                        </span>
+
+
+                        <div>
+
+                            <div>
+                                Ubicación Origen
+                            </div>
+
+
+                            <div class="text-muted small fw-normal mt-1">
+
+                                Seleccione la ubicación desde donde
+                                se retirará el inventario.
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="row g-3">
+
+                        <!-- Ubicación origen -->
+
+                        <div class="col-12 col-lg-7">
+
+                            <label asp-for="OriginLocation"
+                                   class="form-label">
+
+                                Ubicación Origen
+
+                            </label>
+
+
+                            <select asp-for="OriginLocation"
+                                    id="originSelector"
+                                    class="form-select">
+
+                                <option value="">
+                                    Seleccione una ubicación
+                                </option>
+
+
+                                @foreach (var item in ViewBag.Locations)
+                                {
+                                    <option value="@item.LocationCode"
+                                            data-qty="@item.Quantity">
+
+                                        @item.LocationCode
+                                        -
+                                        @item.Quantity.ToString("N0")
+                                        piezas
+
+                                    </option>
+                                }
+
+                            </select>
+
+
+                            <span asp-validation-for="OriginLocation"
+                                  class="text-danger small d-block mt-1">
+                            </span>
+
+
+                            <div class="form-text">
+
+                                Solo se muestran ubicaciones
+                                con inventario disponible.
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- Inventario disponible -->
+
+                        <div class="col-12 col-lg-5">
+
+                            <div class="p-3
+                                border
+                                rounded-3
+                                bg-body-tertiary
+                                h-100">
+
+                                <div class="d-flex
+                                    align-items-center
+                                    gap-2
+                                    text-muted
+                                    small
+                                    mb-2">
+
+                                    <i class="bi bi-boxes"></i>
+
+                                    Inventario Disponible
+
+                                </div>
+
+
+                                <div id="originQuantity"
+                                     class="fs-4
+                                    fw-bold
+                                    table-reference">
+
+                                    -
+
+                                </div>
+
+
+                                <div class="small text-muted mt-1">
+
+                                    Piezas disponibles en la
+                                    ubicación seleccionada.
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <!-- =================================================
+                     PASO 2
+                     UBICACIÓN DESTINO
+                ================================================== -->
+
+                <section class="form-section">
+
+                    <div class="form-section-title">
+
+                        <span class="section-step">
+                            2
+                        </span>
+
+
+                        <div>
+
+                            <div>
+                                Ubicación Destino
+                            </div>
+
+
+                            <div class="text-muted small fw-normal mt-1">
+
+                                Seleccione el rack y nivel hacia donde
+                                se redistribuirá el inventario.
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="row g-3">
+
+                        <!-- Rack -->
+
+                        <div class="col-12 col-md-4">
+
+                            <label asp-for="DestinationRack"
+                                   class="form-label">
+
+                                Rack Destino
+
+                            </label>
+
+
+                            <select asp-for="DestinationRack"
+                                    id="rackSelector"
+                                    class="form-select">
+
+                                <option value="">
+                                    Seleccione Rack
+                                </option>
+
+                                <option value="A">A</option>
+                                <option value="B">B</option>
+                                <option value="C">C</option>
+                                <option value="D">D</option>
+                                <option value="E">E</option>
+                                <option value="F">F</option>
+                                <option value="G">G</option>
+                                <option value="H">H</option>
+                                <option value="I">I</option>
+                                <option value="J">J</option>
+                                <option value="K">K</option>
+                                <option value="L">L</option>
+                                <option value="M">M</option>
+                                <option value="N">N</option>
+                                <option value="W">W</option>
+                                <option value="X">X</option>
+                                <option value="Y">Y</option>
+
+                            </select>
+
+
+                            <span asp-validation-for="DestinationRack"
+                                  class="text-danger small d-block mt-1">
+                            </span>
+
+                        </div>
+
+
+                        <!-- Nivel -->
+
+                        <div class="col-12 col-md-4">
+
+                            <label asp-for="DestinationLevel"
+                                   class="form-label">
+
+                                Nivel Destino
+
+                            </label>
+
+
+                            <select asp-for="DestinationLevel"
+                                    id="levelSelector"
+                                    class="form-select"
+                                    disabled>
+
+                                <option value="">
+
+                                    Seleccione primero un Rack
+
+                                </option>
+
+                            </select>
+
+
+                            <span asp-validation-for="DestinationLevel"
+                                  class="text-danger small d-block mt-1">
+                            </span>
+
+                        </div>
+
+
+                        <!-- Preview -->
+
+                        <div class="col-12 col-md-4">
+
+                            <div class="p-3
+                                border
+                                rounded-3
+                                bg-body-tertiary
+                                h-100">
+
+                                <div class="text-muted small mb-2">
+
+                                    Destino seleccionado
+
+                                </div>
+
+
+                                <div id="destinationPreview"
+                                     class="fs-4
+                                    fw-bold
+                                    text-primary
+                                    table-reference">
+
+                                    Pendiente
+
+                                </div>
+
+
+                                <div class="small text-muted mt-1">
+
+                                    Ubicación final del inventario
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Validación adicional origen/destino -->
+
+                    <span id="destinationValidation"
+                          class="text-danger small d-block mt-2">
+                    </span>
+
+                </section>
+
+
+                <!-- =================================================
+                     PASO 3
+                     CANTIDAD
+                ================================================== -->
+
+                <section class="form-section mb-0">
+
+                    <div class="form-section-title">
+
+                        <span class="section-step">
+                            3
+                        </span>
+
+
+                        <div>
+
+                            <div>
+                                Cantidad a Transferir
+                            </div>
+
+
+                            <div class="text-muted small fw-normal mt-1">
+
+                                Indique cuántas piezas desea mover
+                                desde el origen hacia el destino.
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="row g-3">
+
+                        <div class="col-12 col-md-5 col-lg-4">
+
+                            <label asp-for="Quantity"
+                                   class="form-label">
+
+                                Cantidad
+
+                            </label>
+
+
+                            <div class="input-group">
+
+                                <span class="input-group-text">
+
+                                    <i class="bi bi-boxes"></i>
+
+                                </span>
+
+
+                                <input asp-for="Quantity"
+                                       type="number"
+                                       min="1"
+                                       id="quantityInput"
+                                       class="form-control quantity-input"
+                                       inputmode="numeric"
+                                       autocomplete="off" />
+
+                            </div>
+
+
+                            <span asp-validation-for="Quantity"
+                                  id="quantityValidation"
+                                  class="text-danger small d-block mt-1">
+                            </span>
+
+
+                            <div class="form-text">
+
+                                La cantidad no puede superar
+                                el inventario disponible en el origen.
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- =============================================
+                         INFORMACIÓN
+                    ============================================== -->
+
+                    <div class="help-panel mt-4">
+
+                        <div class="d-flex align-items-start gap-3">
+
+                            <i class="bi bi-info-circle
+                            text-primary
+                            fs-5
+                            flex-shrink-0"></i>
+
+
+                            <div>
+
+                                <div class="help-panel-title">
+
+                                    Redistribución de inventario
+
+                                </div>
+
+
+                                <p class="help-panel-text">
+
+                                    Esta operación no modifica el inventario
+                                    total del material. Las piezas serán retiradas
+                                    de la ubicación origen y agregadas a la
+                                    ubicación destino.
+
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <!-- =================================================
+                     ACCIONES
+                ================================================== -->
+
+                <div class="d-flex flex-column flex-sm-row
+                    justify-content-end
+                    gap-2
+                    mt-4">
+
+                    <a asp-action="Locations"
+                       asp-route-id="@Model.MaterialId"
+                       class="btn btn-outline-secondary">
+
+                        <i class="bi bi-x-lg"></i>
+
+                        Cancelar
+
+                    </a>
+
+
+                    <button type="submit"
+                            id="transferSubmit"
+                            class="btn btn-primary">
+
+                        <i class="bi bi-arrow-left-right"></i>
+
+                        Transferir Inventario
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+@section Scripts
+{
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+
+        (() => {
+
+            // ==============================================
+            // CONFIGURACIÓN TEMPORAL DE RACKS
+            // ==============================================
+
+            const rackLimits = {
+                A: 5,
+                B: 5,
+                C: 5,
+                D: 4,
+                E: 4,
+                F: 3,
+                G: 4,
+                H: 5,
+                I: 3,
+                J: 4,
+                K: 3,
+                L: 3,
+                M: 3,
+                N: 3,
+                W: 4,
+                X: 5,
+                Y: 6
+            };
+
+
+            // ==============================================
+            // ELEMENTOS
+            // ==============================================
+
+            const form =
+                document.getElementById(
+                    "transferLocationForm"
+                );
+
+            const originSelector =
+                document.getElementById(
+                    "originSelector"
+                );
+
+            const originQuantity =
+                document.getElementById(
+                    "originQuantity"
+                );
+
+            const rackSelector =
+                document.getElementById(
+                    "rackSelector"
+                );
+
+            const levelSelector =
+                document.getElementById(
+                    "levelSelector"
+                );
+
+            const destinationLocation =
+                document.getElementById(
+                    "destinationLocation"
+                );
+
+            const destinationPreview =
+                document.getElementById(
+                    "destinationPreview"
+                );
+
+            const destinationValidation =
+                document.getElementById(
+                    "destinationValidation"
+                );
+
+            const quantityInput =
+                document.getElementById(
+                    "quantityInput"
+                );
+
+            const quantityValidation =
+                document.getElementById(
+                    "quantityValidation"
+                );
+
+            const transferSubmit =
+                document.getElementById(
+                    "transferSubmit"
+                );
+
+
+            // ==============================================
+            // VALORES INICIALES
+            // ==============================================
+
+            const initialOrigin =
+                form?.dataset.initialOrigin ?? "";
+
+            const initialRack =
+                form?.dataset.initialRack ?? "";
+
+            const initialLevel =
+                form?.dataset.initialLevel ?? "";
+
+            const hasServerErrors =
+                form?.dataset.hasServerErrors ===
+                "true";
+
+
+            // ==============================================
+            // ENFOCAR CAMPO
+            // ==============================================
+
+            function focusField(field) {
+
+                if (!field) {
+                    return;
+                }
+
+
+                field.scrollIntoView({
+                    behavior: "smooth",
+                    block: "center"
+                });
+
+
+                setTimeout(
+                    () => {
+
+                        field.focus({
+                            preventScroll: true
+                        });
+
+                    },
+                    300
+                );
+
+            }
+
+
+            // ==============================================
+            // INVENTARIO DE ORIGEN
+            // ==============================================
+
+            function updateOriginQuantity() {
+
+                if (
+                    !originSelector ||
+                    !originQuantity
+                ) {
+
+                    return;
+
+                }
+
+
+                const selected =
+                    originSelector.options[
+                    originSelector.selectedIndex
+                    ];
+
+
+                const quantity =
+                    selected?.dataset.qty ?? "";
+
+
+                originQuantity.textContent =
+                    quantity || "-";
+
+            }
+
+
+            // ==============================================
+            // CARGAR NIVELES DEL DESTINO
+            // ==============================================
+
+            function loadLevels(
+                rack,
+                selectedLevel = ""
+            ) {
+
+                if (!levelSelector) {
+                    return;
+                }
+
+
+                levelSelector.innerHTML =
+                    "";
+
+
+                if (
+                    !rack ||
+                    !rackLimits[rack]
+                ) {
+
+                    const option =
+                        document.createElement(
+                            "option"
+                        );
+
+
+                    option.value =
+                        "";
+
+
+                    option.textContent =
+                        "Seleccione primero un Rack";
+
+
+                    levelSelector.appendChild(
+                        option
+                    );
+
+
+                    levelSelector.disabled =
+                        true;
+
+
+                    return;
+
+                }
+
+
+                const placeholder =
+                    document.createElement(
+                        "option"
+                    );
+
+
+                placeholder.value =
+                    "";
+
+
+                placeholder.textContent =
+                    "Seleccione Nivel";
+
+
+                levelSelector.appendChild(
+                    placeholder
+                );
+
+
+                const max =
+                    rackLimits[rack];
+
+
+                for (
+                    let level = 1;
+                    level <= max;
+                    level++
+                ) {
+
+                    const option =
+                        document.createElement(
+                            "option"
+                        );
+
+
+                    option.value =
+                        level.toString();
+
+
+                    option.textContent =
+                        level.toString();
+
+
+                    if (
+                        selectedLevel ===
+                        level.toString()
+                    ) {
+
+                        option.selected =
+                            true;
+
+                    }
+
+
+                    levelSelector.appendChild(
+                        option
+                    );
+
+                }
+
+
+                levelSelector.disabled =
+                    false;
+
+            }
+
+
+            // ==============================================
+            // ACTUALIZAR DESTINO
+            // ==============================================
+
+            function updateDestination() {
+
+                if (
+                    !rackSelector ||
+                    !levelSelector ||
+                    !destinationLocation ||
+                    !destinationPreview
+                ) {
+
+                    return;
+
+                }
+
+
+                const rack =
+                    rackSelector.value;
+
+
+                const level =
+                    levelSelector.value;
+
+
+                if (!rack || !level) {
+
+                    destinationLocation.value =
+                        "";
+
+
+                    destinationPreview.textContent =
+                        "Pendiente";
+
+
+                    return;
+
+                }
+
+
+                const destination =
+                    `${rack}${level}`;
+
+
+                destinationLocation.value =
+                    destination;
+
+
+                destinationPreview.textContent =
+                    destination;
+
+
+                if (destinationValidation) {
+
+                    destinationValidation.textContent =
+                        "";
+
+                }
+
+            }
+
+
+            // ==============================================
+            // CAMBIO DE ORIGEN
+            // ==============================================
+
+            originSelector?.addEventListener(
+                "change",
+                () => {
+
+                    updateOriginQuantity();
+
+
+                    if (destinationValidation) {
+
+                        destinationValidation.textContent =
+                            "";
+
+                    }
+
+                }
+            );
+
+
+            // ==============================================
+            // CAMBIO DE RACK
+            // ==============================================
+
+            rackSelector?.addEventListener(
+                "change",
+                function() {
+
+                    loadLevels(
+                        this.value
+                    );
+
+
+                    if (destinationLocation) {
+
+                        destinationLocation.value =
+                            "";
+
+                    }
+
+
+                    if (destinationPreview) {
+
+                        destinationPreview.textContent =
+                            "Pendiente";
+
+                    }
+
+
+                    if (destinationValidation) {
+
+                        destinationValidation.textContent =
+                            "";
+
+                    }
+
+                }
+            );
+
+
+            // ==============================================
+            // CAMBIO DE NIVEL
+            // ==============================================
+
+            levelSelector?.addEventListener(
+                "change",
+                updateDestination
+            );
+
+
+            // ==============================================
+            // CANTIDAD
+            // ==============================================
+
+            quantityInput?.addEventListener(
+                "input",
+                () => {
+
+                    if (quantityValidation) {
+
+                        quantityValidation.textContent =
+                            "";
+
+                    }
+
+                }
+            );
+
+
+            // ==============================================
+            // RESTAURAR ESTADO DESPUÉS DE ERROR
+            // ==============================================
+
+            if (
+                initialOrigin &&
+                originSelector
+            ) {
+
+                originSelector.value =
+                    initialOrigin;
+
+
+                updateOriginQuantity();
+
+            }
+
+
+            if (
+                initialRack &&
+                rackSelector &&
+                rackLimits[initialRack]
+            ) {
+
+                rackSelector.value =
+                    initialRack;
+
+
+                loadLevels(
+                    initialRack,
+                    initialLevel
+                );
+
+
+                updateDestination();
+
+            }
+
+
+            // ==============================================
+            // ENVÍO
+            // ==============================================
+
+            form?.addEventListener(
+                "submit",
+                function(event) {
+
+                    // ======================================
+                    // VALIDACIÓN ASP.NET / JQUERY
+                    // ======================================
+
+                    if (
+                        typeof $ !== "undefined" &&
+                        typeof $.validator !== "undefined" &&
+                        $(this).data("validator") &&
+                        !$(this).valid()
+                    ) {
+
+                        event.preventDefault();
+
+
+                        const firstError =
+                            document.querySelector(
+                                ".field-validation-error"
+                            );
+
+
+                        if (firstError) {
+
+                            const fieldName =
+                                firstError.getAttribute(
+                                    "data-valmsg-for"
+                                );
+
+
+                            if (fieldName) {
+
+                                let field =
+                                    document.querySelector(
+                                        `[name="${CSS.escape(fieldName)}"]`
+                                    );
+
+
+                                if (
+                                    field &&
+                                    field.type !== "hidden"
+                                ) {
+
+                                    focusField(
+                                        field
+                                    );
+
+                                }
+
+                            }
+
+                        }
+
+
+                        return;
+
+                    }
+
+
+                    // ======================================
+                    // ORIGEN
+                    // ======================================
+
+                    if (!originSelector?.value) {
+
+                        event.preventDefault();
+
+
+                        focusField(
+                            originSelector
+                        );
+
+
+                        return;
+
+                    }
+
+
+                    // ======================================
+                    // DESTINO
+                    // ======================================
+
+                    if (!destinationLocation?.value) {
+
+                        event.preventDefault();
+
+
+                        if (destinationValidation) {
+
+                            destinationValidation.textContent =
+                                "Seleccione el Rack y nivel de destino.";
+
+                        }
+
+
+                        focusField(
+                            !rackSelector?.value
+                                ? rackSelector
+                                : levelSelector
+                        );
+
+
+                        return;
+
+                    }
+
+
+                    // ======================================
+                    // ORIGEN = DESTINO
+                    // ======================================
+
+                    if (
+                        originSelector.value ===
+                        destinationLocation.value
+                    ) {
+
+                        event.preventDefault();
+
+
+                        if (destinationValidation) {
+
+                            destinationValidation.textContent =
+                                "La ubicación destino debe ser diferente al origen.";
+
+                        }
+
+
+                        focusField(
+                            rackSelector
+                        );
+
+
+                        return;
+
+                    }
+
+
+                    // ======================================
+                    // CANTIDAD
+                    // ======================================
+
+                    const quantity =
+                        Number(
+                            quantityInput?.value
+                        );
+
+
+                    const selectedOrigin =
+                        originSelector.options[
+                        originSelector.selectedIndex
+                        ];
+
+
+                    const availableQuantity =
+                        Number(
+                            selectedOrigin?.dataset.qty
+                        );
+
+
+                    if (
+                        !Number.isFinite(quantity) ||
+                        quantity <= 0
+                    ) {
+
+                        event.preventDefault();
+
+
+                        if (quantityValidation) {
+
+                            quantityValidation.textContent =
+                                "Ingrese una cantidad mayor que cero.";
+
+                        }
+
+
+                        focusField(
+                            quantityInput
+                        );
+
+
+                        return;
+
+                    }
+
+
+                    // ======================================
+                    // INVENTARIO INSUFICIENTE
+                    // ======================================
+
+                    if (
+                        Number.isFinite(
+                            availableQuantity
+                        ) &&
+                        quantity >
+                        availableQuantity
+                    ) {
+
+                        event.preventDefault();
+
+
+                        if (quantityValidation) {
+
+                            quantityValidation.textContent =
+                                "La cantidad excede el inventario disponible en la ubicación origen.";
+
+                        }
+
+
+                        focusField(
+                            quantityInput
+                        );
+
+
+                        return;
+
+                    }
+
+
+                    // ======================================
+                    // VALIDACIÓN HTML
+                    // ======================================
+
+                    if (!this.checkValidity()) {
+
+                        event.preventDefault();
+
+
+                        this.reportValidity();
+
+
+                        return;
+
+                    }
+
+
+                    // ======================================
+                    // ENVÍO REAL
+                    // ======================================
+
+                    if (!transferSubmit) {
+                        return;
+                    }
+
+
+                    transferSubmit.disabled =
+                        true;
+
+
+                    transferSubmit.innerHTML =
+                        '<span class="spinner-border spinner-border-sm me-2" ' +
+                        'role="status" aria-hidden="true"></span>' +
+                        'Transfiriendo...';
+
+                }
+            );
+
+
+            // ==============================================
+            // ERROR DEVUELTO POR EL SERVIDOR
+            // ==============================================
+
+            if (hasServerErrors) {
+
+                requestAnimationFrame(
+                    () => {
+
+                        const firstValidationError =
+                            document.querySelector(
+                                ".field-validation-error"
+                            );
+
+
+                        if (firstValidationError) {
+
+                            const fieldName =
+                                firstValidationError.getAttribute(
+                                    "data-valmsg-for"
+                                );
+
+
+                            if (fieldName) {
+
+                                const field =
+                                    document.querySelector(
+                                        `[name="${CSS.escape(fieldName)}"]`
+                                    );
+
+
+                                if (
+                                    field &&
+                                    field.type !== "hidden"
+                                ) {
+
+                                    focusField(
+                                        field
+                                    );
+
+
+                                    return;
+
+                                }
+
+                            }
+
+                        }
+
+
+                        const summary =
+                            document.querySelector(
+                                ".validation-summary-errors"
+                            );
+
+
+                        if (summary) {
+
+                            summary.scrollIntoView({
+                                behavior: "smooth",
+                                block: "center"
+                            });
+
+                        }
+
+                    }
+                );
+
+            }
+
+        })();
+
+    </script>
+}

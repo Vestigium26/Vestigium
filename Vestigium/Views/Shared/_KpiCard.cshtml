@@ -1,0 +1,81 @@
+﻿@model Vestigium.ViewModels.KpiCardVM
+
+@if (!string.IsNullOrWhiteSpace(Model.Url))
+{
+    <a href="@Model.Url"
+       class="text-decoration-none text-reset">
+
+        <div class="card kpi-card h-100 @Model.ColorClass">
+
+            <div class="card-body">
+
+                <div class="d-flex justify-content-between align-items-center">
+
+                    <div>
+
+                        <div class="kpi-title">
+                            @Model.Title
+                        </div>
+
+                        <div class="kpi-value">
+                            @Model.Value
+                        </div>
+
+                        @if (!string.IsNullOrWhiteSpace(Model.Subtitle))
+                        {
+                            <small class="text-muted">
+                                @Model.Subtitle
+                            </small>
+                        }
+
+                    </div>
+
+                    <div class="kpi-icon">
+                        <i class="@Model.Icon"></i>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </a>
+}
+else
+{
+    <div class="card kpi-card h-100 @Model.ColorClass">
+
+        <div class="card-body">
+
+            <div class="d-flex justify-content-between align-items-center">
+
+                <div>
+
+                    <div class="kpi-title">
+                        @Model.Title
+                    </div>
+
+                    <div class="kpi-value">
+                        @Model.Value
+                    </div>
+
+                    @if (!string.IsNullOrWhiteSpace(Model.Subtitle))
+                    {
+                        <small class="text-muted">
+                            @Model.Subtitle
+                        </small>
+                    }
+
+                </div>
+
+                <div class="kpi-icon">
+                    <i class="@Model.Icon"></i>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+}

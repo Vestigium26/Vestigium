@@ -1,0 +1,508 @@
+﻿@model Vestigium.Models.ViewModels.UserEditVM
+
+@{
+    ViewData["Title"] = "Editar Usuario";
+}
+
+<!-- ENCABEZADO -->
+
+<div class="card hero-card mb-4">
+
+    <div class="card-body">
+
+        <div class="d-flex flex-column gap-2">
+
+            <h2 class="hero-title mb-0">
+
+                <i class="bi bi-pencil-square me-2"></i>
+
+                Editar Usuario
+
+            </h2>
+
+            <p class="hero-subtitle mb-0">
+
+                Actualización de información, área y permisos del usuario.
+
+            </p>
+
+        </div>
+
+    </div>
+
+</div>
+
+<div class="card module-card mb-4">
+
+    <div class="card-header bg-transparent">
+
+        <h6 class="card-title-standard mb-0">
+
+            <i class="bi bi-lightning-charge me-2"></i>
+
+            Acciones Rápidas
+
+        </h6>
+
+    </div>
+
+    <div class="card-body">
+
+        <div class="d-flex flex-wrap gap-2">
+
+            <a asp-action="Index"
+               class="btn btn-outline-secondary">
+
+                <i class="bi bi-arrow-left me-1"></i>
+
+                Regresar a Usuarios
+
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- FORMULARIO -->
+
+<div class="card module-card">
+
+    <div class="card-header">
+
+        <h6 class="card-title-standard mb-0">
+
+            <i class="bi bi-person-vcard me-2"></i>
+
+            Información del Usuario
+
+        </h6>
+
+    </div>
+
+    <div class="card-body p-4">
+
+        <form asp-action="Edit">
+
+            <input asp-for="Id" type="hidden" />
+
+            @if (!ViewData.ModelState.IsValid)
+            {
+                <div asp-validation-summary="ModelOnly"
+                     class="alert alert-danger mb-4">
+                </div>
+            }
+
+            <!-- DATOS GENERALES -->
+
+            <div class="form-section mb-4">
+
+                <h6 class="section-title mb-2">
+
+                    <span class="section-step">1</span>
+
+                    <i class="bi bi-person-vcard me-2"></i>
+
+                    Datos Generales
+
+                </h6>
+
+                <p class="text-muted mb-4">
+
+                    Actualice la información de identificación del usuario.
+
+                </p>
+
+                <div class="row g-3">
+
+                    <div class="col-md-4">
+
+                        <label asp-for="UserName"
+                               class="form-label fw-semibold">
+
+                            Número de Empleado
+
+                        </label>
+
+                        <div class="input-group">
+
+                            <span class="input-group-text">
+
+                                <i class="bi bi-hash"></i>
+
+                            </span>
+
+                            <input asp-for="UserName"
+                                   class="form-control"
+                                   placeholder="Número de empleado" />
+
+                        </div>
+
+                        <span asp-validation-for="UserName"
+                              class="text-danger small">
+                        </span>
+
+                    </div>
+
+                    <div class="col-md-4">
+
+                        <label asp-for="FullName"
+                               class="form-label fw-semibold">
+
+                            Nombre Completo
+
+                        </label>
+
+                        <div class="input-group">
+
+                            <span class="input-group-text">
+
+                                <i class="bi bi-person"></i>
+
+                            </span>
+
+                            <input asp-for="FullName"
+                                   class="form-control"
+                                   placeholder="Nombre completo" />
+
+                        </div>
+
+                        <span asp-validation-for="FullName"
+                              class="text-danger small">
+                        </span>
+
+                    </div>
+
+                    <div class="col-md-4">
+
+                        <label asp-for="Email"
+                               class="form-label fw-semibold">
+
+                            Correo Electrónico
+
+                        </label>
+
+                        <div class="input-group">
+
+                            <span class="input-group-text">
+
+                                <i class="bi bi-envelope"></i>
+
+                            </span>
+
+                            <input asp-for="Email"
+                                   class="form-control"
+                                   autocomplete="username"
+                                   placeholder="usuario@empresa.com" />
+
+                        </div>
+
+                        <span asp-validation-for="Email"
+                              class="text-danger small">
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- CONFIGURACIÓN -->
+
+            <div class="form-section mb-4">
+
+                <h6 class="section-title mb-2">
+
+                    <span class="section-step">2</span>
+
+                    <i class="bi bi-sliders me-2"></i>
+
+                    Configuración de Acceso
+
+                </h6>
+
+                <p class="text-muted mb-4">
+
+                    Actualice el área organizacional y el nivel de acceso del usuario.
+
+                </p>
+
+                <!-- AREA -->
+
+                <div class="mb-4">
+
+                    <label class="form-label fw-semibold">
+
+                        <i class="bi bi-diagram-3 me-1"></i>
+
+                        Área
+
+                    </label>
+
+                    <input asp-for="Area"
+                           type="hidden"
+                           id="Area" />
+
+                    <div class="area-selector">
+
+                        <div class="area-pill warehouse-pill"
+                             data-area="Warehouse"
+                             role="button"
+                             tabindex="0">
+
+                            <i class="bi bi-box-seam me-2"></i>
+
+                            Warehouse
+
+                        </div>
+
+                        <div class="area-pill engineering-pill"
+                             data-area="Engineering"
+                             role="button"
+                             tabindex="0">
+
+                            <i class="bi bi-gear me-2"></i>
+
+                            Engineering
+
+                        </div>
+
+                        <div class="area-pill quality-pill"
+                             data-area="Quality"
+                             role="button"
+                             tabindex="0">
+
+                            <i class="bi bi-shield-check me-2"></i>
+
+                            Quality
+
+                        </div>
+
+                        <div class="area-pill production-pill"
+                             data-area="Production Line"
+                             role="button"
+                             tabindex="0">
+
+                            <i class="bi bi-cpu me-2"></i>
+
+                            Production
+
+                        </div>
+
+                    </div>
+
+                    <span asp-validation-for="Area"
+                          class="text-danger small d-block mt-2">
+                    </span>
+
+                    <small class="text-muted d-block mt-2">
+
+                        Seleccione el área a la que pertenece el usuario.
+
+                    </small>
+
+                </div>
+
+
+                <!-- ROL -->
+
+                <div>
+
+                    <label asp-for="Role"
+                           class="form-label fw-semibold">
+
+                        <i class="bi bi-person-badge me-1"></i>
+
+                        Rol
+
+                    </label>
+
+                    <select asp-for="Role"
+                            class="form-select">
+
+                        @foreach (var role in ViewBag.Roles)
+                        {
+                            <option value="@role.Name">
+
+                                @role.Name
+
+                            </option>
+                        }
+
+                    </select>
+
+                    <span asp-validation-for="Role"
+                          class="text-danger small">
+                    </span>
+
+                    <small class="text-muted d-block mt-2">
+
+                        <i class="bi bi-info-circle me-1"></i>
+
+                        El rol determina los permisos y módulos disponibles dentro de Vestigium.
+
+                    </small>
+
+                </div>
+
+            </div>
+
+            <!-- CONFIRMACIÓN -->
+
+            <div class="form-section mb-4">
+
+                <h6 class="section-title mb-2">
+
+                    <span class="section-step">3</span>
+
+                    <i class="bi bi-shield-check me-2"></i>
+
+                    Confirmación de Cambios
+
+                </h6>
+
+                <p class="text-muted mb-4">
+
+                    Revise la configuración antes de actualizar la cuenta.
+
+                </p>
+
+                <div class="alert alert-primary border-0 mb-0">
+
+                    <div class="d-flex align-items-start">
+
+                        <i class="bi bi-info-circle fs-5 me-3"></i>
+
+                        <div>
+
+                            <div class="fw-semibold">
+
+                                Aplicación inmediata
+
+                            </div>
+
+                            <div class="small">
+
+                                Los cambios realizados actualizarán inmediatamente
+                                la información y los permisos disponibles para este usuario.
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- BOTONES -->
+
+            <hr />
+
+            <div class="d-flex justify-content-end gap-2">
+
+                <a asp-action="Index"
+                   class="btn btn-outline-secondary">
+
+                    <i class="bi bi-x-circle me-1"></i>
+
+                    Cancelar
+
+                </a>
+
+                <button type="submit"
+                        class="btn btn-primary">
+
+                    <i class="bi bi-person-check me-1"></i>
+
+                    Actualizar Usuario
+
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+@section Scripts
+{
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+
+        const areaInput =
+    document.getElementById("Area");
+
+const pills =
+    document.querySelectorAll(".area-pill");
+
+
+function applySelection() {
+
+    pills.forEach(pill => {
+
+        pill.classList.remove(
+            "area-pill-selected"
+        );
+
+        if (
+            pill.dataset.area ===
+            areaInput.value
+        ) {
+            pill.classList.add(
+                "area-pill-selected"
+            );
+        }
+    });
+}
+
+
+function selectArea(pill) {
+
+    areaInput.value =
+        pill.dataset.area;
+
+    applySelection();
+}
+
+
+pills.forEach(pill => {
+
+    pill.addEventListener(
+        "click",
+        function() {
+
+            selectArea(this);
+        }
+    );
+
+    pill.addEventListener(
+        "keydown",
+        function(e) {
+
+            if (
+                e.key !== "Enter" &&
+                e.key !== " "
+            ) {
+                return;
+            }
+
+            e.preventDefault();
+
+            selectArea(this);
+        }
+    );
+});
+
+
+applySelection();
+
+        applySelection();
+
+    </script>
+}

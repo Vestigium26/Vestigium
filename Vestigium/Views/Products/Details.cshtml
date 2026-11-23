@@ -1,0 +1,557 @@
+﻿@model Vestigium.Models.Product
+
+@{
+    ViewData["Title"] = "Detalle de Producto";
+
+    var bomItems = Model.BomItems
+        .OrderBy(x => x.Material.PartNumber)
+        .ToList();
+
+    var componentCount = bomItems.Count;
+}
+
+<div class="container-fluid px-0">
+
+
+    <!-- BREADCRUMB -->
+
+    <nav aria-label="breadcrumb">
+
+        <ol class="breadcrumb">
+
+            <li class="breadcrumb-item">
+
+                <a asp-action="Index">
+                    Catálogo de Productos
+                </a>
+
+            </li>
+
+            <li class="breadcrumb-item active"
+                aria-current="page">
+
+                @Model.ProductNumber
+
+            </li>
+
+        </ol>
+
+    </nav>
+
+
+    <!-- Product HERO -->
+
+    <div class="card hero-card mb-4">
+
+        <div class="card-body p-4">
+
+            <div class="d-flex flex-column flex-lg-row
+                align-items-lg-center
+                justify-content-between
+                gap-3">
+
+
+                <!-- Informacion principal -->
+
+                <div>
+
+                    <div class="text-muted small mb-1">
+                        Producto
+                    </div>
+
+
+                    <h1 class="hero-title mb-1">
+
+                        @Model.ProductNumber
+
+                    </h1>
+
+
+                    <p class="hero-subtitle">
+
+                        @if (!string.IsNullOrWhiteSpace(Model.ProductDescription))
+                        {
+                            @Model.ProductDescription
+                        }
+                        else
+                        {
+                            <span>Sin descripción</span>
+                        }
+
+                    </p>
+
+
+                    <div class="hero-meta">
+
+                        <!-- Estado -->
+                        @if (Model.IsActive)
+                        {
+                            <span class="status-badge production-pill">
+
+                                <i class="bi bi-check-circle-fill"></i>
+
+                                Activo
+
+                            </span>
+                        }
+                        else
+                        {
+                            <span class="status-badge badge-neutral">
+
+                                <i class="bi bi-dash-circle"></i>
+
+                                Inactivo
+
+                            </span>
+                        }
+
+
+                        <!-- BOM -->
+
+                        <span class="component-badge">
+
+                            <i class="bi bi-boxes"></i>
+
+                            @componentCount
+                            @(componentCount == 1 ? "componente" : "componentes")
+
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Acciones -->
+
+                <div class="page-header-actions">
+
+                    <a asp-action="Index"
+                       class="btn btn-outline-secondary">
+
+                        <i class="bi bi-arrow-left"></i>
+
+                        Regresar
+
+                    </a>
+
+
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <a asp-action="Edit"
+                           asp-route-id="@Model.Id"
+                           class="btn btn-outline-secondary">
+
+                            <i class="bi bi-pencil"></i>
+
+                            Editar
+
+                        </a>
+
+
+                        <a asp-controller="ProductBom"
+                           asp-action="Index"
+                           asp-route-productId="@Model.Id"
+                           class="btn btn-primary">
+
+                            <i class="bi bi-diagram-3"></i>
+
+                            Administrar BOM
+
+                        </a>
+                    }
+                    else
+                    {
+                        <a asp-controller="ProductBom"
+                           asp-action="Index"
+                           asp-route-productId="@Model.Id"
+                           class="btn btn-outline-primary">
+
+                            <i class="bi bi-diagram-3"></i>
+
+                            Ver BOM
+
+                        </a>
+                    }
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Resumen del producto -->
+
+    <div class="card module-card mb-4">
+
+        <div class="card-header">
+
+            <h2 class="card-title-standard d-flex align-items-center gap-2">
+
+                <i class="bi bi-info-circle text-primary"></i>
+
+                Información General
+
+            </h2>
+
+        </div>
+
+
+        <div class="card-body">
+
+            <div class="product-summary">
+
+
+                <!-- Numero -->
+
+                <div class="product-summary-item">
+
+                    <span class="detail-label">
+                        Número de Producto
+                    </span>
+
+                    <div class="detail-value product-part-number table-reference">
+
+                        @Model.ProductNumber
+
+                    </div>
+
+                </div>
+
+
+                <!-- Descripcion -->
+
+                <div class="product-summary-item">
+
+                    <span class="detail-label">
+                        Descripción
+                    </span>
+
+                    <div class="detail-value">
+
+                        @if (!string.IsNullOrWhiteSpace(Model.ProductDescription))
+                        {
+                            @Model.ProductDescription
+                        }
+                        else
+                        {
+                            <span class="text-muted">
+                                Sin descripción
+                            </span>
+                        }
+
+                    </div>
+
+                </div>
+
+
+                <!-- Estado -->
+
+                <div class="product-summary-item">
+
+                    <span class="detail-label">
+                        Estado
+                    </span>
+
+                    <div class="detail-value">
+
+                        @if (Model.IsActive)
+                        {
+                            <span class="text-success">
+
+                                <i class="bi bi-check-circle me-1"></i>
+
+                                Activo
+
+                            </span>
+                        }
+                        else
+                        {
+                            <span class="text-muted">
+
+                                <i class="bi bi-dash-circle me-1"></i>
+
+                                Inactivo
+
+                            </span>
+                        }
+
+                    </div>
+
+                </div>
+
+
+                <!-- Fecha -->
+
+                <div class="product-summary-item">
+
+                    <span class="detail-label">
+                        Fecha de Creación
+                    </span>
+
+                    <div class="detail-value">
+
+                        <i class="bi bi-calendar3 me-1 text-muted"></i>
+
+                        @Model.CreatedDate.ToString("dd/MM/yyyy")
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- BILL OF MATERIALS -->
+
+    <div class="card module-card">
+
+        <!-- Header -->
+
+        <div class="card-header">
+
+            <div class="d-flex flex-column flex-md-row
+                justify-content-between
+                align-items-md-center
+                gap-3">
+
+                <div>
+
+                    <h2 class="card-title-standard d-flex align-items-center gap-2">
+
+                        <i class="bi bi-diagram-3 text-primary"></i>
+
+                        Bill of Materials (BOM)
+
+                    </h2>
+
+                    <div class="text-muted small mt-1">
+
+                        Materiales y cantidades requeridas para fabricar
+                        este producto.
+
+                    </div>
+
+                </div>
+
+
+                <div class="d-flex align-items-center gap-2">
+
+                    <span class="component-badge">
+
+                        <i class="bi bi-boxes"></i>
+
+                        @componentCount
+
+                        @(componentCount == 1
+                            ? "componente"
+                            : "componentes")
+
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Bom con componentes -->
+        @if (componentCount > 0)
+        {
+            <div class="table-responsive">
+
+                <table class="table table-modern table-hover align-middle">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                Número de Parte
+                            </th>
+
+                            <th>
+                                Descripción
+                            </th>
+
+                            <th class="text-end text-nowrap">
+                                Cantidad Requerida
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        @foreach (var item in bomItems)
+                        {
+                            <tr class="bom-component-row">
+
+
+                                <!-- Parte -->
+
+                                <td>
+
+                                    <div class="material-display">
+
+                                        <span class="material-number table-reference">
+
+                                            @item.Material.PartNumber
+
+                                        </span>
+
+                                    </div>
+
+                                </td>
+
+
+                                <!-- Descripcion -->
+
+                                <td>
+
+                                    @if (!string.IsNullOrWhiteSpace(item.Material.Description))
+                                    {
+                                        <div class="material-description">
+
+                                            @item.Material.Description
+
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">
+
+                                            Sin descripción
+
+                                        </span>
+                                    }
+
+                                </td>
+
+
+                                <!-- Cantidad -->
+
+                                <td class="text-end">
+
+                                    <span class="bom-quantity">
+
+                                        @item.Quantity.ToString("0.####")
+
+                                    </span>
+
+                                </td>
+
+                            </tr>
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+
+            <!-- Acceso al bom completo -->
+
+            <div class="card-footer">
+
+                <div class="d-flex flex-column flex-sm-row
+                    justify-content-between
+                    align-items-sm-center
+                    gap-2">
+
+                    <div class="small text-muted">
+
+                        Mostrando la lista de materiales actualmente
+                        asociada al producto.
+
+                    </div>
+
+
+                    <a asp-controller="ProductBom"
+                       asp-action="Index"
+                       asp-route-productId="@Model.Id"
+                       class="btn btn-sm btn-outline-primary">
+
+                        <i class="bi bi-diagram-3"></i>
+
+                        @(User.IsInRole("Admin")
+                            ? "Administrar BOM"
+                            : "Ver BOM completo")
+
+                    </a>
+
+                </div>
+
+            </div>
+        }
+        else
+        {
+            <!-- BOM Vacio -->
+
+            <div class="empty-state">
+
+                <div class="empty-state-icon">
+
+                    <i class="bi bi-boxes"></i>
+
+                </div>
+
+
+                <div class="empty-state-title">
+
+                    Este producto no tiene un BOM configurado
+
+                </div>
+
+
+                <div class="empty-state-description">
+
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <span>
+                            Agrega los materiales y cantidades requeridas
+                            para comenzar a construir su lista de materiales.
+                        </span>
+                    }
+                    else
+                    {
+                        <span>
+                            Actualmente no existen materiales asociados
+                            a este producto.
+                        </span>
+                    }
+
+                </div>
+
+
+                @if (User.IsInRole("Admin"))
+                {
+                    <a asp-controller="ProductBom"
+                       asp-action="Index"
+                       asp-route-productId="@Model.Id"
+                       class="btn btn-primary">
+
+                        <i class="bi bi-plus-lg"></i>
+
+                        Configurar BOM
+
+                    </a>
+                }
+
+            </div>
+        }
+
+    </div>
+
+</div>

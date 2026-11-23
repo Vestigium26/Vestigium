@@ -1,0 +1,393 @@
+﻿/* ==========================================================
+   VESTIGIUM
+   PROFILE MODULE
+
+   User profile-specific components only.
+   Shared styles live in vestigium-theme.css.
+========================================================== */
+
+
+/* ==========================================================
+   1. PROFILE LAYOUT
+========================================================== */
+
+.profile-section {
+	margin-bottom: 1.5rem;
+}
+
+.profile-grid {
+	display: grid;
+	gap: 1rem;
+}
+
+
+/* ==========================================================
+   2. PROFILE HERO
+========================================================== */
+
+.profile-hero {
+	position: relative;
+	overflow: hidden;
+	border: 0;
+	background: linear-gradient( 135deg, rgba(13, 110, 253, .08), rgba(13, 110, 253, .02) );
+}
+
+
+/* ==========================================================
+   3. PROFILE AVATAR
+========================================================== */
+
+.profile-avatar-large {
+	width: 96px;
+	height: 96px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+	border-radius: 50%;
+	background: rgba(13, 110, 253, .12);
+	color: var(--engineering);
+	font-size: 3.2rem;
+	font-weight: 600;
+}
+
+
+/* ==========================================================
+   4. USER IDENTITY
+========================================================== */
+
+.profile-user-name {
+	margin-bottom: .25rem;
+	font-size: 1.5rem;
+	font-weight: 700;
+	line-height: 1.2;
+	overflow-wrap: anywhere;
+}
+
+.profile-user-role {
+	color: var(--text-secondary);
+	font-size: .95rem;
+}
+
+.profile-user-email {
+	color: var(--text-secondary);
+	font-size: .9rem;
+	overflow-wrap: anywhere;
+}
+
+
+/* ==========================================================
+   5. PROFILE META INFORMATION
+========================================================== */
+
+.profile-meta {
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: .75rem;
+}
+
+.profile-meta-item {
+	display: inline-flex;
+	align-items: center;
+	gap: .5rem;
+	min-width: 0;
+}
+
+.profile-meta-icon {
+	flex-shrink: 0;
+	color: var(--engineering);
+}
+
+
+/* ==========================================================
+   6. PROFILE INFORMATION CARDS
+========================================================== */
+
+.profile-info-card {
+	height: 100%;
+	padding: 1.25rem;
+	border: 1px solid var(--border-light);
+	border-radius: var(--radius-md);
+	background: var(--bg-card);
+	transition: border-color .2s ease, box-shadow .2s ease;
+}
+
+	.profile-info-card:hover {
+		border-color: rgba(13, 110, 253, .20);
+		box-shadow: var(--shadow-sm);
+	}
+
+.profile-card-icon {
+	margin-bottom: .75rem;
+	color: var(--engineering);
+	font-size: 1.4rem;
+	line-height: 1;
+}
+
+.profile-card-label {
+	margin-bottom: .25rem;
+	color: var(--text-secondary);
+	font-size: .85rem;
+}
+
+.profile-card-value {
+	color: var(--text-primary);
+	font-size: 1rem;
+	font-weight: 600;
+	overflow-wrap: anywhere;
+}
+
+
+/* ==========================================================
+   7. SECURITY SUMMARY
+========================================================== */
+
+.security-summary {
+	display: flex;
+	align-items: center;
+	gap: 1rem;
+	min-width: 0;
+}
+
+.security-summary-content {
+	min-width: 0;
+	flex: 1;
+}
+
+.security-summary-title {
+	margin-bottom: .25rem;
+	font-weight: 600;
+}
+
+.security-summary-description {
+	margin-bottom: 0;
+	color: var(--text-secondary);
+	font-size: .9rem;
+}
+
+
+/* ==========================================================
+   8. ACCOUNT STATUS
+========================================================== */
+
+.profile-status-card {
+	height: 100%;
+}
+
+.profile-status-value {
+	font-size: 1.8rem;
+	font-weight: 700;
+	line-height: 1;
+	font-variant-numeric: tabular-nums;
+}
+
+.profile-status-label {
+	color: var(--text-secondary);
+	font-size: .9rem;
+}
+
+
+/* ==========================================================
+   9. QUICK ACTIONS
+========================================================== */
+
+.profile-action-card {
+	height: 100%;
+	padding: 1rem;
+	border: 1px solid var(--border-light);
+	border-radius: var(--radius-md);
+	background: var(--bg-card);
+	transition: border-color .2s ease, box-shadow .2s ease, transform .2s ease;
+}
+
+	.profile-action-card:hover {
+		transform: translateY(-2px);
+		border-color: rgba(13, 110, 253, .20);
+		box-shadow: var(--shadow-md);
+	}
+
+.profile-action-icon {
+	color: var(--engineering);
+	font-size: 1.5rem;
+	line-height: 1;
+}
+
+.profile-action-title {
+	margin-bottom: .25rem;
+	font-weight: 600;
+}
+
+.profile-action-description {
+	margin-bottom: 0;
+	color: var(--text-secondary);
+	font-size: .85rem;
+}
+
+
+/* ==========================================================
+   10. USER ACTIVITY
+========================================================== */
+
+.profile-activity-item {
+	display: flex;
+	align-items: flex-start;
+	gap: .75rem;
+	padding: .85rem 0;
+	border-bottom: 1px solid var(--border-light);
+}
+
+	.profile-activity-item:first-child {
+		padding-top: 0;
+	}
+
+	.profile-activity-item:last-child {
+		padding-bottom: 0;
+		border-bottom: 0;
+	}
+
+.profile-activity-icon {
+	flex-shrink: 0;
+	color: var(--engineering);
+	font-size: 1rem;
+}
+
+.profile-activity-text {
+	min-width: 0;
+	flex: 1;
+}
+
+.profile-activity-title {
+	font-weight: 600;
+}
+
+.profile-activity-description {
+	margin-top: .15rem;
+	color: var(--text-secondary);
+	font-size: .85rem;
+	overflow-wrap: anywhere;
+}
+
+.profile-activity-date {
+	flex-shrink: 0;
+	color: var(--text-secondary);
+	font-size: .8rem;
+	white-space: nowrap;
+}
+
+
+/* ==========================================================
+   11. PROFILE DETAILS
+========================================================== */
+
+.profile-detail-list {
+	display: flex;
+	flex-direction: column;
+}
+
+.profile-detail-item {
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: 1rem;
+	padding: .75rem 0;
+	border-bottom: 1px solid var(--border-light);
+}
+
+	.profile-detail-item:first-child {
+		padding-top: 0;
+	}
+
+	.profile-detail-item:last-child {
+		padding-bottom: 0;
+		border-bottom: 0;
+	}
+
+.profile-detail-label {
+	color: var(--text-secondary);
+	font-size: .85rem;
+}
+
+.profile-detail-value {
+	font-weight: 600;
+	text-align: right;
+	overflow-wrap: anywhere;
+}
+
+
+/* ==========================================================
+   12. RESPONSIVE
+========================================================== */
+
+@media (max-width: 767.98px) {
+
+	.profile-avatar-large {
+		width: 80px;
+		height: 80px;
+		font-size: 2.5rem;
+	}
+
+	.profile-user-name {
+		font-size: 1.25rem;
+	}
+
+	.profile-meta {
+		flex-direction: column;
+		align-items: flex-start;
+	}
+
+	.security-summary {
+		align-items: flex-start;
+	}
+
+	.profile-activity-item {
+		flex-wrap: wrap;
+	}
+
+	.profile-activity-date {
+		width: 100%;
+		padding-left: 1.75rem;
+	}
+
+	.profile-detail-item {
+		flex-direction: column;
+		gap: .25rem;
+	}
+
+	.profile-detail-value {
+		text-align: left;
+	}
+}
+
+
+@media (max-width: 575.98px) {
+
+	.profile-info-card,
+	.profile-action-card {
+		padding: 1rem;
+	}
+
+	.profile-avatar-large {
+		width: 72px;
+		height: 72px;
+		font-size: 2.2rem;
+	}
+}
+
+
+/* ==========================================================
+   13. FUTURE PROFILE COMPONENTS
+========================================================== */
+
+/*
+
+.profile-security-history
+.profile-login-history
+.profile-notifications
+.profile-area-summary
+.profile-access-card
+.profile-preferences
+.profile-theme-selector
+.profile-device-list
+
+*/

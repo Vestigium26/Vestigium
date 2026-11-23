@@ -1,0 +1,2284 @@
+﻿@model Vestigium.Models.ViewModels.MovementCreateVM
+
+@using Vestigium.Models.Enums
+
+@{
+    ViewData["Title"] = "Nuevo Movimiento";
+}
+
+<div class="container-fluid px-0">
+
+    <!-- =====================================================
+         ENCABEZADO
+    ====================================================== -->
+
+    <div class="card hero-card mb-4">
+
+        <div class="card-body p-4">
+
+            <div class="d-flex flex-column flex-lg-row
+                justify-content-between
+                align-items-lg-center
+                gap-3">
+
+                <div>
+
+                    <h1 class="hero-title
+                        d-flex
+                        align-items-center
+                        gap-2
+                        mb-1">
+
+                        <i class="bi bi-arrow-left-right"></i>
+
+                        <span>
+                            Registrar Movimiento
+                        </span>
+
+                    </h1>
+
+                    <p class="hero-subtitle mb-0">
+
+                        Entradas, transferencias y salidas
+                        de material.
+
+                    </p>
+
+                </div>
+
+                <div class="page-header-actions">
+
+                    <a asp-action="Index"
+                       class="btn btn-outline-secondary">
+
+                        <i class="bi bi-arrow-left"></i>
+
+                        Regresar a Movimientos
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         FORMULARIO
+    ====================================================== -->
+
+    <div class="card module-card">
+
+        <div class="card-header">
+
+            <div>
+
+                <h2 class="card-title-standard
+                    d-flex
+                    align-items-center
+                    gap-2">
+
+                    <i class="bi bi-arrow-left-right text-primary"></i>
+
+                    Información del Movimiento
+
+                </h2>
+
+                <div class="text-muted small mt-1">
+
+                    Complete la información requerida para
+                    registrar el movimiento de inventario.
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="card-body p-4">
+
+            <form asp-action="Create"
+                  method="post"
+                  id="movementForm">
+
+                <!-- =================================================
+                     VALIDACIÓN GENERAL
+                ================================================== -->
+                @if (!ViewData.ModelState.IsValid)
+                {
+                    <div asp-validation-summary="ModelOnly"
+                         class="alert alert-danger mb-4"
+                         role="alert">
+                    </div>
+                }
+
+
+                <!-- =================================================
+                     CAMPOS INTERNOS
+                ================================================== -->
+
+                <input asp-for="MaterialId"
+                       type="hidden"
+                       id="materialId" />
+
+                <input asp-for="MovementType"
+                       type="hidden"
+                       id="MovementType" />
+
+                <span asp-validation-for="MaterialId"
+                      class="text-danger small d-block">
+                </span>
+
+
+                <!-- =================================================
+                     PASO 1
+                     MATERIAL
+                ================================================== -->
+
+                <section class="form-section">
+
+                    <div class="form-section-title">
+
+                        <span class="section-step">
+                            1
+                        </span>
+
+                        <div>
+
+                            <div>
+                                Identificar Material
+                            </div>
+
+                            <div class="text-muted small fw-normal mt-1">
+
+                                Escanee el código QR o busque
+                                manualmente el material.
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="row g-4">
+
+                        <!-- =========================================
+                             ESCÁNER QR
+                        ========================================== -->
+
+                        <div class="col-12 col-lg-5">
+
+                            <div class="card
+                                h-100
+                                border
+                                bg-body-tertiary">
+
+                                <div class="card-body">
+
+                                    <div class="fw-semibold mb-3">
+
+                                        <i class="bi bi-camera
+                                        me-2
+                                        text-primary"></i>
+
+                                        Escáner QR
+
+                                    </div>
+
+
+                                    <p class="text-muted small">
+
+                                        Utilice la cámara del dispositivo
+                                        para identificar el material.
+
+                                    </p>
+
+
+                                    <div class="d-flex
+                                        flex-wrap
+                                        gap-2
+                                        mb-3">
+
+                                        <button type="button"
+                                                id="btnStartScanner"
+                                                class="btn btn-outline-primary">
+
+                                            <i class="bi bi-camera me-1"></i>
+
+                                            Iniciar Escáner
+
+                                        </button>
+
+
+                                        <button type="button"
+                                                id="btnStopScanner"
+                                                class="btn btn-outline-secondary">
+
+                                            <i class="bi bi-stop-circle me-1"></i>
+
+                                            Detener
+
+                                        </button>
+
+                                    </div>
+
+
+                                    <div id="reader"
+                                         class="mx-auto"
+                                         style="max-width:500px;">
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- =========================================
+                             SELECCIÓN MANUAL
+                        ========================================== -->
+
+                        <div class="col-12 col-lg-7">
+
+                            <div class="card
+                                h-100
+                                border
+                                bg-body-tertiary">
+
+                                <div class="card-body">
+
+                                    <div class="fw-semibold mb-3">
+
+                                        <i class="bi bi-search
+                                        me-2
+                                        text-primary"></i>
+
+                                        Selección Manual
+
+                                    </div>
+
+
+                                    <div class="row g-3">
+
+                                        <div class="col-12">
+
+                                            <label class="form-label">
+
+                                                Número de Parte
+
+                                            </label>
+
+
+                                            <input type="text"
+                                                   id="partNumberInput"
+                                                   class="form-control"
+                                                   list="partNumbersList"
+                                                   autocomplete="off"
+                                                   placeholder="Buscar número de parte..." />
+
+
+                                            <datalist id="partNumbersList">
+
+                                                @foreach (var item in ViewBag.MaterialsList)
+                                                {
+                                                    <option value="@item.PartNumber">
+                                                    </option>
+                                                }
+
+                                            </datalist>
+
+                                        </div>
+
+
+                                        <div class="col-12">
+
+                                            <label class="form-label">
+
+                                                Material
+
+                                            </label>
+
+
+                                            <select id="materialSelector"
+                                                    class="form-select">
+
+                                                <option value="">
+
+                                                    Seleccione un material
+
+                                                </option>
+
+                                                @foreach (var item in ViewBag.MaterialsList)
+                                                {
+                                                    <option value="@item.Id"
+                                                            data-partnumber="@item.PartNumber">
+
+                                                        @item.PartNumber
+
+                                                    </option>
+                                                }
+
+                                            </select>
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- =============================================
+                         MATERIAL SELECCIONADO
+                    ============================================== -->
+
+                    <div id="qrResult"
+                         class="alert alert-success mt-3 mb-0"
+                         style="display:none;">
+                    </div>
+
+                </section>
+
+
+                <!-- =================================================
+                     PASO 2
+                     TIPO DE MOVIMIENTO
+                ================================================== -->
+
+                <section class="form-section">
+
+                    <div class="form-section-title">
+
+                        <span class="section-step">
+                            2
+                        </span>
+
+                        <div>
+
+                            <div>
+                                Tipo de Movimiento
+                            </div>
+
+                            <div class="text-muted small fw-normal mt-1">
+
+                                Seleccione la operación que desea
+                                realizar con el material.
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="movement-selector">
+
+                        <!-- ENTRADA -->
+
+                        <div class="movement-pill movement-entry-pill"
+                             data-value="1"
+                             role="button"
+                             tabindex="0">
+
+                            <i class="bi bi-box-arrow-in-down me-2"></i>
+
+                            Entrada
+
+                        </div>
+
+
+                        <!-- TRANSFERENCIA -->
+
+                        <div class="movement-pill movement-transfer-pill"
+                             data-value="2"
+                             role="button"
+                             tabindex="0">
+
+                            <i class="bi bi-arrow-left-right me-2"></i>
+
+                            Transferencia
+
+                        </div>
+
+
+                        <!-- SALIDA -->
+
+                        <div class="movement-pill movement-output-pill"
+                             data-value="3"
+                             role="button"
+                             tabindex="0">
+
+                            <i class="bi bi-box-arrow-right me-2"></i>
+
+                            Salida
+
+                        </div>
+
+                    </div>
+
+
+                    <div id="movementIndicator"
+                         class="alert alert-secondary mt-3 mb-0">
+
+                        <i class="bi bi-info-circle me-2"></i>
+
+                        Seleccione un tipo de movimiento.
+
+                    </div>
+
+
+                    <span asp-validation-for="MovementType"
+                          class="text-danger small d-block mt-1">
+                    </span>
+
+                </section>
+
+
+                <!-- =================================================
+                     PASO 3
+                     INFORMACIÓN DEL MATERIAL
+                ================================================== -->
+
+                <section class="form-section">
+
+                    <div class="form-section-title">
+
+                        <span class="section-step">
+                            3
+                        </span>
+
+                        <div>
+
+                            <div>
+                                Información del Material
+                            </div>
+
+                            <div class="text-muted small fw-normal mt-1">
+
+                                Consulte el inventario actual y seleccione
+                                la ubicación del movimiento.
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="row g-3">
+
+                        <!-- DESCRIPCIÓN -->
+
+                        <div class="col-12 col-lg-6">
+
+                            <label class="form-label">
+                                Descripción
+                            </label>
+
+
+                            <input id="description"
+                                   class="form-control bg-body-tertiary"
+                                   readonly />
+
+                        </div>
+
+
+                        <!-- INVENTARIO TOTAL -->
+
+                        <div class="col-12 col-md-4 col-lg-2">
+
+                            <label class="form-label">
+                                Inventario Total
+                            </label>
+
+
+                            <input id="quantity"
+                                   class="form-control
+                            bg-body-tertiary
+                            fw-bold
+                            text-primary"
+                                   readonly />
+
+                        </div>
+
+
+                        <!-- UBICACIÓN -->
+
+                        <div class="col-12 col-md-8 col-lg-4">
+
+                            <label id="locationLabel"
+                                   class="form-label fw-semibold">
+
+                                <i class="bi bi-geo-alt-fill
+                                me-1
+                                text-primary"></i>
+
+                                Ubicación
+
+                            </label>
+
+
+                            <select asp-for="OriginLocation"
+                                    id="originLocation"
+                                    class="form-select">
+
+                                <option value="">
+                                    Seleccione ubicación
+                                </option>
+
+                            </select>
+
+
+                            <span asp-validation-for="OriginLocation"
+                                  class="text-danger small d-block mt-1">
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <div id="locationHelp"
+                         class="form-text mt-2">
+
+                        Seleccione primero un material
+                        y un tipo de movimiento.
+
+                    </div>
+
+
+                    <!-- =============================================
+                         INVENTARIO DE UBICACIÓN
+                    ============================================== -->
+
+                    <div class="card
+                        border-primary
+                        bg-primary-subtle
+                        mt-4">
+
+                        <div class="card-body text-center py-3">
+
+                            <div id="originLocationQty"
+                                 class="fs-2
+                                fw-bold
+                                text-primary
+                                table-reference">
+
+                                -
+
+                            </div>
+
+
+                            <div id="originQuantityText"
+                                 class="small text-muted">
+
+                                piezas disponibles en la
+                                ubicación seleccionada
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <!-- =================================================
+                     PASO 4
+                     CANTIDAD Y RUTA
+                ================================================== -->
+
+                <section class="form-section">
+
+                    <div class="form-section-title">
+
+                        <span class="section-step">
+                            4
+                        </span>
+
+                        <div>
+
+                            <div>
+                                Cantidad y Ruta
+                            </div>
+
+                            <div class="text-muted small fw-normal mt-1">
+
+                                Indique la cantidad y configure
+                                el destino del movimiento.
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="row g-3">
+
+                        <!-- CANTIDAD -->
+
+                        <div class="col-12 col-lg-5">
+
+                            <label asp-for="Quantity"
+                                   class="form-label fw-semibold">
+
+                                Cantidad
+
+                            </label>
+
+
+                            <div class="input-group input-group-lg">
+
+                                <span class="input-group-text">
+
+                                    <i class="bi bi-boxes"></i>
+
+                                </span>
+
+
+                                <input asp-for="Quantity"
+                                       type="number"
+                                       min="1"
+                                       id="movementQuantity"
+                                       class="form-control quantity-input"
+                                       inputmode="numeric"
+                                       autocomplete="off" />
+
+                            </div>
+
+
+                            <span asp-validation-for="Quantity"
+                                  class="text-danger small d-block mt-1">
+                            </span>
+
+                        </div>
+
+
+                        <!-- DESTINO -->
+
+                        <div class="col-12 col-lg-7">
+
+                            <div id="destinationContainer"
+                                 style="display:none;">
+
+                                <label asp-for="DestinationLocation"
+                                       class="form-label fw-semibold">
+
+                                    Ubicación Destino
+
+                                </label>
+
+
+                                <select asp-for="DestinationLocation"
+                                        id="DestinationLocation"
+                                        class="form-select form-select-lg">
+                                </select>
+
+
+                                <span asp-validation-for="DestinationLocation"
+                                      class="text-danger small d-block mt-1">
+                                </span>
+
+                            </div>
+
+
+                            <div id="destinationPlaceholder"
+                                 class="alert
+                                alert-light
+                                border
+                                mb-0">
+
+                                <i class="bi bi-info-circle me-2"></i>
+
+                                Seleccione un tipo de movimiento
+                                para configurar el destino.
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <!-- =================================================
+                     PASO 5
+                     RECEPCIÓN
+                ================================================== -->
+
+                <section id="receiverContainer"
+                         class="form-section"
+                         style="display:none;">
+
+                    <div class="form-section-title">
+
+                        <span class="section-step">
+                            5
+                        </span>
+
+                        <div>
+
+                            <div>
+                                Información de Recepción
+                            </div>
+
+                            <div class="text-muted small fw-normal mt-1">
+
+                                Seleccione la persona que recibe
+                                físicamente el material.
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="row g-3">
+
+                        <!-- RECEPTOR -->
+
+                        <div class="col-12 col-md-6">
+
+                            <label asp-for="ReceivedByUserId"
+                                   class="form-label fw-semibold">
+
+                                Recibido por
+
+                            </label>
+
+
+                            <select asp-for="ReceivedByUserId"
+                                    id="receiverUser"
+                                    class="form-select">
+
+                                <option value="">
+
+                                    Seleccione un empleado
+
+                                </option>
+
+                            </select>
+
+
+                            <span asp-validation-for="ReceivedByUserId"
+                                  class="text-danger small d-block mt-1">
+                            </span>
+
+
+                            <div id="receiverHelp"
+                                 class="form-text">
+
+                                El empleado disponible depende
+                                del tipo de movimiento.
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- NÚMERO DE EMPLEADO -->
+
+                        <div class="col-12 col-md-6">
+
+                            <label asp-for="ReceivedByEmployeeNumber"
+                                   class="form-label fw-semibold">
+
+                                Número de Empleado
+
+                            </label>
+
+
+                            <input asp-for="ReceivedByEmployeeNumber"
+                                   id="employeeNumber"
+                                   class="form-control bg-body-tertiary"
+                                   readonly />
+
+
+                            <div class="form-text">
+
+                                Se obtiene automáticamente
+                                del empleado seleccionado.
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- INFORMACIÓN -->
+
+                    <div class="alert alert-light border mt-3 mb-0">
+
+                        <div class="d-flex
+                            align-items-start
+                            gap-2">
+
+                            <i class="bi bi-info-circle
+                            text-primary
+                            mt-1"></i>
+
+                            <div>
+
+                                <div class="fw-semibold">
+
+                                    Receptor requerido
+
+                                </div>
+
+
+                                <div id="receiverAreaHelp"
+                                     class="small text-muted">
+
+                                    Seleccione un tipo de movimiento
+                                    para determinar el área responsable.
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <!-- =================================================
+                     PASO 6
+                     COMENTARIOS
+                ================================================== -->
+
+                <section class="form-section mb-0">
+
+                    <div class="form-section-title">
+
+                        <span class="section-step">
+                            6
+                        </span>
+
+                        <div>
+
+                            <div>
+                                Comentarios
+                            </div>
+
+                            <div class="text-muted small fw-normal mt-1">
+
+                                Registre cualquier observación
+                                relacionada con el movimiento.
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <textarea asp-for="Comments"
+                              rows="4"
+                              class="form-control"
+                              placeholder="Ingrese observaciones relacionadas con el movimiento..."></textarea>
+
+                </section>
+
+
+                <!-- =================================================
+                     ACCIONES FINALES
+                ================================================== -->
+
+                <hr class="mt-4" />
+
+
+                <div class="d-flex
+                    flex-column
+                    flex-sm-row
+                    justify-content-end
+                    gap-2">
+
+                    <a asp-action="Index"
+                       class="btn btn-outline-secondary">
+
+                        <i class="bi bi-x-circle me-1"></i>
+
+                        Cancelar
+
+                    </a>
+
+
+                    <button type="submit"
+                            id="submitMovement"
+                            class="btn btn-primary">
+
+                        <i class="bi bi-check-circle me-1"></i>
+
+                        Registrar Movimiento
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     QR SCANNER
+====================================================== -->
+
+<script src="https://unpkg.com/html5-qrcode"></script>
+
+
+@section Scripts
+{
+    <partial name="_ValidationScriptsPartial" />
+
+
+    <script>
+
+          // ======================================
+          // UBICACIONES OFICIALES
+          // WarehouseLocations.GetLocations()
+            // ======================================
+
+            const warehouseLocations = [
+
+                    @foreach (var location in ViewBag.WarehouseLocations)
+                {
+                         <text>"@location",</text>
+                    }
+
+             ];
+
+
+             // ======================================
+                // ELEMENTOS PRINCIPALES
+            // ======================================
+
+                const partNumberInput =
+                document.getElementById(
+                     "partNumberInput");
+
+            const materialSelector =
+                 document.getElementById(
+                        "materialSelector");
+
+             const materialIdInput =
+                    document.getElementById(
+                    "materialId");
+
+                const movementInput =
+                document.getElementById(
+                     "MovementType");
+
+            const originLocation =
+                 document.getElementById(
+                    "originLocation");
+
+                const originLocationQty =
+                document.getElementById(
+                     "originLocationQty");
+
+            const originQuantityText =
+                 document.getElementById(
+                    "originQuantityText");
+
+            const destination =
+                    document.getElementById(
+                        "DestinationLocation");
+
+            const destinationContainer =
+                    document.getElementById(
+                    "destinationContainer");
+
+                      const destinationPlaceholder =
+                document.getElementById(
+                           "destinationPlaceholder");
+
+            const locationLabel =
+                       document.getElementById(
+                              "locationLabel");
+
+                   const locationHelp =
+                          document.getElementById(
+                              "locationHelp");
+
+                   const indicator =
+                          document.getElementById(
+                              "movementIndicator");
+
+                   const receiverContainer =
+                          document.getElementById(
+                    "receiverContainer");
+
+                      const receiverUser =
+                document.getElementById(
+                           "receiverUser");
+
+                      const employeeNumber =
+                document.getElementById(
+                           "employeeNumber");
+
+                   const receiverAreaHelp =
+                document.getElementById(
+                    "receiverAreaHelp");
+
+                const submitMovement =
+                    document.getElementById(
+                    "submitMovement");
+
+
+                   // ======================================
+                      // ESTADO
+            // ======================================
+
+                      let currentMaterialLocations =
+                [];
+
+                      let currentUsers =
+                          [];
+
+                   let processingScan =
+                          false;
+
+                   let scanTimer =
+                          null;
+
+                         let html5QrCode =
+                null;
+
+
+                         // ======================================
+                         // INVENTARIO DE UBICACIÓN
+            // ======================================
+
+                      function updateOriginQuantity() {
+
+                             const selected =
+                    originLocation.options[
+                               originLocation.selectedIndex
+                              ];
+
+
+                originLocationQty.textContent =
+                           selected?.dataset.quantity
+                              ?? "-";
+                         }
+
+
+                   originLocation.addEventListener(
+                          "change",
+                             updateOriginQuantity);
+
+
+                   // ======================================
+                      // SELECTOR DE UBICACIÓN
+            // ======================================
+
+                      function updateLocationSelector() {
+
+                const movementType =
+                           movementInput.value;
+
+                       const previousValue =
+                    originLocation.value;
+
+
+                    originLocation.innerHTML =
+                        '<option value="">' +
+                    'Seleccione ubicación' +
+                        '</option>';
+
+
+                          originLocationQty.textContent =
+                    "-";
+
+
+                // ==================================
+                       // ENTRADA
+                          //
+                          // Todas las ubicaciones oficiales.
+                // ==================================
+
+                          if (movementType === "1") {
+
+                           warehouseLocations.forEach(
+                                  locationCode => {
+
+                                         const existingLocation =
+                                currentMaterialLocations
+                                           .find(x =>
+                                                  x.code ===
+                                                     locationCode);
+
+
+                                   const quantity =
+                                          existingLocation
+                                                 ? existingLocation.quantity
+                                                 : 0;
+
+
+                                      const option =
+                                document.createElement(
+                                           "option");
+
+
+                            option.value =
+                                       locationCode;
+
+
+                            option.textContent =
+                                existingLocation
+                                        ? `${locationCode} - ${quantity} piezas actuales`
+                                        : `${locationCode} - sin inventario actual`;
+
+
+                                option.dataset.quantity =
+                                quantity;
+
+
+                            originLocation.appendChild(
+                                       option);
+                                  });
+                }
+
+
+                // ==================================
+                       // TRANSFERENCIA / SALIDA
+                          //
+                          // Solo ubicaciones con inventario.
+                // ==================================
+
+                          else if (
+                    movementType === "2" ||
+                           movementType === "3"
+                          ) {
+
+                    currentMaterialLocations.forEach(
+                               location => {
+
+                            const option =
+                                       document.createElement(
+                                              "option");
+
+
+                                      option.value =
+                                          location.code;
+
+
+                             option.textContent =
+                              `${location.code} - ${location.quantity} piezas`;
+
+
+                             option.dataset.quantity =
+                                 location.quantity;
+
+
+                            originLocation.appendChild(
+                                    option);
+                        });
+                    }
+
+
+                          // ==================================
+                          // RESTAURAR SELECCIÓN
+                 // ==================================
+
+        if (
+                  previousValue &&
+                  Array.from(
+                      originLocation.options)
+                        .some(x =>
+                          x.value ===
+                            previousValue)
+                 ) {
+
+                    originLocation.value =
+                         previousValue;
+
+
+                    updateOriginQuantity();
+                 }
+                }
+
+
+                // ======================================
+            // INFORMACIÓN DEL MATERIAL
+             // ======================================
+
+            async function loadMaterialInfo(
+                 materialId) {
+
+                    if (!materialId) {
+                        return;
+                }
+
+
+                    const response =
+                        await fetch(
+                      `/Movements/GetMaterialInfo?id=${materialId}`);
+
+
+              if (!response.ok) {
+                  return;
+                }
+
+
+                 const material =
+                        await response.json();
+
+
+                 if (!material) {
+                        return;
+                }
+
+
+                document
+                     .getElementById(
+                            "description")
+                    .value =
+                         material.description
+                            ?? "";
+
+
+                 document
+                    .getElementById(
+                            "quantity")
+                           .value =
+                        material.quantity
+                            ?? 0;
+                   }
+
+
+                   // ======================================
+            // UBICACIONES DEL MATERIAL
+                // ======================================
+
+            async function loadMaterialLocations(
+                    materialId) {
+
+              currentMaterialLocations =
+                    [];
+
+
+              if (!materialId) {
+
+                  updateLocationSelector();
+
+                     return;
+                }
+
+
+                const response =
+                     await fetch(
+                            `/Movements/GetMaterialLocations?materialId=${materialId}`);
+
+
+                    if (!response.ok) {
+
+                     updateLocationSelector();
+
+                    return;
+                 }
+
+
+                    const locations =
+                    await response.json();
+
+
+                    currentMaterialLocations =
+                        Array.isArray(locations)
+                            ? locations
+                            : [];
+
+
+                updateLocationSelector();
+             }
+
+
+             // ======================================
+                // EMPLOYEE NUMBER
+            // ======================================
+
+                function updateEmployeeNumber() {
+
+                const selected =
+                  currentUsers.find(
+                      x =>
+                          x.id.toString() ===
+                            receiverUser.value);
+
+
+              if (!selected) {
+
+                    employeeNumber.value =
+                        "";
+
+                  return;
+                }
+
+
+                 employeeNumber.value =
+                    selected.employeeNumber
+                     ?? "";
+                }
+
+
+            receiverUser.addEventListener(
+                 "change",
+                    updateEmployeeNumber);
+
+
+            // ======================================
+             // RECEPTORES
+            // ======================================
+
+                async function loadReceivers(
+                    type,
+                selectedUserId = "") {
+
+                       receiverContainer.style.display =
+                    "block";
+
+
+                       receiverUser.innerHTML =
+                        '<option value="">' +
+                    'Seleccione un empleado' +
+                        '</option>';
+
+
+                employeeNumber.value =
+                        "";
+
+
+                const response =
+                           await fetch(
+                        `/Movements/GetReceivers?movementType=${type}`);
+
+
+                if (!response.ok) {
+
+                           currentUsers =
+                        [];
+
+                           return;
+                       }
+
+
+                       currentUsers =
+                    await response.json();
+
+
+                    currentUsers.forEach(
+                    user => {
+
+                            const option =
+                            document.createElement(
+                                    "option");
+
+
+                        option.value =
+                             user.id;
+
+
+                         option.textContent =
+                          user.name;
+
+
+                         if (
+                             selectedUserId &&
+                            user.id.toString() ===
+                                selectedUserId.toString()
+                               ) {
+
+                                option.selected =
+                                       true;
+                        }
+
+
+                         receiverUser.appendChild(
+                            option);
+                  });
+
+
+                 if (selectedUserId) {
+
+                        updateEmployeeNumber();
+                    }
+            }
+
+
+            // ======================================
+                   // DESTINOS SEGÚN MOVIMIENTO
+                      // ======================================
+
+                   async function updateDestinations(
+                          preserveDestination = true) {
+
+                       const movementType =
+                              movementInput.value;
+
+
+                       const previousDestination =
+                              preserveDestination
+                            ? destination.value
+                        : "";
+
+
+              destination.innerHTML =
+                  "";
+
+
+                 receiverContainer.style.display =
+                     "none";
+
+
+                receiverUser.innerHTML =
+                           '<option value="">' +
+                              'Seleccione un empleado' +
+                              '</option>';
+
+
+                          employeeNumber.value =
+                                 "";
+
+
+                    updateLocationSelector();
+
+
+              switch (movementType) {
+
+                    // ==================================
+                  // ENTRADA
+                     // ==================================
+
+                    case "1":
+
+                         destinationContainer.style.display =
+                                "none";
+
+
+                         destinationPlaceholder.style.display =
+                                "block";
+
+
+                        destinationPlaceholder.className =
+                          "alert alert-success border mb-0";
+
+
+                            destinationPlaceholder.innerHTML =
+                            '<i class="bi bi-box-arrow-in-down me-2"></i>' +
+                             'Receiving → ubicación seleccionada.';
+
+
+                         locationLabel.innerHTML =
+                            '<i class="bi bi-geo-alt-fill me-1 text-success"></i>' +
+                             ' Ubicación Destino';
+
+
+                        locationHelp.textContent =
+                             "Seleccione la ubicación de almacén donde será recibido el material.";
+
+
+                         originQuantityText.textContent =
+                            "piezas actuales en la ubicación destino";
+
+
+                        indicator.className =
+                                "alert alert-success mt-3 mb-0";
+
+
+                            indicator.innerHTML =
+                                   '<i class="bi bi-box-arrow-in-down me-2"></i>' +
+                            'Entrada de material hacia almacén';
+
+
+                      receiverAreaHelp.textContent =
+                            "Para una Entrada, el receptor debe pertenecer al área Warehouse.";
+
+
+                         await loadReceivers(
+                            1,
+                                "@Model.ReceivedByUserId");
+
+
+                                     break;
+
+
+                        // ==================================
+                    // TRANSFERENCIA
+                           // ==================================
+
+                    case "2":
+
+                            destinationContainer.style.display =
+                            "block";
+
+
+                         destinationPlaceholder.style.display =
+                            "none";
+
+
+                      locationLabel.innerHTML =
+                            '<i class="bi bi-geo-alt-fill me-1 text-primary"></i>' +
+                          ' Ubicación Origen';
+
+
+                      locationHelp.textContent =
+                             "Seleccione la ubicación de almacén desde donde saldrá el material.";
+
+
+                         originQuantityText.textContent =
+                            "piezas disponibles en la ubicación origen";
+
+
+                         destination.add(
+                                new Option(
+                                       "Seleccione una zona",
+                                ""));
+
+
+                            destination.add(
+                                   new Option(
+                                 "Digital Acuity Systems",
+                              "Digital Acuity Systems"));
+
+
+                        destination.add(
+                             new Option(
+                                    "Autophoroptor",
+                                "Autophoroptor"));
+
+
+                            destination.add(
+                                   new Option(
+                                 "Non-Contact Tonometer",
+                                "Non-Contact Tonometer"));
+
+
+                        destination.add(
+                             new Option(
+                              "Manual Phoroptor",
+                                "Manual Phoroptor"));
+
+
+                        destination.add(
+                             new Option(
+                                    "Clean Room",
+                                    "Clean Room"));
+
+
+                            indicator.className =
+                            "alert alert-primary mt-3 mb-0";
+
+
+                            indicator.innerHTML =
+                                '<i class="bi bi-arrow-left-right me-2"></i>' +
+                            'Transferencia de material hacia producción';
+
+
+                                  receiverAreaHelp.textContent =
+                                   "Para una Transferencia, el receptor debe pertenecer al área Production Line.";
+
+
+                               await loadReceivers(
+                            2,
+                                   "@Model.ReceivedByUserId");
+
+
+                        break;
+
+
+                  // ==================================
+                    // SALIDA
+                  // ==================================
+
+                  case "3":
+
+                         destinationContainer.style.display =
+                            "block";
+
+
+                            destinationPlaceholder.style.display =
+                            "none";
+
+
+                            locationLabel.innerHTML =
+                                   '<i class="bi bi-geo-alt-fill me-1 text-danger"></i>' +
+                                   ' Ubicación Origen';
+
+
+                         locationHelp.textContent =
+                          "Seleccione la ubicación desde donde saldrá el material hacia MRB o Scrap.";
+
+
+                         originQuantityText.textContent =
+                             "piezas disponibles en la ubicación origen";
+
+
+                        destination.add(
+                                   new Option(
+                                "Seleccione destino",
+                                          ""));
+
+
+                                        destination.add(
+                                               new Option(
+                                          "MRB",
+                                "MRB"));
+
+
+                                        destination.add(
+                                               new Option(
+                                             "Scrap",
+                                             "Scrap"));
+
+
+                                     indicator.className =
+                                         "alert alert-danger mt-3 mb-0";
+
+
+                                        indicator.innerHTML =
+                                               '<i class="bi bi-box-arrow-right me-2"></i>' +
+                            'Salida de material hacia MRB o Scrap';
+
+
+                                           receiverAreaHelp.textContent =
+                            "Para una Salida hacia MRB o Scrap, el receptor debe pertenecer a Engineering o Quality.";
+
+
+                        await loadReceivers(
+                                   3,
+                            "@Model.ReceivedByUserId");
+
+
+                                  break;
+
+
+                        // ==================================
+                    // SIN MOVIMIENTO
+                  // ==================================
+
+                     default:
+
+                            destinationContainer.style.display =
+                            "none";
+
+
+                        destinationPlaceholder.style.display =
+                                   "block";
+
+
+                        destinationPlaceholder.className =
+                                   "alert alert-light border mb-0";
+
+
+                      destinationPlaceholder.innerHTML =
+                            '<i class="bi bi-info-circle me-2"></i>' +
+                             'Seleccione un tipo de movimiento para configurar el destino.';
+
+
+                        receiverContainer.style.display =
+                                "none";
+
+
+                      locationLabel.innerHTML =
+                            '<i class="bi bi-geo-alt-fill me-1 text-primary"></i>' +
+                          ' Ubicación';
+
+
+                        locationHelp.textContent =
+                                "Seleccione primero el tipo de movimiento.";
+
+
+                               originQuantityText.textContent =
+                            "piezas disponibles en la ubicación seleccionada";
+
+
+                        receiverAreaHelp.textContent =
+                                      "Seleccione un tipo de movimiento para determinar el área responsable.";
+
+
+                                  indicator.className =
+                                         "alert alert-secondary mt-3 mb-0";
+
+
+                        indicator.innerHTML =
+                                   '<i class="bi bi-info-circle me-2"></i>' +
+                                   'Seleccione un tipo de movimiento.';
+
+
+                        break;
+              }
+
+
+                // ==================================
+                    // RESTAURAR DESTINO
+                       // ==================================
+
+                    if (
+                    previousDestination &&
+                        Array.from(
+                               destination.options)
+                        .some(x =>
+                                x.value ===
+                                   previousDestination)
+                ) {
+
+                           destination.value =
+                        previousDestination;
+                    }
+             }
+
+
+            // ======================================
+            // SELECCIONAR MATERIAL
+            // ======================================
+
+            async function selectMaterial(
+                materialId,
+                partNumber) {
+
+                materialIdInput.value =
+                    materialId;
+
+
+                materialSelector.value =
+                    materialId.toString();
+
+
+                partNumberInput.value =
+                    partNumber;
+
+
+                const qrResult =
+                    document.getElementById(
+                        "qrResult");
+
+
+                qrResult.innerHTML =
+                    '<div class="d-flex align-items-center">' +
+                    '<i class="bi bi-check-circle-fill fs-5 me-2"></i>' +
+                    '<div>' +
+                    '<div class="fw-semibold">Material seleccionado</div>' +
+                    `<div>${partNumber}</div>` +
+                    '</div>' +
+                    '</div>';
+
+
+                qrResult.style.display =
+                    "block";
+
+
+                await loadMaterialInfo(
+                    materialId);
+
+
+                await loadMaterialLocations(
+                    materialId);
+            }
+
+
+            // ======================================
+            // BUSCAR MATERIAL POR PART NUMBER
+            // ======================================
+
+            async function searchMaterialByPartNumber(
+                partNumber) {
+
+                if (processingScan) {
+                    return;
+                }
+
+
+                let pn =
+                    partNumber.trim();
+
+
+                if (!pn) {
+                    return;
+                }
+
+
+                processingScan =
+                    true;
+
+
+                try {
+
+                    const match =
+                        pn.match(
+                            /PN\s*=\s*([^;]+)/i);
+
+
+                    if (match) {
+
+                        pn =
+                            match[1].trim();
+                    }
+
+
+                    const response =
+                        await fetch(
+                            `/Movements/GetMaterialByPartNumber?partNumber=${encodeURIComponent(pn)}`);
+
+
+                    if (!response.ok) {
+
+                        alert(
+                            "Material no encontrado.");
+
+
+                        partNumberInput.value =
+                            "";
+
+
+                        return;
+                    }
+
+
+                    const material =
+                        await response.json();
+
+
+                    await selectMaterial(
+                        material.id,
+                        material.partNumber);
+
+
+                    partNumberInput.value =
+                        material.partNumber;
+
+                }
+                finally {
+
+                    processingScan =
+                        false;
+                }
+            }
+
+
+            // ======================================
+            // BÚSQUEDA MANUAL
+            // ======================================
+
+            partNumberInput.addEventListener(
+                "blur",
+                async function () {
+
+                    const value =
+                        this.value.trim();
+
+
+                    if (!value) {
+                        return;
+                    }
+
+
+                    await searchMaterialByPartNumber(
+                        value);
+                });
+
+
+            materialSelector.addEventListener(
+                "change",
+                async function () {
+
+                    const selectedId =
+                        this.value;
+
+
+                    if (!selectedId) {
+                        return;
+                    }
+
+
+                    const selectedOption =
+                        this.options[
+                            this.selectedIndex
+                        ];
+
+
+                    await selectMaterial(
+                        selectedId,
+                        selectedOption.dataset.partnumber);
+                });
+
+
+            // ======================================
+            // MOVEMENT PILLS
+            // ======================================
+
+            const movementPills =
+                document.querySelectorAll(
+                    ".movement-pill");
+
+
+            function selectCurrentMovementPill() {
+
+                movementPills.forEach(
+                    item => {
+
+                        item.classList.remove(
+                            "movement-pill-selected");
+                    });
+
+
+                if (!movementInput.value) {
+                    return;
+                }
+
+
+                const selectedPill =
+                    document.querySelector(
+                        `.movement-pill[data-value="${movementInput.value}"]`);
+
+
+                selectedPill?.classList.add(
+                    "movement-pill-selected");
+            }
+
+
+            async function selectMovement(
+                pill) {
+
+                movementInput.value =
+                    pill.dataset.value;
+
+
+                selectCurrentMovementPill();
+
+
+                await updateDestinations(
+                    false);
+            }
+
+
+            movementPills.forEach(
+                pill => {
+
+                    pill.addEventListener(
+                        "click",
+                        async function () {
+
+                            await selectMovement(
+                                this);
+                        });
+
+
+                    pill.addEventListener(
+                        "keydown",
+                        async function (event) {
+
+                            if (
+                                event.key !== "Enter" &&
+                                event.key !== " "
+                            ) {
+
+                                return;
+                            }
+
+
+                            event.preventDefault();
+
+
+                            await selectMovement(
+                                this);
+                        });
+                });
+
+
+            // ======================================
+            // QR
+            // ======================================
+
+            async function loadMaterialFromQr(
+                qrContent) {
+
+                let pn =
+                    qrContent.trim();
+
+
+                const match =
+                    pn.match(
+                        /PN\s*=\s*([^;]+)/i);
+
+
+                if (match) {
+
+                    pn =
+                        match[1].trim();
+                }
+
+
+                await searchMaterialByPartNumber(
+                    pn);
+            }
+
+
+            document
+                .getElementById(
+                    "btnStartScanner")
+                .addEventListener(
+                    "click",
+                    async () => {
+
+                        try {
+
+                            if (!html5QrCode) {
+
+                                html5QrCode =
+                                    new Html5Qrcode(
+                                        "reader");
+                            }
+
+
+                            await html5QrCode.start(
+                                {
+                                    facingMode:
+                                        "environment"
+                                },
+                                {
+                                    fps: 10,
+                                    qrbox: 250
+                                },
+                                async decodedText => {
+
+                                    await loadMaterialFromQr(
+                                        decodedText);
+
+
+                                    try {
+
+                                        await html5QrCode.stop();
+
+                                    }
+                                    catch {
+                                    }
+                                });
+
+                        }
+                        catch (error) {
+
+                            console.error(
+                                error);
+
+
+                            alert(
+                                "No fue posible iniciar el escáner.");
+                        }
+                    });
+
+
+            document
+                .getElementById(
+                    "btnStopScanner")
+                .addEventListener(
+                    "click",
+                    async () => {
+
+                        if (!html5QrCode) {
+                            return;
+                        }
+
+
+                        try {
+
+                            await html5QrCode.stop();
+
+                        }
+                        catch {
+                        }
+                    });
+
+
+            // ======================================
+            // CAPTURA RÁPIDA / ESCÁNER
+            // ======================================
+
+            function prepareNextScan() {
+
+                setTimeout(
+                    () => {
+
+                        partNumberInput.focus();
+
+                        partNumberInput.select();
+
+                    },
+                    100);
+            }
+
+
+            partNumberInput.addEventListener(
+                "input",
+                function () {
+
+                    clearTimeout(
+                        scanTimer);
+
+
+                    scanTimer =
+                        setTimeout(
+                            async () => {
+
+                                const value =
+                                    this.value.trim();
+
+
+                                if (!value) {
+                                    return;
+                                }
+
+
+                                await searchMaterialByPartNumber(
+                                    value);
+
+
+                                prepareNextScan();
+
+                            },
+                            300);
+                });
+
+
+            partNumberInput.addEventListener(
+                "keydown",
+                async function (event) {
+
+                    if (event.key !== "Enter") {
+                        return;
+                    }
+
+
+                    event.preventDefault();
+
+
+                    clearTimeout(
+                        scanTimer);
+
+
+                    const value =
+                        this.value.trim();
+
+
+                    if (!value) {
+                        return;
+                    }
+
+
+                    await searchMaterialByPartNumber(
+                        value);
+
+
+                    prepareNextScan();
+                });
+
+
+            // ======================================
+            // RESTAURAR ESTADO
+            // ======================================
+
+            document.addEventListener(
+                "DOMContentLoaded",
+                async function () {
+
+                    selectCurrentMovementPill();
+
+
+                    const savedMaterialId =
+                        materialIdInput.value;
+
+
+                    if (savedMaterialId &&
+                        savedMaterialId !== "0") {
+
+                        const selectedOption =
+                            Array.from(
+                                materialSelector.options)
+                                .find(x =>
+                                    x.value ===
+                                    savedMaterialId);
+
+
+                        if (selectedOption) {
+
+                            materialSelector.value =
+                                savedMaterialId;
+
+
+                            partNumberInput.value =
+                                selectedOption.dataset.partnumber;
+
+
+                            await loadMaterialInfo(
+                                savedMaterialId);
+
+
+                            await loadMaterialLocations(
+                                savedMaterialId);
+                        }
+                    }
+
+
+                    await updateDestinations(
+                        true);
+
+
+                    partNumberInput.focus();
+                });
+
+
+            // ======================================
+            // PREVENIR DOBLE ENVÍO
+            // ======================================
+
+            document
+                .getElementById(
+                    "movementForm")
+                .addEventListener(
+                    "submit",
+                    function () {
+
+                        if (
+                            typeof $ !== "undefined" &&
+                            $(this).data("validator") &&
+                            !$(this).valid()
+                        ) {
+
+                            return;
+                        }
+
+
+                        submitMovement.disabled =
+                            true;
+
+
+                        submitMovement.innerHTML =
+                            '<span class="spinner-border spinner-border-sm me-2" ' +
+                            'role="status" aria-hidden="true"></span>' +
+                            'Registrando...';
+                    });
+
+    </script>
+}

@@ -1,0 +1,402 @@
+﻿@model Vestigium.Models.ViewModels.ImportUsersVM
+
+@{
+    ViewData["Title"] = "Importar Usuarios";
+}
+
+<!-- ENCABEZADO -->
+
+<div class="card hero-card mb-4">
+
+    <div class="card-body">
+
+        <div class="d-flex flex-column gap-2">
+
+            <h2 class="hero-title mb-0">
+
+                <i class="bi bi-file-earmark-excel me-2"></i>
+
+                Importar Usuarios
+
+            </h2>
+
+            <p class="hero-subtitle mb-0">
+
+                Carga masiva de usuarios mediante un archivo de Microsoft Excel.
+
+            </p>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- ACCIONES RÁPIDAS -->
+
+<div class="card module-card mb-4">
+
+    <div class="card-header bg-transparent">
+
+        <h6 class="card-title-standard mb-0">
+
+            <i class="bi bi-lightning-charge me-2"></i>
+
+            Acciones Rápidas
+
+        </h6>
+
+    </div>
+
+    <div class="card-body">
+
+        <div class="d-flex flex-wrap gap-2">
+
+            <a asp-action="Index"
+               class="btn btn-outline-secondary">
+
+                <i class="bi bi-arrow-left me-1"></i>
+
+                Regresar a Usuarios
+
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- FORMULARIO -->
+
+<div class="card module-card">
+
+    <div class="card-header">
+
+        <h6 class="card-title-standard mb-0">
+
+            <i class="bi bi-cloud-arrow-up me-2"></i>
+
+            Carga de Usuarios
+
+        </h6>
+
+    </div>
+
+    <div class="card-body p-4">
+
+        <form id="importUsersForm"
+              asp-action="ImportUsers"
+              method="post"
+              enctype="multipart/form-data">
+
+            @if (!ViewData.ModelState.IsValid)
+            {
+                <div asp-validation-summary="ModelOnly"
+                     class="alert alert-danger mb-4">
+                </div>
+            }
+
+
+            <!-- ========================= -->
+            <!-- PASO 1: ARCHIVO -->
+            <!-- ========================= -->
+
+            <div class="form-section mb-4">
+
+                <h6 class="section-title mb-2">
+
+                    <span class="section-step">1</span>
+
+                    <i class="bi bi-file-earmark-spreadsheet me-2"></i>
+
+                    Seleccionar Archivo
+
+                </h6>
+
+                <p class="text-muted mb-4">
+
+                    Seleccione el archivo de Excel que contiene los usuarios que desea importar.
+
+                </p>
+
+
+                <div class="upload-zone">
+
+                    <div class="text-center mb-4">
+
+                        <div class="upload-icon-wrapper mx-auto mb-3">
+
+                            <i class="bi bi-cloud-arrow-up upload-icon"></i>
+
+                        </div>
+
+                        <div class="fw-semibold">
+
+                            Archivo de importación
+
+                        </div>
+
+                        <div class="small text-muted">
+
+                            Formato permitido: .xlsx
+
+                        </div>
+
+                    </div>
+
+
+                    <label asp-for="ExcelFile"
+                           class="form-label fw-semibold">
+
+                        Archivo Excel
+
+                    </label>
+
+                    <input asp-for="ExcelFile"
+                           id="excelFile"
+                           class="form-control"
+                           accept=".xlsx" />
+
+                    <span asp-validation-for="ExcelFile"
+                          class="text-danger small">
+                    </span>
+
+
+                    <!-- ARCHIVO SELECCIONADO -->
+
+                    <div id="selectedFileInfo"
+                         class="alert alert-success mt-3 mb-0"
+                         style="display:none;">
+
+                        <div class="d-flex align-items-center">
+
+                            <i class="bi bi-file-earmark-excel fs-4 me-3"></i>
+
+                            <div>
+
+                                <div class="fw-semibold">
+
+                                    Archivo seleccionado
+
+                                </div>
+
+                                <div id="selectedFileName"
+                                     class="small">
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ========================= -->
+            <!-- PASO 2: REQUISITOS -->
+            <!-- ========================= -->
+
+            <div class="form-section mb-4">
+
+                <h6 class="section-title mb-2">
+
+                    <span class="section-step">2</span>
+
+                    <i class="bi bi-clipboard-check me-2"></i>
+
+                    Validar Archivo
+
+                </h6>
+
+                <p class="text-muted mb-4">
+
+                    Verifique que el archivo cumpla con los requisitos antes de iniciar la importación.
+
+                </p>
+
+
+                <div class="alert alert-primary border-0 mb-0">
+
+                    <div class="d-flex align-items-start">
+
+                        <i class="bi bi-info-circle fs-5 me-3"></i>
+
+                        <div class="w-100">
+
+                            <div class="fw-semibold mb-2">
+
+                                Requisitos de importación
+
+                            </div>
+
+                            <ul class="mb-0 ps-3">
+
+                                <li class="mb-2">
+
+                                    El archivo debe utilizar el formato
+                                    <strong>.xlsx</strong>.
+
+                                </li>
+
+                                <li class="mb-2">
+
+                                    Cada fila debe representar un usuario.
+
+                                </li>
+
+                                <li class="mb-2">
+
+                                    Las columnas deben coincidir con la plantilla establecida.
+
+                                </li>
+
+                                <li>
+
+                                    Los usuarios duplicados serán omitidos o reportados durante el proceso.
+
+                                </li>
+
+                            </ul>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ========================= -->
+            <!-- PASO 3: CONFIRMACIÓN -->
+            <!-- ========================= -->
+
+            <div class="form-section mb-4">
+
+                <h6 class="section-title mb-2">
+
+                    <span class="section-step">3</span>
+
+                    <i class="bi bi-shield-check me-2"></i>
+
+                    Confirmar Importación
+
+                </h6>
+
+                <p class="text-muted mb-4">
+
+                    La información del archivo será procesada para crear las nuevas cuentas.
+
+                </p>
+
+                <div class="alert alert-warning border-0 mb-0">
+
+                    <div class="d-flex align-items-start">
+
+                        <i class="bi bi-exclamation-triangle fs-5 me-3"></i>
+
+                        <div>
+
+                            <div class="fw-semibold">
+
+                                Revise el archivo antes de continuar
+
+                            </div>
+
+                            <div class="small">
+
+                                Verifique que los números de empleado, correos,
+                                áreas y roles sean correctos antes de realizar
+                                la importación.
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ACCIONES -->
+
+            <hr />
+
+            <div class="d-flex justify-content-end gap-2">
+
+                <a asp-action="Index"
+                   class="btn btn-outline-secondary">
+
+                    <i class="bi bi-x-circle me-1"></i>
+
+                    Cancelar
+
+                </a>
+
+                <button id="importSubmit"
+                        type="submit"
+                        class="btn btn-primary">
+
+                    <i class="bi bi-cloud-arrow-up me-1"></i>
+
+                    Importar Usuarios
+
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+@section Scripts
+{
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+
+        const excelFile =
+            document.getElementById("excelFile");
+
+        const selectedFileInfo =
+            document.getElementById("selectedFileInfo");
+
+        const selectedFileName =
+            document.getElementById("selectedFileName");
+
+
+        excelFile.addEventListener(
+            "change",
+            function() {
+
+                const file =
+                    this.files?.[0];
+
+                if (!file) {
+
+                    selectedFileInfo.style.display =
+                        "none";
+
+                    selectedFileName.textContent =
+                        "";
+
+                    return;
+                }
+
+                selectedFileName.textContent =
+                    file.name;
+
+                selectedFileInfo.style.display =
+                    "block";
+            });
+
+    </script>
+}

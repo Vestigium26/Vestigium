@@ -1,0 +1,30 @@
+﻿@model Vestigium.ViewModels.EmptyStateVM
+
+<div class="empty-state">
+
+    <div class="empty-state-icon">
+        <i class="@Model.Icon"></i>
+    </div>
+
+    <h5 class="empty-state-title">
+        @Model.Title
+    </h5>
+
+    <p class="empty-state-description">
+        @Model.Description
+    </p>
+
+    @if (!string.IsNullOrWhiteSpace(Model.ButtonText)
+        && !string.IsNullOrWhiteSpace(Model.ButtonUrl))
+    {
+        <a href="@Model.ButtonUrl"
+           class="@Model.ButtonClass">
+
+            <i class="bi bi-plus-circle me-1"></i>
+
+            @Model.ButtonText
+
+        </a>
+    }
+
+</div>

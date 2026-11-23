@@ -1,0 +1,762 @@
+﻿@model Vestigium.Models.ViewModels.MovementHistoryVM
+@using Vestigium.Models.Enums
+@using Vestigium.ViewModels
+
+@{
+	ViewData["Title"] = "Historial de Movimientos";
+}
+
+<div class="card hero-card mb-4">
+
+	<div class="card-body">
+
+		<div class="d-flex flex-column gap-2">
+
+			<h2 class="hero-title mb-0">
+
+				<i class="bi bi-clock-history me-2"></i>
+
+				Historial de Movimientos
+
+			</h2>
+
+			<p class="hero-subtitle mb-0">
+
+				Consulta y trazabilidad completa de movimientos registrados.
+
+			</p>
+
+		</div>
+
+	</div>
+
+</div>
+
+<div class="card module-card mb-4">
+
+	<div class="card-header bg-transparent">
+
+		<h6 class="card-title-standard mb-0">
+
+			<i class="bi bi-lightning-charge me-2"></i>
+
+			Acciones Rápidas
+
+		</h6>
+
+	</div>
+
+	<div class="card-body">
+
+		<div class="d-flex flex-wrap gap-2">
+
+			<a asp-action="Index"
+			   class="btn btn-primary">
+
+				<i class="bi bi-arrow-left me-1"></i>
+
+				Regresar a Movimientos
+
+			</a>
+
+		</div>
+
+	</div>
+
+</div>
+
+<!-- Filtros -->
+
+<form method="get"
+	  class="card module-card mb-4">
+
+	<div class="card-header bg-transparent">
+
+		<h6 class="card-title-standard mb-0">
+
+			<i class="bi bi-funnel me-2"></i>
+
+			Filtros de Búsqueda
+
+		</h6>
+
+	</div>
+
+	<div class="card-body">
+
+		<div class="row g-3">
+
+			<div class="col-lg-3">
+
+				<label class="form-label">
+					Empleado
+				</label>
+
+				<input asp-for="EmployeeSearch"
+					   list="employeesList"
+					   class="form-control"
+					   placeholder="Nombre o número de empleado..." />
+
+			</div>
+
+			<div class="col-lg-2">
+
+				<label class="form-label">
+					Número de Parte
+				</label>
+
+				<input asp-for="PartNumber"
+					   class="form-control" />
+
+			</div>
+
+			<div class="col-lg-2">
+
+				<label class="form-label">
+					Tipo Movimiento
+				</label>
+
+				<select asp-for="MovementType"
+						class="form-select">
+
+					<option value="">Todos</option>
+					<option value="1">Entrada</option>
+					<option value="2">Transferencia</option>
+					<option value="3">Salida</option>
+
+				</select>
+
+			</div>
+
+			<div class="col-lg-2">
+
+				<label class="form-label">
+					Desde
+				</label>
+
+				<input asp-for="FromDate"
+					   type="date"
+					   class="form-control" />
+
+			</div>
+
+			<div class="col-lg-2">
+
+				<label class="form-label">
+					Hasta
+				</label>
+
+				<input asp-for="ToDate"
+					   type="date"
+					   class="form-control" />
+
+			</div>
+
+			<div class="col-lg-1 d-flex align-items-end">
+
+				<button type="submit"
+						class="btn btn-primary w-100">
+
+					<i class="bi bi-search"></i>
+
+					Buscar
+
+				</button>
+
+			</div>
+
+		</div>
+
+		<hr />
+
+		<a asp-action="History"
+		   class="btn btn-outline-secondary">
+
+			<i class="bi bi-arrow-counterclockwise"></i>
+
+			Limpiar
+
+		</a>
+
+	</div>
+
+</form>
+
+<datalist id="employeesList">
+
+	@foreach (var item in Model.Movements
+		.SelectMany(x => new[]
+		{
+			x.UserName,
+			x.ReceivedByEmployeeNumber,
+			x.RegisteredByName,
+			x.ReceivedByName
+		})
+		.Where(x => !string.IsNullOrWhiteSpace(x))
+		.Distinct()
+		.OrderBy(x => x))
+	{
+		<option value="@item"></option>
+	}
+
+</datalist>
+<!-- KPI -->
+
+<div class="row g-3 mb-4">
+
+	<div class="col-xl-3 col-md-6">
+
+		@await Html.PartialAsync(
+			"_KpiCard",
+			new KpiCardVM
+			{
+				Title = "Movimientos",
+				Value = Model.TotalRecords.ToString("N0"),
+				Subtitle = "Registros encontrados",
+				Icon = "bi bi-clock-history",
+				ColorClass = "kpi-primary"
+			})
+
+	</div>
+
+	<div class="col-xl-3 col-md-6">
+
+		@await Html.PartialAsync(
+			"_KpiCard",
+			new KpiCardVM
+			{
+				Title = "Entradas",
+				Value = Model.TotalEntries.ToString("N0"),
+				Subtitle = "Incluye reubicaciones",
+				Icon = "bi bi-box-arrow-in-down",
+				ColorClass = "kpi-success"
+			})
+
+	</div>
+
+	<div class="col-xl-3 col-md-6">
+
+		@await Html.PartialAsync(
+			"_KpiCard",
+			new KpiCardVM
+			{
+				Title = "Transferencias",
+				Value = Model.TotalTransfers.ToString("N0"),
+				Subtitle = "Movimientos",
+				Icon = "bi bi-arrow-left-right",
+				ColorClass = "kpi-info"
+			})
+
+	</div>
+
+	<div class="col-xl-3 col-md-6">
+
+		@await Html.PartialAsync(
+			"_KpiCard",
+			new KpiCardVM
+			{
+				Title = "Salidas",
+				Value = Model.TotalOutputs.ToString("N0"),
+				Subtitle = "Movimientos",
+				Icon = "bi bi-box-arrow-right",
+				ColorClass = "kpi-danger"
+			})
+
+	</div>
+
+	<div class="col-xl-3 col-md-6">
+
+		@await Html.PartialAsync(
+			"_KpiCard",
+			new KpiCardVM
+			{
+				Title = "Piezas Movidas",
+				Value = Model.TotalMovedPieces.ToString("N0"),
+				Subtitle = "Cantidad total",
+				Icon = "bi bi-boxes",
+				ColorClass = "kpi-warning"
+			})
+
+	</div>
+
+</div>
+
+<div class="alert alert-primary border-0 shadow-sm mb-4">
+
+	<i class="bi bi-bar-chart-line me-2"></i>
+
+	Se encontraron
+
+	<strong>@Model.TotalRecords</strong>
+
+	movimientos para los criterios seleccionados.
+
+</div>
+
+<div class="card module-card">
+
+	<!--Tabla-->
+
+	<div class="card-header">
+
+		<div class="d-flex justify-content-between align-items-center">
+
+			<div>
+
+				<h6 class="card-title-standard d-flex align-items-center">
+
+					<i class="bi bi-table me-2"></i>
+
+					Historial Registrado
+
+				</h6>
+
+				<small class="text-muted">
+
+					Trazabilidad completa de movimientos registrados.
+
+				</small>
+
+			</div>
+
+			<span class="component-badge d-inline-flex align-items-center">
+
+				<i class="bi bi-clock-history me-2"></i>
+
+				@Model.TotalRecords Registros
+
+			</span>
+
+		</div>
+
+	</div>
+
+	<div class="table-responsive inventory-table-container">
+
+		<table class="table table-hover table-modern align-middle mb-0 movement-history-table">
+			<!--  Cambio -->
+			<thead>
+
+				<tr>
+
+					<th class="folio-column">Folio</th>
+
+					<th>Fecha</th>
+
+					<th>Registrado Por</th>
+
+					<th>Recibido Por</th>
+
+					<th class="part-column">No. Parte</th>
+
+					<th class="type-column">Tipo</th>
+
+					<th class="qty-column">Movimiento</th>
+
+					<th class="origin-column">Origen</th>
+
+					<th class="destination-column">Destino</th>
+
+					<th>Comentarios</th>
+
+				</tr>
+
+			</thead>
+
+			<tbody>
+
+				@if (Model.Movements.Any())
+				{
+					<!-- Cambios  -->
+					@foreach (var item in Model.Movements)
+					{
+						var isInternalTransfer =
+							item.MovementType ==
+								MovementType.Transfer &&
+							!string.IsNullOrWhiteSpace(item.Comments) &&
+							item.Comments.Contains(
+								"Transferencia interna",
+								StringComparison.OrdinalIgnoreCase);
+
+						<tr>
+
+							<td class="folio-column">
+
+								<span class="table-reference text-nowrap">
+
+									@item.ReportNumber
+
+								</span>
+
+							</td>
+
+							<td>
+
+								<div>
+
+									@item.MovementDate.ToString("dd/MM/yyyy")
+
+								</div>
+
+								<small class="text-muted">
+
+									@item.MovementDate.ToString("HH:mm")
+
+								</small>
+
+							</td>
+
+							<td>
+
+								<div class="fw-semibold small">
+
+									@(string.IsNullOrWhiteSpace(item.RegisteredByName)
+										? "-"
+										: item.RegisteredByName)
+
+								</div>
+
+								<small class="text-muted">
+
+									@item.UserName
+
+								</small>
+
+							</td>
+
+							<td>
+
+								@if (!string.IsNullOrWhiteSpace(item.ReceivedByName))
+								{
+									<div class="fw-semibold small">
+
+										@item.ReceivedByName
+
+									</div>
+
+									<small class="text-muted">
+
+										@item.ReceivedByEmployeeNumber
+
+									</small>
+								}
+								else
+								{
+									<span class="text-muted">
+
+										-
+
+									</span>
+								}
+
+							</td>
+
+							<td class="part-column">
+
+								<div class="fw-semibold text-primary">
+
+									@item.Material.PartNumber
+
+								</div>
+
+								<small class="text-muted
+									d-inline-block
+									text-truncate"
+									   style="max-width:220px;"
+									   title="@item.Material.Description">
+
+									@item.Material.Description
+
+								</small>
+
+							</td>
+
+							<td class="type-column">
+
+								@switch (item.MovementType)
+								{
+									case MovementType.Entry:
+
+										<span class="status-badge badge-success">
+
+											<i class="bi bi-box-arrow-in-down"></i>
+
+											Entrada
+
+										</span>
+
+										break;
+
+									case MovementType.Transfer:
+
+										if (isInternalTransfer)
+										{
+											<span class="status-badge badge-neutral">
+
+												<i class="bi bi-arrow-left-right"></i>
+
+												Reubicación
+
+											</span>
+										}
+										else
+										{
+											<span class="status-badge engineering-pill">
+
+												<i class="bi bi-arrow-right"></i>
+
+												Transferencia
+
+											</span>
+										}
+
+										break;
+
+									case MovementType.Output:
+
+										<span class="status-badge badge-danger">
+
+											<i class="bi bi-box-arrow-up"></i>
+
+											Salida
+
+										</span>
+
+										break;
+								}
+
+							</td>
+
+							<td class="qty-column">
+
+								@if (item.MovementType == MovementType.Entry)
+								{
+									<span class="status-badge badge-success">
+
+										+@item.Quantity.ToString("N0")
+
+									</span>
+								}
+								else
+								{
+									<span class="status-badge badge-danger">
+
+										-@item.Quantity.ToString("N0")
+
+									</span>
+								}
+
+								<div>
+
+									<small class="text-muted">
+
+										piezas
+
+									</small>
+
+								</div>
+
+							</td>
+
+							<td class="origin-column">
+
+								@if (!string.IsNullOrWhiteSpace(item.OriginLocation))
+								{
+									<span class="location-badge">
+
+										<i class="bi bi-geo-alt"></i>
+
+										@item.OriginLocation
+
+									</span>
+								}
+								else
+								{
+									<span class="text-muted">
+
+										-
+
+									</span>
+								}
+
+							</td>
+
+							<td class="destination-column">
+
+								@if (!string.IsNullOrWhiteSpace(item.DestinationLocation))
+								{
+									<span class="location-badge">
+
+										@item.DestinationLocation
+
+									</span>
+								}
+								else
+								{
+									<span class="text-muted">
+
+										-
+
+									</span>
+								}
+
+							</td>
+
+							<td class="comments-column">
+
+								<span class="d-inline-block text-truncate"
+									  style="max-width:240px;"
+									  data-bs-toggle="tooltip"
+									  data-bs-placement="top"
+									  data-bs-title="@item.Comments">
+
+									@(string.IsNullOrWhiteSpace(item.Comments)
+										? "-"
+										: item.Comments)
+
+								</span>
+
+							</td>
+
+						</tr>
+					}
+				}
+				else
+				{
+					<tr>
+
+						<td colspan="10"
+							class="text-center p-5">
+
+							<div class="py-5">
+
+								<i class="bi bi-inbox fs-1 text-muted"></i>
+
+								<div class="mt-3 fw-semibold">
+
+									No se encontraron movimientos
+
+								</div>
+
+								<div class="text-muted mb-3">
+
+									Ajuste los filtros para ampliar la búsqueda.
+
+								</div>
+
+								<a asp-action="History"
+								   class="btn btn-outline-primary">
+
+									<i class="bi bi-arrow-counterclockwise me-1"></i>
+
+									Limpiar Filtros
+
+								</a>
+
+							</div>
+
+						</td>
+
+					</tr>
+				}
+
+			</tbody>
+
+		</table>
+
+	</div>
+
+	@if (Model.TotalPages > 1)
+	{
+		<div class="card-footer">
+
+			<nav>
+
+				<ul class="pagination justify-content-center mb-0">
+
+					<li class="page-item @(Model.CurrentPage == 1 ? "disabled" : "")">
+
+						<a class="page-link"
+						   asp-action="History"
+						   asp-route-page="@(Model.CurrentPage - 1)"
+						   asp-route-partNumber="@Model.PartNumber"
+						   asp-route-employeeSearch="@Model.EmployeeSearch"
+						   asp-route-movementType="@Model.MovementType"
+						   asp-route-fromDate="@(Model.FromDate?.ToString("yyyy-MM-dd"))"
+						   asp-route-toDate="@(Model.ToDate?.ToString("yyyy-MM-dd"))">
+
+							Anterior
+
+						</a>
+
+					</li>
+
+					@for (int i = 1; i <= Model.TotalPages; i++)
+					{
+						if (
+							i == 1 ||
+							i == Model.TotalPages ||
+							Math.Abs(i - Model.CurrentPage) <= 2)
+						{
+							<li class="page-item @(i == Model.CurrentPage ? "active" : "")">
+
+								<a class="page-link"
+								   asp-action="History"
+								   asp-route-page="@i"
+								   asp-route-partNumber="@Model.PartNumber"
+								   asp-route-employeeSearch="@Model.EmployeeSearch"
+								   asp-route-movementType="@Model.MovementType"
+								   asp-route-fromDate="@(Model.FromDate?.ToString("yyyy-MM-dd"))"
+								   asp-route-toDate="@(Model.ToDate?.ToString("yyyy-MM-dd"))">
+
+									@i
+
+								</a>
+
+							</li>
+						}
+					}
+
+					<li class="page-item @(Model.CurrentPage == Model.TotalPages ? "disabled" : "")">
+
+						<a class="page-link"
+						   asp-action="History"
+						   asp-route-page="@(Model.CurrentPage + 1)"
+						   asp-route-partNumber="@Model.PartNumber"
+						   asp-route-employeeSearch="@Model.EmployeeSearch"
+						   asp-route-movementType="@Model.MovementType"
+						   asp-route-fromDate="@(Model.FromDate?.ToString("yyyy-MM-dd"))"
+						   asp-route-toDate="@(Model.ToDate?.ToString("yyyy-MM-dd"))">
+
+							Siguiente
+
+						</a>
+
+					</li>
+
+				</ul>
+
+			</nav>
+
+		</div>
+	}
+
+</div>
+
+
+
+@section Scripts
+{
+	<script>
+
+		const tooltipTriggerList =
+			document.querySelectorAll(
+				'[data-bs-toggle="tooltip"]'
+			);
+
+		[...tooltipTriggerList].map(
+			el => new bootstrap.Tooltip(el)
+		);
+
+	</script>
+}

@@ -1,0 +1,481 @@
+﻿/* ==========================================================
+   VESTIGIUM
+   OPERATIONS MODULE
+
+   Products + Bill of Materials + Transfers
+
+   Shared components live in:
+   - vestigium-theme.css
+
+   Movement-specific components live in:
+   - movements.css
+
+   Inventory-specific components live in:
+   - inventory.css
+========================================================== */
+
+
+/* ==========================================================
+   1. PRODUCTS
+========================================================== */
+
+.product-card {
+	height: 100%;
+	transition: border-color .2s ease, box-shadow .2s ease;
+}
+
+	.product-card:hover {
+		border-color: rgba(13, 110, 253, .20);
+		box-shadow: var(--shadow-sm);
+	}
+
+.product-part-number {
+	color: var(--engineering);
+	font-weight: 700;
+	letter-spacing: .01em;
+	overflow-wrap: anywhere;
+}
+
+.product-description {
+	color: var(--text-secondary);
+	font-size: .9rem;
+	line-height: 1.4;
+}
+
+.product-components-count {
+	font-weight: 600;
+	font-variant-numeric: tabular-nums;
+}
+
+
+/* ==========================================================
+   2. PRODUCT SUMMARY
+========================================================== */
+
+.product-summary {
+	display: flex;
+	align-items: stretch;
+	flex-wrap: wrap;
+	gap: 1rem;
+}
+
+.product-summary-item {
+	flex: 1 1 180px;
+	min-width: 180px;
+}
+
+
+/* ==========================================================
+   3. MATERIAL DISPLAY
+========================================================== */
+
+.material-display {
+	display: flex;
+	flex-direction: column;
+	gap: .2rem;
+	min-width: 0;
+}
+
+.material-number {
+	color: var(--engineering);
+	font-weight: 700;
+	overflow-wrap: anywhere;
+}
+
+.material-description {
+	color: var(--text-secondary);
+	font-size: .85rem;
+	line-height: 1.35;
+	overflow-wrap: anywhere;
+}
+
+
+/* ==========================================================
+   4. BOM LAYOUT
+========================================================== */
+
+.bom-card {
+	height: 100%;
+}
+
+.bom-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	flex-wrap: wrap;
+	gap: 1rem;
+}
+
+.bom-header-content {
+	min-width: 0;
+	flex: 1;
+}
+
+.bom-header-actions {
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: .5rem;
+}
+
+
+/* ==========================================================
+   5. BOM COMPONENTS
+========================================================== */
+
+.bom-component-row {
+	transition: background-color .15s ease;
+}
+
+	.bom-component-row:hover {
+		background-color: rgba(13, 110, 253, .04);
+	}
+
+.bom-quantity {
+	font-size: 1rem;
+	font-weight: 700;
+	font-variant-numeric: tabular-nums;
+}
+
+.bom-unit {
+	color: var(--text-secondary);
+	font-size: .85rem;
+	white-space: nowrap;
+}
+
+.bom-reference {
+	font-family: Consolas, "Courier New", monospace;
+	font-weight: 600;
+	letter-spacing: .3px;
+	white-space: nowrap;
+}
+
+
+/* ==========================================================
+   6. COMPONENT BADGES
+========================================================== */
+
+.component-badge {
+	display: inline-flex;
+	align-items: center;
+	gap: .35rem;
+	padding: .4rem .75rem;
+	border-radius: 999px;
+	background: rgba(13, 110, 253, .08);
+	color: var(--engineering);
+	font-size: .8rem;
+	font-weight: 600;
+	line-height: 1;
+	white-space: nowrap;
+}
+
+
+/* ==========================================================
+   7. BOM SUMMARY
+========================================================== */
+
+.bom-summary {
+	display: flex;
+	align-items: stretch;
+	flex-wrap: wrap;
+	gap: 1rem;
+}
+
+.bom-summary-item {
+	flex: 1 1 160px;
+	min-width: 160px;
+	padding: 1rem;
+	border: 1px solid var(--border-light);
+	border-radius: var(--radius-sm);
+	background: var(--bg-subtle);
+}
+
+.bom-summary-value {
+	margin-bottom: .2rem;
+	font-size: 1.25rem;
+	font-weight: 700;
+	line-height: 1;
+	font-variant-numeric: tabular-nums;
+}
+
+.bom-summary-label {
+	color: var(--text-secondary);
+	font-size: .8rem;
+}
+
+
+/* ==========================================================
+   8. BOM EMPTY STATE
+========================================================== */
+
+.bom-empty-note {
+	display: flex;
+	align-items: flex-start;
+	gap: .75rem;
+	padding: 1rem;
+	border: 1px solid var(--border-light);
+	border-radius: var(--radius-sm);
+	background: var(--bg-subtle);
+}
+
+.bom-empty-note-icon {
+	flex-shrink: 0;
+	color: var(--engineering);
+	font-size: 1.2rem;
+	line-height: 1;
+}
+
+.bom-empty-note-content {
+	min-width: 0;
+	flex: 1;
+}
+
+.bom-empty-note-title {
+	margin-bottom: .2rem;
+	font-weight: 600;
+}
+
+.bom-empty-note-description {
+	margin-bottom: 0;
+	color: var(--text-secondary);
+	font-size: .85rem;
+}
+
+
+/* ==========================================================
+   9. TRANSFERS
+========================================================== */
+
+.transfer-card {
+	height: 100%;
+}
+
+
+/* ==========================================================
+   10. TRANSFER SUMMARY
+========================================================== */
+
+.transfer-summary {
+	padding: 1rem;
+	border: 1px solid rgba(13, 110, 253, .10);
+	border-radius: var(--radius-md);
+	background: rgba(13, 110, 253, .04);
+}
+
+.transfer-summary-item {
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: 1rem;
+	padding: .5rem 0;
+	border-bottom: 1px solid var(--border-light);
+}
+
+	.transfer-summary-item:first-child {
+		padding-top: 0;
+	}
+
+	.transfer-summary-item:last-child {
+		padding-bottom: 0;
+		border-bottom: 0;
+	}
+
+.transfer-summary-label {
+	color: var(--text-secondary);
+	font-size: .85rem;
+}
+
+.transfer-summary-value {
+	font-weight: 600;
+	text-align: right;
+	overflow-wrap: anywhere;
+}
+
+
+/* ==========================================================
+   11. TRANSFER CONFIRMATION
+========================================================== */
+
+.confirmation-panel {
+	padding: 1rem;
+	border-left: 4px solid var(--success);
+	border-radius: var(--radius-sm);
+	background: rgba(25, 135, 84, .08);
+}
+
+.confirmation-title {
+	display: flex;
+	align-items: center;
+	gap: .5rem;
+	margin-bottom: .75rem;
+	font-weight: 600;
+}
+
+	.confirmation-title i {
+		color: var(--success);
+	}
+
+
+/* ==========================================================
+   12. EMPLOYEE DISPLAY
+========================================================== */
+
+.employee-card {
+	display: flex;
+	align-items: center;
+	gap: .75rem;
+	min-width: 0;
+}
+
+.employee-icon {
+	width: 44px;
+	height: 44px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+	border-radius: 50%;
+	background: rgba(13, 110, 253, .10);
+	color: var(--engineering);
+	font-size: 1.25rem;
+}
+
+.employee-content {
+	min-width: 0;
+	flex: 1;
+}
+
+.employee-name {
+	font-weight: 600;
+	overflow-wrap: anywhere;
+}
+
+.employee-id {
+	color: var(--text-secondary);
+	font-size: .85rem;
+	overflow-wrap: anywhere;
+}
+
+
+/* ==========================================================
+   13. OPERATION STATES
+========================================================== */
+
+.operation-success {
+	background-color: rgba(25, 135, 84, .08);
+}
+
+.operation-warning {
+	background-color: rgba(255, 193, 7, .12);
+}
+
+.operation-danger {
+	background-color: rgba(220, 53, 69, .08);
+}
+
+
+/* ==========================================================
+   14. OPERATION TABLE HELPERS
+========================================================== */
+
+.operation-reference {
+	font-family: Consolas, "Courier New", monospace;
+	font-weight: 600;
+	letter-spacing: .3px;
+	white-space: nowrap;
+}
+
+.operation-user,
+.operation-location,
+.operation-actions {
+	white-space: nowrap;
+}
+
+
+/* ==========================================================
+   15. RESPONSIVE
+========================================================== */
+
+@media (max-width: 767.98px) {
+
+	.product-summary,
+	.bom-summary {
+		flex-direction: column;
+	}
+
+	.product-summary-item,
+	.bom-summary-item {
+		width: 100%;
+		min-width: 100%;
+	}
+
+	.bom-header {
+		flex-direction: column;
+		align-items: stretch;
+	}
+
+	.bom-header-actions {
+		width: 100%;
+	}
+
+		.bom-header-actions .btn {
+			flex: 1 1 100%;
+		}
+
+	.transfer-summary-item {
+		flex-direction: column;
+		gap: .25rem;
+	}
+
+	.transfer-summary-value {
+		text-align: left;
+	}
+
+	.operation-actions {
+		text-align: left;
+	}
+}
+
+
+@media (max-width: 575.98px) {
+
+	.component-badge {
+		padding: .35rem .65rem;
+		font-size: .75rem;
+	}
+
+	.employee-icon {
+		width: 40px;
+		height: 40px;
+	}
+
+	.transfer-summary,
+	.confirmation-panel,
+	.bom-summary-item {
+		padding: .85rem;
+	}
+}
+
+
+/* ==========================================================
+   16. FUTURE OPERATIONS COMPONENTS
+========================================================== */
+
+/*
+
+PRODUCTS
+.product-family-card
+.product-lifecycle-badge
+.product-status-badge
+
+BOM
+.bom-version-panel
+.bom-comparison-panel
+.bom-revision-history
+
+TRANSFERS
+.transfer-history-card
+.transfer-approval-card
+.transfer-signature-panel
+
+*/

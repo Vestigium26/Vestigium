@@ -1,0 +1,644 @@
+﻿@model Vestigium.Models.ViewModels.MaterialLocationVM
+
+@{
+    ViewData["Title"] = "Ubicaciones";
+
+    var activeLocations =
+        Model.Locations
+            .Where(x => x.Quantity > 0)
+            .OrderByDescending(x => x.Quantity)
+            .ThenBy(x => x.LocationCode)
+            .ToList();
+
+    var totalInventory =
+        activeLocations.Sum(x => x.Quantity);
+
+    var activeLocationCount =
+        activeLocations.Count;
+
+    var principalLocation =
+        activeLocations.FirstOrDefault();
+}
+
+<div class="container-fluid px-0">
+
+    <!-- =====================================================
+         BREADCRUMB
+    ====================================================== -->
+
+    <nav aria-label="breadcrumb">
+
+        <ol class="breadcrumb">
+
+            <li class="breadcrumb-item">
+
+                <a asp-action="Index">
+                    Inventario
+                </a>
+
+            </li>
+
+            <li class="breadcrumb-item active"
+                aria-current="page">
+
+                Ubicaciones
+
+            </li>
+
+        </ol>
+
+    </nav>
+
+
+    <!-- =====================================================
+         ENCABEZADO
+    ====================================================== -->
+
+    <div class="card hero-card mb-4">
+
+        <div class="card-body p-4">
+
+            <div class="d-flex flex-column flex-lg-row
+                align-items-lg-center
+                justify-content-between
+                gap-3">
+
+                <!-- Información -->
+
+                <div>
+
+                    <div class="text-muted small mb-1">
+
+                        Inventario por ubicación
+
+                    </div>
+
+
+                    <h1 class="hero-title
+                        d-flex
+                        align-items-center
+                        gap-2
+                        mb-1">
+
+                        <i class="bi bi-geo-alt"></i>
+
+                        <span>
+                            @Model.PartNumber
+                        </span>
+
+                    </h1>
+
+
+                    <p class="hero-subtitle">
+
+                        @if (!string.IsNullOrWhiteSpace(Model.Description))
+                        {
+                            @Model.Description
+                        }
+                        else
+                        {
+                            <span>Sin descripción</span>
+                        }
+
+                    </p>
+
+
+                    <div class="hero-meta">
+
+                        <span class="component-badge">
+
+                            <i class="bi bi-boxes"></i>
+
+                            @totalInventory.ToString("N0")
+
+                            @(totalInventory == 1
+                                ? "pieza"
+                                : "piezas")
+
+                        </span>
+
+
+                        <span class="status-badge engineering-pill">
+
+                            <i class="bi bi-geo-alt"></i>
+
+                            @activeLocationCount
+
+                            @(activeLocationCount == 1
+                                ? "ubicación"
+                                : "ubicaciones")
+
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Acciones -->
+
+                <div class="page-header-actions">
+
+                    <a asp-action="Index"
+                       class="btn btn-outline-secondary">
+
+                        <i class="bi bi-arrow-left"></i>
+
+                        Regresar al Inventario
+
+                    </a>
+
+
+                    <a asp-action="Traceability"
+                       asp-route-id="@Model.MaterialId"
+                       class="btn btn-outline-primary">
+
+                        <i class="bi bi-clock-history"></i>
+
+                        Trazabilidad
+
+                    </a>
+
+
+                    @if (activeLocationCount > 0)
+                    {
+                        <a asp-action="TransferLocation"
+                           asp-route-id="@Model.MaterialId"
+                           class="btn btn-primary">
+
+                            <i class="bi bi-arrow-left-right"></i>
+
+                            Transferir Inventario
+
+                        </a>
+                    }
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         RESUMEN
+    ====================================================== -->
+
+    <div class="row g-3 mb-4">
+
+        <!-- Inventario -->
+
+        <div class="col-12 col-md-4">
+
+            <div class="p-3
+                border
+                rounded-3
+                bg-body-tertiary
+                h-100">
+
+                <div class="d-flex
+                    align-items-center
+                    gap-2
+                    text-muted
+                    small
+                    mb-2">
+
+                    <i class="bi bi-boxes"></i>
+
+                    Inventario Total
+
+                </div>
+
+
+                <div class="fs-4
+                    fw-bold
+                    table-reference">
+
+                    @totalInventory.ToString("N0")
+
+                </div>
+
+
+                <div class="small text-muted mt-1">
+
+                    Existencia disponible entre todas
+                    las ubicaciones.
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Ubicaciones -->
+
+        <div class="col-12 col-md-4">
+
+            <div class="p-3
+                border
+                rounded-3
+                bg-body-tertiary
+                h-100">
+
+                <div class="d-flex
+                    align-items-center
+                    gap-2
+                    text-muted
+                    small
+                    mb-2">
+
+                    <i class="bi bi-pin-map"></i>
+
+                    Ubicaciones Activas
+
+                </div>
+
+
+                <div class="fs-4
+                    fw-bold
+                    table-reference">
+
+                    @activeLocationCount.ToString("N0")
+
+                </div>
+
+
+                <div class="small text-muted mt-1">
+
+                    Posiciones con inventario disponible.
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Principal -->
+
+        <div class="col-12 col-md-4">
+
+            <div class="p-3
+                border
+                rounded-3
+                bg-body-tertiary
+                h-100">
+
+                <div class="d-flex
+                    align-items-center
+                    gap-2
+                    text-muted
+                    small
+                    mb-2">
+
+                    <i class="bi bi-star"></i>
+
+                    Ubicación Principal
+
+                </div>
+
+
+                @if (principalLocation != null)
+                {
+                    <div class="fs-4
+                        fw-bold
+                        text-primary
+                        table-reference">
+
+                        @principalLocation.LocationCode
+
+                    </div>
+
+
+                    <div class="small text-muted mt-1">
+
+                        @principalLocation.Quantity.ToString("N0")
+
+                        @(principalLocation.Quantity == 1
+                            ? "pieza disponible"
+                            : "piezas disponibles")
+
+                    </div>
+                }
+                else
+                {
+                    <div class="fs-6 text-muted">
+
+                        <i class="bi bi-dash-circle me-1"></i>
+
+                        Sin ubicación
+
+                    </div>
+
+
+                    <div class="small text-muted mt-1">
+
+                        No existe inventario disponible.
+
+                    </div>
+                }
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         UBICACIONES
+    ====================================================== -->
+
+    <div class="card module-card">
+
+        <!-- Header -->
+
+        <div class="card-header">
+
+            <div class="d-flex flex-column flex-md-row
+                justify-content-between
+                align-items-md-center
+                gap-3">
+
+                <div>
+
+                    <h2 class="card-title-standard
+                        d-flex
+                        align-items-center
+                        gap-2">
+
+                        <i class="bi bi-pin-map text-primary"></i>
+
+                        Distribución del Inventario
+
+                    </h2>
+
+
+                    <div class="text-muted small mt-1">
+
+                        Cantidad disponible y participación
+                        de cada ubicación.
+
+                    </div>
+
+                </div>
+
+
+                <span class="component-badge">
+
+                    <i class="bi bi-geo-alt"></i>
+
+                    @activeLocationCount
+
+                    @(activeLocationCount == 1
+                        ? "ubicación"
+                        : "ubicaciones")
+
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             TABLA
+        ================================================== -->
+        @if (activeLocations.Any())
+        {
+            <div class="table-responsive">
+
+                <table class="table
+                    table-modern
+                    table-hover
+                    align-middle">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                Ubicación
+                            </th>
+
+                            <th class="text-end text-nowrap">
+                                Cantidad
+                            </th>
+
+                            <th style="min-width: 260px;">
+                                Participación
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        @foreach (var location in activeLocations)
+                        {
+                            var isPrincipal =
+                                principalLocation?.Id ==
+                                location.Id;
+
+                            var percentage =
+                                totalInventory > 0
+                                    ? location.Quantity *
+                                      100.0 /
+                                      totalInventory
+                                    : 0;
+
+
+                            <tr>
+
+                                <!-- =================================
+                                     UBICACIÓN
+                                ================================== -->
+
+                                <td>
+
+                                    <div class="d-flex
+                                        flex-wrap
+                                        align-items-center
+                                        gap-2">
+
+                                        <span class="location-badge">
+
+                                            <i class="bi bi-geo-alt"></i>
+
+                                            @location.LocationCode
+
+                                        </span>
+
+
+                                        @if (isPrincipal)
+                                        {
+                                            <span class="status-badge
+                                                badge-success">
+
+                                                <i class="bi bi-star-fill"></i>
+
+                                                Principal
+
+                                            </span>
+                                        }
+
+                                    </div>
+
+                                </td>
+
+
+                                <!-- =================================
+                                     CANTIDAD
+                                ================================== -->
+
+                                <td class="text-end">
+
+                                    <span class="fw-semibold
+                                        table-reference">
+
+                                        @location.Quantity.ToString("N0")
+
+                                    </span>
+
+                                </td>
+
+
+                                <!-- =================================
+                                     PARTICIPACIÓN
+                                ================================== -->
+
+                                <td>
+
+                                    <div class="d-flex
+                                        align-items-center
+                                        gap-3">
+
+                                        <div class="progress flex-grow-1"
+                                             style="height: 8px;">
+
+                                            <div class="progress-bar"
+                                                 role="progressbar"
+                                                 style="width: @percentage.ToString("0.##", System.Globalization.CultureInfo.InvariantCulture)%"
+                                                 aria-valuenow="@percentage.ToString("0.##", System.Globalization.CultureInfo.InvariantCulture)"
+                                                 aria-valuemin="0"
+                                                 aria-valuemax="100">
+                                            </div>
+
+                                        </div>
+
+
+                                        <span class="small
+                                            text-muted
+                                            text-nowrap">
+
+                                            @percentage.ToString("N1")%
+
+                                        </span>
+
+                                    </div>
+
+                                </td>
+
+                            </tr>
+                        }
+
+                    </tbody>
+
+
+                    <tfoot>
+
+                        <tr class="summary-row">
+
+                            <th>
+                                Total
+                            </th>
+
+
+                            <th class="text-end">
+
+                                <span class="fw-bold
+                                    table-reference">
+
+                                    @totalInventory.ToString("N0")
+
+                                </span>
+
+                            </th>
+
+
+                            <th>
+
+                                <span class="text-muted small">
+
+                                    100% del inventario disponible
+
+                                </span>
+
+                            </th>
+
+                        </tr>
+
+                    </tfoot>
+
+                </table>
+
+            </div>
+        }
+        else
+        {
+            <!-- =================================================
+                 EMPTY STATE
+            ================================================== -->
+
+            <div class="empty-state">
+
+                <div class="empty-state-icon">
+
+                    <i class="bi bi-geo-alt"></i>
+
+                </div>
+
+
+                <div class="empty-state-title">
+
+                    Sin inventario por ubicación
+
+                </div>
+
+
+                <div class="empty-state-description">
+
+                    Actualmente este material no tiene
+                    ubicaciones con inventario disponible.
+
+                </div>
+
+            </div>
+        }
+
+
+        <!-- =================================================
+             AYUDA
+        ================================================== -->
+
+        <div class="card-footer">
+
+            <div class="small text-muted">
+
+                <i class="bi bi-info-circle me-1"></i>
+
+                La ubicación principal corresponde a la posición
+                con mayor cantidad disponible del material.
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

@@ -1,0 +1,331 @@
+﻿/* ==========================================================
+   VESTIGIUM
+   USERS MODULE
+
+   User administration-specific components only.
+   Shared styles live in vestigium-theme.css.
+========================================================== */
+
+
+/* ==========================================================
+   1. AREA SELECTOR
+========================================================== */
+
+.area-selector {
+	display: flex;
+	flex-wrap: wrap;
+	gap: .75rem;
+}
+
+.area-pill {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: .5rem;
+	padding: .85rem 1rem;
+	border: 2px solid transparent;
+	border-radius: var(--radius-sm);
+	font-weight: 500;
+	line-height: 1.2;
+	cursor: pointer;
+	user-select: none;
+	transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease;
+}
+
+	.area-pill:hover {
+		transform: translateY(-1px);
+		box-shadow: var(--shadow-sm);
+	}
+
+	.area-pill:focus-visible {
+		outline: none;
+		box-shadow: 0 0 0 .2rem rgba(13, 110, 253, .20);
+	}
+
+.area-pill-selected {
+	border-color: var(--engineering);
+	box-shadow: 0 0 0 .2rem rgba(13, 110, 253, .15);
+}
+
+
+/* ==========================================================
+   2. USERS TABLE
+========================================================== */
+
+.users-badge {
+	display: inline-flex;
+	align-items: center;
+	gap: .35rem;
+	padding: .5rem .8rem;
+	border-radius: 999px;
+	font-size: .8rem;
+	font-weight: 600;
+	line-height: 1;
+	white-space: nowrap;
+}
+
+.user-name {
+	font-weight: 600;
+}
+
+.user-email {
+	color: var(--text-secondary);
+	font-size: .85rem;
+	overflow-wrap: anywhere;
+}
+
+.user-actions {
+	white-space: nowrap;
+}
+
+
+/* ==========================================================
+   3. USERS TOOLBAR
+========================================================== */
+
+.users-toolbar {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	flex-wrap: wrap;
+	gap: .75rem;
+}
+
+.users-filter-group {
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: .75rem;
+}
+
+	.users-filter-group .form-control,
+	.users-filter-group .form-select {
+		min-width: 180px;
+	}
+
+
+/* ==========================================================
+   4. USERS STATS
+========================================================== */
+
+.users-stats-card {
+	height: 100%;
+}
+
+.users-stats-icon {
+	font-size: 2rem;
+	line-height: 1;
+}
+
+.users-stats-value {
+	font-size: 1.75rem;
+	font-weight: 700;
+	line-height: 1;
+	font-variant-numeric: tabular-nums;
+}
+
+.users-stats-label {
+	color: var(--text-secondary);
+	font-size: .9rem;
+}
+
+
+/* ==========================================================
+   5. CREATE / EDIT USER
+========================================================== */
+
+.user-form-summary {
+	padding: 1rem;
+	border: 1px solid var(--border-light);
+	border-radius: var(--radius-md);
+	background: var(--bg-card);
+}
+
+	.user-form-summary + .user-form-summary {
+		margin-top: 1rem;
+	}
+
+
+/* ==========================================================
+   6. USER PREVIEW
+========================================================== */
+
+.user-preview-card {
+	padding: 1rem;
+	border: 1px dashed var(--border-light);
+	border-radius: var(--radius-md);
+	background: var(--bg-card);
+}
+
+.user-preview-name {
+	font-size: 1.1rem;
+	font-weight: 600;
+	overflow-wrap: anywhere;
+}
+
+.user-preview-role {
+	color: var(--text-secondary);
+	font-size: .9rem;
+}
+
+
+/* ==========================================================
+   7. USER STATUS
+========================================================== */
+
+.user-status {
+	display: inline-flex;
+	align-items: center;
+	gap: .4rem;
+	font-size: .85rem;
+	font-weight: 600;
+}
+
+	.user-status::before {
+		content: "";
+		width: 8px;
+		height: 8px;
+		flex-shrink: 0;
+		border-radius: 50%;
+		background-color: currentColor;
+	}
+
+.user-status-active {
+	color: var(--success);
+}
+
+.user-status-inactive {
+	color: var(--neutral);
+}
+
+.user-status-locked {
+	color: var(--danger);
+}
+
+
+/* ==========================================================
+   8. USER INFORMATION
+========================================================== */
+
+.user-info {
+	display: flex;
+	align-items: center;
+	gap: .75rem;
+	min-width: 0;
+}
+
+.user-info-content {
+	min-width: 0;
+}
+
+.user-info-name {
+	font-weight: 600;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.user-info-secondary {
+	color: var(--text-secondary);
+	font-size: .85rem;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+
+/* ==========================================================
+   9. USER AVATAR
+========================================================== */
+
+.user-avatar {
+	width: 40px;
+	height: 40px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+	border-radius: 50%;
+	background: rgba(13, 110, 253, .10);
+	color: var(--engineering);
+	font-size: .85rem;
+	font-weight: 700;
+	text-transform: uppercase;
+}
+
+
+/* ==========================================================
+   10. USER ROLE
+========================================================== */
+
+.user-role {
+	display: inline-flex;
+	align-items: center;
+	gap: .35rem;
+	padding: .4rem .7rem;
+	border-radius: 999px;
+	background: var(--bg-subtle);
+	color: var(--text-primary);
+	font-size: .8rem;
+	font-weight: 600;
+	white-space: nowrap;
+}
+
+.user-role-admin {
+	background: rgba(13, 110, 253, .12);
+	color: var(--engineering);
+}
+
+
+/* ==========================================================
+   11. RESPONSIVE
+========================================================== */
+
+@media (max-width: 767.98px) {
+
+	.area-selector {
+		flex-direction: column;
+	}
+
+	.area-pill {
+		width: 100%;
+	}
+
+	.users-toolbar {
+		flex-direction: column;
+		align-items: stretch;
+	}
+
+	.users-filter-group {
+		flex-direction: column;
+		align-items: stretch;
+	}
+
+		.users-filter-group .form-control,
+		.users-filter-group .form-select {
+			width: 100%;
+			min-width: 100%;
+		}
+
+	.user-actions {
+		text-align: left;
+	}
+}
+
+
+/* ==========================================================
+   12. FUTURE USERS COMPONENTS
+========================================================== */
+
+/*
+
+.user-permissions-card
+.user-role-card
+.user-activity-card
+.user-audit-history
+.user-login-history
+.user-area-summary
+.user-security-panel
+.user-access-matrix
+
+*/

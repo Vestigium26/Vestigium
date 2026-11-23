@@ -1,0 +1,1737 @@
+﻿@model Vestigium.Models.ViewModels.BulkBomImportViewModel
+@using Vestigium.ViewModels
+
+@{
+    ViewData["Title"] = "Importar BOM";
+
+    var hasResults =
+        Model.TotalLines > 0;
+
+    var reviewCount =
+        Model.DuplicateCount +
+        Model.InvalidCount +
+        Model.NotFound.Count;
+
+    var hasServerErrors =
+        !ViewData.ModelState.IsValid;
+}
+
+<div class="container-fluid px-0">
+
+    <!-- =====================================================
+         BREADCRUMB
+    ====================================================== -->
+
+    <nav aria-label="breadcrumb">
+
+        <ol class="breadcrumb">
+
+            <li class="breadcrumb-item">
+
+                <a asp-controller="Products"
+                   asp-action="Index">
+
+                    Catálogo de Productos
+
+                </a>
+
+            </li>
+
+            <li class="breadcrumb-item">
+
+                <a asp-action="Index"
+                   asp-route-productId="@Model.ProductId">
+
+                    BOM
+
+                </a>
+
+            </li>
+
+            <li class="breadcrumb-item active"
+                aria-current="page">
+
+                Importar BOM
+
+            </li>
+
+        </ol>
+
+    </nav>
+
+
+    <!-- =====================================================
+         ENCABEZADO
+    ====================================================== -->
+
+    <div class="card hero-card mb-4">
+
+        <div class="card-body p-4">
+
+            <div class="d-flex flex-column flex-lg-row
+                align-items-lg-center
+                justify-content-between
+                gap-3">
+
+                <div>
+
+                    <div class="text-muted small mb-1">
+
+                        Bill of Materials
+
+                    </div>
+
+
+                    <h1 class="hero-title
+                        d-flex
+                        align-items-center
+                        gap-2
+                        mb-1">
+
+                        <i class="bi bi-file-earmark-arrow-up"></i>
+
+                        <span>
+                            Importar BOM
+                        </span>
+
+                    </h1>
+
+
+                    <p class="hero-subtitle">
+
+                        Agrega o actualiza múltiples componentes
+                        mediante texto o un archivo TXT/CSV.
+
+                    </p>
+
+
+                    <div class="hero-meta">
+
+                        <span class="component-badge">
+
+                            <i class="bi bi-hash"></i>
+
+                            @Model.ProductNumber
+
+                        </span>
+
+
+                        @if (Model.RequiresPassword)
+                        {
+                            <span class="status-badge badge-warning">
+
+                                <i class="bi bi-shield-lock"></i>
+
+                                BOM existente
+
+                            </span>
+                        }
+
+                    </div>
+
+                </div>
+
+
+                <div class="page-header-actions">
+
+                    <a asp-action="Index"
+                       asp-route-productId="@Model.ProductId"
+                       class="btn btn-outline-secondary">
+
+                        <i class="bi bi-arrow-left"></i>
+
+                        Regresar al BOM
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         IMPORTACIÓN
+    ====================================================== -->
+
+    <div class="card module-card mb-4">
+
+        <div class="card-header">
+
+            <div>
+
+                <h2 class="card-title-standard
+                    d-flex
+                    align-items-center
+                    gap-2">
+
+                    <i class="bi bi-cloud-arrow-up text-primary"></i>
+
+                    Datos de Importación
+
+                </h2>
+
+
+                <div class="text-muted small mt-1">
+
+                    Proporcione el listado mediante texto
+                    o cargando un archivo compatible.
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="card-body p-4">
+
+            <form asp-action="BulkImport"
+                  method="post"
+                  enctype="multipart/form-data"
+                  id="bulkImportForm">
+
+                <!-- =================================================
+                     CAMPOS INTERNOS
+                ================================================== -->
+
+                <input type="hidden"
+                       asp-for="ProductId" />
+
+
+                <!-- =================================================
+                     VALIDACIONES GENERALES
+                ================================================== -->
+                @if (!ViewData.ModelState.IsValid)
+                {
+                    <div asp-validation-summary="ModelOnly"
+                         class="alert alert-danger mb-4"
+                         role="alert">
+                    </div>
+                }
+
+
+                <!-- =================================================
+                     PASO 1
+                     ORIGEN DE DATOS
+                ================================================== -->
+
+                <section class="form-section">
+
+                    <div class="form-section-title">
+
+                        <span class="section-step">
+                            1
+                        </span>
+
+
+                        <div>
+
+                            <div>
+                                Origen de los Datos
+                            </div>
+
+
+                            <div class="text-muted small fw-normal mt-1">
+
+                                Pegue el listado directamente o seleccione
+                                un archivo TXT/CSV.
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- =============================================
+                         TEXTO
+                    ============================================== -->
+
+                    <div class="mb-4">
+
+                        <div class="d-flex flex-column flex-sm-row
+                            justify-content-between
+                            align-items-sm-center
+                            gap-2
+                            mb-2">
+
+                            <label asp-for="BomText"
+                                   class="form-label mb-0">
+
+                                Pegar listado
+
+                            </label>
+
+
+                            <span class="component-badge">
+
+                                <i class="bi bi-list-ol"></i>
+
+                                <span id="lineCount">
+                                    0
+                                </span>
+
+                                líneas
+
+                            </span>
+
+                        </div>
+
+
+                        <textarea asp-for="BomText"
+                                  id="bomText"
+                                  class="form-control font-monospace"
+                                  rows="9"
+                                  spellcheck="false"
+                                  placeholder="PN001,2&#10;PN002,4&#10;PN003,1"></textarea>
+
+
+                        <span asp-validation-for="BomText"
+                              class="text-danger small d-block mt-1">
+                        </span>
+
+
+                        <div class="form-text">
+
+                            Capture un número de parte y una cantidad
+                            por línea.
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- =============================================
+                         SEPARADOR
+                    ============================================== -->
+
+                    <div class="d-flex align-items-center gap-3 my-4">
+
+                        <div class="flex-grow-1 border-top"></div>
+
+                        <span class="text-muted small fw-semibold">
+
+                            O
+
+                        </span>
+
+                        <div class="flex-grow-1 border-top"></div>
+
+                    </div>
+
+
+                    <!-- =============================================
+                         ARCHIVO
+                    ============================================== -->
+
+                    <div>
+
+                        <label asp-for="File"
+                               class="form-label">
+
+                            Cargar archivo
+
+                        </label>
+
+
+                        <div class="upload-zone">
+
+                            <div class="d-flex
+                                flex-column
+                                flex-md-row
+                                align-items-md-center
+                                gap-3">
+
+                                <div class="upload-icon-wrapper
+                                    m-0
+                                    flex-shrink-0">
+
+                                    <i class="bi bi-file-earmark-arrow-up
+                                    upload-icon"></i>
+
+                                </div>
+
+
+                                <div class="flex-grow-1 min-width-0">
+
+                                    <div class="upload-title">
+
+                                        Archivo TXT o CSV
+
+                                    </div>
+
+
+                                    <div class="upload-description mb-3">
+
+                                        Tamaño máximo permitido: 5 MB.
+
+                                    </div>
+
+
+                                    <input asp-for="File"
+                                           id="bomFile"
+                                           type="file"
+                                           accept=".txt,.csv,text/plain,text/csv"
+                                           class="form-control" />
+
+
+                                    <span asp-validation-for="File"
+                                          class="text-danger small d-block mt-1">
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- =====================================
+                                 ARCHIVO SELECCIONADO
+                            ====================================== -->
+
+                            <div id="selectedFileInfo"
+                                 class="confirmation-panel mt-3 d-none">
+
+                                <div class="d-flex
+                                    align-items-center
+                                    gap-3">
+
+                                    <i class="bi bi-file-earmark-check
+                                    text-success
+                                    fs-4
+                                    flex-shrink-0"></i>
+
+
+                                    <div class="min-width-0 flex-grow-1">
+
+                                        <div id="selectedFileName"
+                                             class="fw-semibold text-break">
+                                        </div>
+
+
+                                        <div id="selectedFileSize"
+                                             class="small text-muted">
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- =============================================
+                         AYUDA
+                    ============================================== -->
+
+                    <div class="help-panel mt-4">
+
+                        <div class="d-flex align-items-start gap-3">
+
+                            <i class="bi bi-info-circle
+                            text-primary
+                            fs-5
+                            flex-shrink-0"></i>
+
+
+                            <div>
+
+                                <div class="help-panel-title">
+
+                                    Texto o archivo
+
+                                </div>
+
+
+                                <p class="help-panel-text">
+
+                                    Puede utilizar cualquiera de las dos opciones.
+                                    Si proporciona ambas, el archivo seleccionado
+                                    tendrá prioridad.
+
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <!-- =================================================
+                     PASO 2
+                     COMPONENTES EXISTENTES
+                ================================================== -->
+
+                <section class="form-section">
+
+                    <div class="form-section-title">
+
+                        <span class="section-step">
+                            2
+                        </span>
+
+
+                        <div>
+
+                            <div>
+                                Componentes Existentes
+                            </div>
+
+
+                            <div class="text-muted small fw-normal mt-1">
+
+                                Defina qué ocurrirá si un material ya
+                                pertenece al BOM.
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="p-3
+                        border
+                        rounded-3
+                        bg-body-tertiary">
+
+                        <div class="d-flex
+                            flex-column
+                            flex-md-row
+                            justify-content-between
+                            align-items-md-center
+                            gap-3">
+
+                            <div>
+
+                                <div class="form-check form-switch mb-0">
+
+                                    <input asp-for="UpdateExisting"
+                                           class="form-check-input"
+                                           role="switch"
+                                           id="updateExisting" />
+
+
+                                    <label asp-for="UpdateExisting"
+                                           class="form-check-label fw-semibold">
+
+                                        Actualizar cantidades existentes
+
+                                    </label>
+
+                                </div>
+
+
+                                <div id="updateExistingHelp"
+                                     class="small text-muted mt-2">
+
+                                    Desactivado: los componentes existentes
+                                    serán omitidos.
+
+                                </div>
+
+                            </div>
+
+
+                            <span id="updateExistingBadge"
+                                  class="status-badge badge-neutral">
+
+                                <i class="bi bi-dash-circle"></i>
+
+                                Omitir existentes
+
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <div id="updateExistingWarning"
+                         class="security-alert mt-3 d-none">
+
+                        <div class="d-flex align-items-start gap-3">
+
+                            <i class="bi bi-exclamation-triangle
+                            fs-5
+                            flex-shrink-0"></i>
+
+
+                            <div>
+
+                                <div class="fw-semibold mb-1">
+
+                                    Se actualizarán cantidades existentes
+
+                                </div>
+
+
+                                <div class="small">
+
+                                    Las cantidades actuales de los componentes
+                                    encontrados serán reemplazadas por los valores
+                                    incluidos en la importación.
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <!-- =================================================
+                     PASO 3
+                     FORMATO
+                ================================================== -->
+
+                <section class="form-section
+                    @(Model.RequiresPassword ? "" : "mb-0")">
+
+                    <div class="form-section-title">
+
+                        <span class="section-step">
+                            3
+                        </span>
+
+
+                        <div>
+
+                            <div>
+                                Formato de Entrada
+                            </div>
+
+
+                            <div class="text-muted small fw-normal mt-1">
+
+                                Los siguientes formatos se reconocen
+                                automáticamente.
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="row g-3">
+
+                        <!-- =========================================
+                             COMA
+                        ========================================== -->
+
+                        <div class="col-12 col-md-4">
+
+                            <div class="p-3
+                                border
+                                rounded-3
+                                bg-body-tertiary
+                                h-100">
+
+                                <div class="d-flex
+                                    align-items-center
+                                    gap-2
+                                    fw-semibold
+                                    mb-2">
+
+                                    <i class="bi bi-comma text-primary"></i>
+
+                                    Coma
+
+                                </div>
+
+
+                                <code class="d-block text-nowrap">
+
+                                    PN001,2
+
+                                </code>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- =========================================
+                             PUNTO Y COMA
+                        ========================================== -->
+
+                        <div class="col-12 col-md-4">
+
+                            <div class="p-3
+                                border
+                                rounded-3
+                                bg-body-tertiary
+                                h-100">
+
+                                <div class="d-flex
+                                    align-items-center
+                                    gap-2
+                                    fw-semibold
+                                    mb-2">
+
+                                    <i class="bi bi-three-dots text-primary"></i>
+
+                                    Punto y coma
+
+                                </div>
+
+
+                                <code class="d-block text-nowrap">
+
+                                    PN001;2
+
+                                </code>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- =========================================
+                             ESPACIO / TAB
+                        ========================================== -->
+
+                        <div class="col-12 col-md-4">
+
+                            <div class="p-3
+                                border
+                                rounded-3
+                                bg-body-tertiary
+                                h-100">
+
+                                <div class="d-flex
+                                    align-items-center
+                                    gap-2
+                                    fw-semibold
+                                    mb-2">
+
+                                    <i class="bi bi-arrows-expand-vertical
+                                    text-primary"></i>
+
+                                    Espacio / Tab
+
+                                </div>
+
+
+                                <code class="d-block text-nowrap">
+
+                                    PN001&nbsp;&nbsp;&nbsp;&nbsp;2
+
+                                </code>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="form-text mt-3">
+
+                        Formato:
+                        <strong>Número de Parte + Cantidad</strong>.
+
+                        Las cantidades deben ser mayores que cero.
+
+                        Para cantidades decimales utilice punto,
+                        por ejemplo <code>PN001,2.5</code>.
+
+                    </div>
+
+                </section>
+
+
+                <!-- =================================================
+                     PASO 4
+                     SEGURIDAD
+                ================================================== -->
+                @if (Model.RequiresPassword)
+                {
+                    <section class="form-section mb-0">
+
+                        <div class="form-section-title">
+
+                            <span class="section-step">
+                                4
+                            </span>
+
+
+                            <div>
+
+                                <div>
+                                    Confirmación de Seguridad
+                                </div>
+
+
+                                <div class="text-muted small fw-normal mt-1">
+
+                                    Este producto ya tiene un BOM configurado.
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="security-alert mb-4">
+
+                            <div class="d-flex align-items-start gap-3">
+
+                                <div class="security-icon">
+
+                                    <i class="bi bi-shield-lock"></i>
+
+                                </div>
+
+
+                                <div>
+
+                                    <div class="fw-semibold mb-1">
+
+                                        Importación sobre BOM existente
+
+                                    </div>
+
+
+                                    <div class="small">
+
+                                        Confirme su contraseña de administrador
+                                        antes de procesar modificaciones sobre
+                                        la lista de materiales actual.
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="row g-3">
+
+                            <div class="col-12 col-md-6">
+
+                                <label asp-for="Password"
+                                       class="form-label">
+
+                                    Contraseña
+
+                                </label>
+
+
+                                <div class="input-group">
+
+                                    <span class="input-group-text">
+
+                                        <i class="bi bi-key"></i>
+
+                                    </span>
+
+
+                                    <input asp-for="Password"
+                                           type="password"
+                                           class="form-control"
+                                           autocomplete="current-password"
+                                           placeholder="Ingrese su contraseña" />
+
+                                </div>
+
+
+                                <span asp-validation-for="Password"
+                                      class="text-danger small d-block mt-1">
+                                </span>
+
+
+                                <div class="form-text">
+
+                                    La contraseña únicamente se utiliza
+                                    para confirmar esta operación.
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </section>
+                }
+
+
+                <!-- =================================================
+                     ACCIONES
+                ================================================== -->
+
+                <div class="d-flex flex-column flex-sm-row
+                    justify-content-end
+                    gap-2
+                    mt-4">
+
+                    <a asp-action="Index"
+                       asp-route-productId="@Model.ProductId"
+                       class="btn btn-outline-secondary">
+
+                        <i class="bi bi-x-lg"></i>
+
+                        Cancelar
+
+                    </a>
+
+
+                    <button type="submit"
+                            id="bulkImportSubmit"
+                            class="btn btn-primary">
+
+                        <i class="bi bi-play-circle"></i>
+
+                        Procesar Importación
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         RESULTADOS
+    ====================================================== -->
+    @if (hasResults)
+    {
+        <div id="importResults"
+             class="card module-card">
+
+            <div class="card-header">
+
+                <div class="d-flex flex-column flex-md-row
+                    justify-content-between
+                    align-items-md-center
+                    gap-2">
+
+                    <div>
+
+                        <h2 class="card-title-standard
+                            d-flex
+                            align-items-center
+                            gap-2">
+
+                            <i class="bi bi-clipboard-check text-primary"></i>
+
+                            Resultado de la Importación
+
+                        </h2>
+
+
+                        <div class="text-muted small mt-1">
+
+                            Resumen del procesamiento realizado.
+
+                        </div>
+
+                    </div>
+
+
+                    @if (reviewCount == 0)
+                    {
+                        <span class="status-badge badge-success">
+
+                            <i class="bi bi-check-circle-fill"></i>
+
+                            Completado
+
+                        </span>
+                    }
+                    else
+                    {
+                        <span class="status-badge badge-warning">
+
+                            <i class="bi bi-exclamation-triangle-fill"></i>
+
+                            @reviewCount por revisar
+
+                        </span>
+                    }
+
+                </div>
+
+            </div>
+
+
+            <div class="card-body">
+
+                <!-- =================================================
+                     KPI
+                ================================================== -->
+
+                <div class="row g-3">
+
+                    <div class="col-6 col-lg">
+
+                        @await Html.PartialAsync(
+                            "_KpiCard",
+                            new KpiCardVM
+                            {
+                                Title = "Procesados",
+                                Value = Model.TotalLines.ToString("N0"),
+                                Subtitle = "Líneas",
+                                Icon = "bi bi-list-check",
+                                ColorClass = "kpi-info"
+                            })
+
+                    </div>
+
+
+                    <div class="col-6 col-lg">
+
+                        @await Html.PartialAsync(
+                            "_KpiCard",
+                            new KpiCardVM
+                            {
+                                Title = "Agregados",
+                                Value = Model.AddedCount.ToString("N0"),
+                                Subtitle = "Nuevos",
+                                Icon = "bi bi-plus-circle",
+                                ColorClass = "kpi-success"
+                            })
+
+                    </div>
+
+
+                    <div class="col-6 col-lg">
+
+                        @await Html.PartialAsync(
+                            "_KpiCard",
+                            new KpiCardVM
+                            {
+                                Title = "Actualizados",
+                                Value = Model.UpdatedCount.ToString("N0"),
+                                Subtitle = "Modificados",
+                                Icon = "bi bi-arrow-repeat",
+                                ColorClass = "kpi-primary"
+                            })
+
+                    </div>
+
+
+                    <div class="col-6 col-lg">
+
+                        @await Html.PartialAsync(
+                            "_KpiCard",
+                            new KpiCardVM
+                            {
+                                Title = "Duplicados",
+                                Value = Model.DuplicateCount.ToString("N0"),
+                                Subtitle = "Omitidos",
+                                Icon = "bi bi-files",
+                                ColorClass = Model.DuplicateCount > 0
+                                    ? "kpi-warning"
+                                    : "kpi-success"
+                            })
+
+                    </div>
+
+
+                    <div class="col-6 col-lg">
+
+                        @await Html.PartialAsync(
+                            "_KpiCard",
+                            new KpiCardVM
+                            {
+                                Title = "No Encontrados",
+                                Value = Model.NotFound.Count.ToString("N0"),
+                                Subtitle = "Pendientes",
+                                Icon = "bi bi-exclamation-triangle",
+                                ColorClass = Model.NotFound.Any()
+                                    ? "kpi-danger"
+                                    : "kpi-success"
+                            })
+
+                    </div>
+
+                </div>
+
+
+                <!-- =================================================
+                     LÍNEAS INVÁLIDAS
+                ================================================== -->
+                @if (Model.InvalidCount > 0)
+                {
+                    <div class="alert alert-warning mt-4 mb-0"
+                         role="alert">
+
+                        <div class="d-flex align-items-start gap-3">
+
+                            <i class="bi bi-exclamation-triangle
+                            fs-5
+                            flex-shrink-0"></i>
+
+
+                            <div>
+
+                                <div class="fw-semibold">
+
+                                    Líneas con formato inválido
+
+                                </div>
+
+
+                                <div class="small mt-1">
+
+                                    Se omitieron
+                                    <strong>@Model.InvalidCount</strong>
+
+                                    @(Model.InvalidCount == 1
+                                        ? "línea"
+                                        : "líneas")
+
+                                    porque no cumplen con el formato esperado.
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+                }
+
+
+                <!-- =================================================
+                     NO ENCONTRADOS
+                ================================================== -->
+                @if (Model.NotFound.Any())
+                {
+                    <div class="mt-4">
+
+                        <div class="d-flex
+                            flex-column
+                            flex-md-row
+                            justify-content-between
+                            align-items-md-end
+                            gap-3
+                            mb-3">
+
+                            <div>
+
+                                <div class="fw-semibold">
+
+                                    <i class="bi bi-exclamation-circle
+                                    text-danger
+                                    me-2"></i>
+
+                                    Materiales no encontrados
+
+                                </div>
+
+
+                                <div class="small text-muted mt-1">
+
+                                    Estos números de parte no existen
+                                    actualmente en el catálogo.
+
+                                </div>
+
+                            </div>
+
+
+                            <form asp-action="DownloadNotFound"
+                                  method="post"
+                                  class="m-0">
+
+                                @foreach (var item in Model.NotFound)
+                                {
+                                    <input type="hidden"
+                                           name="notFound"
+                                           value="@item" />
+                                }
+
+
+                                <button type="submit"
+                                        class="btn btn-outline-secondary">
+
+                                    <i class="bi bi-download"></i>
+
+                                    Descargar TXT
+
+                                </button>
+
+                            </form>
+
+                        </div>
+
+
+                        <div class="list-group">
+
+                            @foreach (var item in Model.NotFound)
+                            {
+                                <div class="list-group-item
+                                    d-flex
+                                    align-items-center
+                                    justify-content-between
+                                    flex-wrap
+                                    gap-2">
+
+                                    <span class="table-reference">
+
+                                        @item
+
+                                    </span>
+
+
+                                    <span class="status-badge badge-danger">
+
+                                        <i class="bi bi-x-circle"></i>
+
+                                        No encontrado
+
+                                    </span>
+
+                                </div>
+                            }
+
+                        </div>
+
+                    </div>
+                }
+
+
+                <!-- =================================================
+                     IMPORTACIÓN SIN INCIDENCIAS
+                ================================================== -->
+                @if (reviewCount == 0)
+                {
+                    <div class="alert alert-success mt-4 mb-0"
+                         role="status">
+
+                        <div class="d-flex align-items-start gap-3">
+
+                            <i class="bi bi-check-circle-fill
+                            fs-5
+                            flex-shrink-0"></i>
+
+
+                            <div>
+
+                                <div class="fw-semibold">
+
+                                    Importación completada
+
+                                </div>
+
+
+                                <div class="small mt-1">
+
+                                    Todos los registros fueron procesados
+                                    sin incidencias pendientes de revisión.
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+                }
+
+            </div>
+
+        </div>
+    }
+
+</div>
+
+
+@section Scripts
+{
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+
+        (() => {
+
+            // ==============================================
+            // ELEMENTOS
+            // ==============================================
+
+            const bomText =
+                document.getElementById("bomText");
+
+            const bomFile =
+                document.getElementById("bomFile");
+
+            const lineCount =
+                document.getElementById("lineCount");
+
+            const selectedFileInfo =
+                document.getElementById("selectedFileInfo");
+
+            const selectedFileName =
+                document.getElementById("selectedFileName");
+
+            const selectedFileSize =
+                document.getElementById("selectedFileSize");
+
+            const updateExisting =
+                document.getElementById("updateExisting");
+
+            const updateExistingHelp =
+                document.getElementById("updateExistingHelp");
+
+            const updateExistingBadge =
+                document.getElementById("updateExistingBadge");
+
+            const updateExistingWarning =
+                document.getElementById("updateExistingWarning");
+
+            const bulkImportForm =
+                document.getElementById("bulkImportForm");
+
+            const bulkImportSubmit =
+                document.getElementById("bulkImportSubmit");
+
+
+            // ==============================================
+            // CONTADOR DE LÍNEAS
+            // ==============================================
+
+            function updateLineCount() {
+
+                if (!bomText ||
+                    !lineCount) {
+
+                    return;
+
+                }
+
+
+                const lines =
+                    bomText.value
+                        .split(/\r?\n/)
+                        .filter(line =>
+                            line.trim().length > 0
+                        );
+
+
+                lineCount.textContent =
+                    lines.length.toString();
+
+            }
+
+
+            bomText?.addEventListener(
+                "input",
+                updateLineCount
+            );
+
+
+            updateLineCount();
+
+
+            // ==============================================
+            // ARCHIVO
+            // ==============================================
+
+            bomFile?.addEventListener(
+                "change",
+                function() {
+
+                    const file =
+                        this.files?.[0];
+
+
+                    if (!file) {
+
+                        selectedFileInfo?.classList.add(
+                            "d-none"
+                        );
+
+
+                        if (selectedFileName) {
+                            selectedFileName.textContent = "";
+                        }
+
+
+                        if (selectedFileSize) {
+                            selectedFileSize.textContent = "";
+                        }
+
+
+                        return;
+
+                    }
+
+
+                    const extension =
+                        file.name
+                            .split(".")
+                            .pop()
+                            ?.toLowerCase();
+
+
+                    const validExtension =
+                        extension === "txt" ||
+                        extension === "csv";
+
+
+                    const maxFileSize =
+                        5 * 1024 * 1024;
+
+
+                    // ======================================
+                    // ARCHIVO INVÁLIDO
+                    // ======================================
+
+                    if (!validExtension ||
+                        file.size > maxFileSize) {
+
+                        if (selectedFileInfo) {
+
+                            selectedFileInfo.className =
+                                "alert alert-danger mt-3 mb-0";
+
+                        }
+
+
+                        if (selectedFileName) {
+
+                            selectedFileName.textContent =
+                                !validExtension
+                                    ? "El archivo debe ser TXT o CSV."
+                                    : "El archivo excede el límite de 5 MB.";
+
+                        }
+
+
+                        if (selectedFileSize) {
+
+                            selectedFileSize.textContent =
+                                "";
+
+                        }
+
+
+                        selectedFileInfo?.classList.remove(
+                            "d-none"
+                        );
+
+
+                        return;
+
+                    }
+
+
+                    // ======================================
+                    // ARCHIVO VÁLIDO
+                    // ======================================
+
+                    if (selectedFileInfo) {
+
+                        selectedFileInfo.className =
+                            "confirmation-panel mt-3";
+
+                    }
+
+
+                    if (selectedFileName) {
+
+                        selectedFileName.textContent =
+                            file.name;
+
+                    }
+
+
+                    if (selectedFileSize) {
+
+                        const sizeInKb =
+                            file.size / 1024;
+
+
+                        selectedFileSize.textContent =
+                            sizeInKb >= 1024
+                                ? `${(sizeInKb / 1024).toFixed(2)} MB`
+                                : `${sizeInKb.toFixed(1)} KB`;
+
+                    }
+
+
+                    selectedFileInfo?.classList.remove(
+                        "d-none"
+                    );
+
+                }
+            );
+
+
+            // ==============================================
+            // UPDATE EXISTING
+            // ==============================================
+
+            function updateExistingState() {
+
+                if (!updateExisting) {
+                    return;
+                }
+
+
+                if (updateExisting.checked) {
+
+                    if (updateExistingHelp) {
+
+                        updateExistingHelp.textContent =
+                            "Activado: las cantidades existentes serán reemplazadas.";
+
+                    }
+
+
+                    if (updateExistingBadge) {
+
+                        updateExistingBadge.className =
+                            "status-badge badge-warning";
+
+
+                        updateExistingBadge.innerHTML =
+                            '<i class="bi bi-arrow-repeat"></i> Actualizar existentes';
+
+                    }
+
+
+                    updateExistingWarning?.classList.remove(
+                        "d-none"
+                    );
+
+
+                    return;
+                }
+
+
+                if (updateExistingHelp) {
+
+                    updateExistingHelp.textContent =
+                        "Desactivado: los componentes existentes serán omitidos.";
+
+                }
+
+
+                if (updateExistingBadge) {
+
+                    updateExistingBadge.className =
+                        "status-badge badge-neutral";
+
+
+                    updateExistingBadge.innerHTML =
+                        '<i class="bi bi-dash-circle"></i> Omitir existentes';
+
+                }
+
+
+                updateExistingWarning?.classList.add(
+                    "d-none"
+                );
+
+            }
+
+
+            updateExisting?.addEventListener(
+                "change",
+                updateExistingState
+            );
+
+
+            updateExistingState();
+
+
+            // ==============================================
+            // ENVÍO
+            // ==============================================
+
+            bulkImportForm?.addEventListener(
+                "submit",
+                function() {
+
+                    if (!this.checkValidity()) {
+                        return;
+                    }
+
+
+                    if (!bulkImportSubmit) {
+                        return;
+                    }
+
+
+                    bulkImportSubmit.disabled =
+                        true;
+
+
+                    bulkImportSubmit.innerHTML =
+                        '<span class="spinner-border spinner-border-sm me-2" ' +
+                        'role="status" aria-hidden="true"></span>' +
+                        'Procesando...';
+
+                }
+            );
+
+
+            // ==============================================
+            // ERROR DEL SERVIDOR
+            // ENFOCAR CAMPO CORRESPONDIENTE
+            // ==============================================
+
+            const hasServerErrors =
+                @Html.Raw(
+                hasServerErrors
+                ? "true"
+                : "false"
+                );
+
+
+            if (hasServerErrors) {
+
+                requestAnimationFrame(
+                    () => {
+
+                        const firstValidationError =
+                            document.querySelector(
+                                ".field-validation-error"
+                            );
+
+
+                        if (firstValidationError) {
+
+                            const fieldName =
+                                firstValidationError.getAttribute(
+                                    "data-valmsg-for"
+                                );
+
+
+                            let field =
+                                null;
+
+
+                            if (fieldName) {
+
+                                field =
+                                    document.querySelector(
+                                        `[name="${CSS.escape(fieldName)}"]`
+                                    );
+
+                            }
+
+
+                            if (
+                                field &&
+                                field.type !== "hidden"
+                            ) {
+
+                                field.scrollIntoView({
+                                    behavior: "smooth",
+                                    block: "center"
+                                });
+
+
+                                setTimeout(
+                                    () => {
+
+                                        field.focus({
+                                            preventScroll: true
+                                        });
+
+                                    },
+                                    350
+                                );
+
+
+                                return;
+
+                            }
+
+
+                            firstValidationError.scrollIntoView({
+                                behavior: "smooth",
+                                block: "center"
+                            });
+
+
+                            return;
+
+                        }
+
+
+                        // ==================================
+                        // ERROR GENERAL
+                        // ==================================
+
+                        const validationSummary =
+                            document.querySelector(
+                                ".validation-summary-errors"
+                            );
+
+
+                        if (validationSummary) {
+
+                            validationSummary.scrollIntoView({
+                                behavior: "smooth",
+                                block: "center"
+                            });
+
+                        }
+
+                    }
+                );
+
+            }
+
+
+            // ==============================================
+            // RESULTADO DE IMPORTACIÓN
+            // ==============================================
+
+            const importResults =
+                document.getElementById("importResults");
+
+
+            /*
+             * Solo bajamos automáticamente a resultados
+             * cuando no existe un error del servidor.
+             */
+
+            if (
+                importResults &&
+                !hasServerErrors
+            ) {
+
+                requestAnimationFrame(
+                    () => {
+
+                        importResults.scrollIntoView({
+                            behavior: "smooth",
+                            block: "start"
+                        });
+
+                    }
+                );
+
+            }
+
+        })();
+
+    </script>
+}

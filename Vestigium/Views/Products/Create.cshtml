@@ -1,0 +1,367 @@
+﻿@model Vestigium.Models.Product
+
+@{
+    ViewData["Title"] = "Nuevo Producto";
+}
+
+<div class="container-fluid px-0">
+
+
+    <!-- BREADCRUMB -->
+
+    <nav aria-label="breadcrumb">
+
+        <ol class="breadcrumb">
+
+            <li class="breadcrumb-item">
+
+                <a asp-action="Index">
+                    Catálogo de Productos
+                </a>
+
+            </li>
+
+            <li class="breadcrumb-item active"
+                aria-current="page">
+
+                Nuevo Producto
+
+            </li>
+
+        </ol>
+
+    </nav>
+
+
+    <!-- Encabezado -->
+
+    <div class="card hero-card mb-4">
+
+        <div class="card-body p-4">
+
+            <div class="d-flex flex-column flex-md-row
+                align-items-md-center
+                justify-content-between
+                gap-3">
+
+
+                <!-- Informacion -->
+
+                <div>
+
+                    <h1 class="hero-title d-flex align-items-center gap-2 mb-1">
+
+                        <i class="bi bi-plus-circle"></i>
+
+                        <span>
+                            Nuevo Producto
+                        </span>
+
+                    </h1>
+
+                    <p class="hero-subtitle">
+
+                        Registra un nuevo producto para configurar posteriormente
+                        su lista de materiales.
+
+                    </p>
+
+                </div>
+
+
+                <!-- Regresar -->
+
+                <div class="page-header-actions">
+
+                    <a asp-action="Index"
+                       class="btn btn-outline-secondary">
+
+                        <i class="bi bi-arrow-left"></i>
+
+                        Regresar
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Formulario -->
+
+    <div class="card module-card">
+
+        <!-- Header -->
+
+        <div class="card-header">
+
+            <div>
+
+                <h2 class="card-title-standard d-flex align-items-center gap-2">
+
+                    <i class="bi bi-box-seam text-primary"></i>
+
+                    Información del Producto
+
+                </h2>
+
+                <div class="text-muted small mt-1">
+
+                    Capture la información necesaria para registrar
+                    el producto en Vestigium.
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Body -->
+
+        <div class="card-body p-4">
+
+            <form asp-action="Create"
+                  method="post">
+
+
+                <!-- Validaciones -->
+                @if (!ViewData.ModelState.IsValid)
+                {
+                    <div asp-validation-summary="ModelOnly"
+                         class="alert alert-danger mb-4"
+                         role="alert">
+                    </div>
+                }
+
+
+                <!-- Paso 1: Datos generales -->
+
+                <section class="form-section">
+
+                    <div class="form-section-title">
+
+                        <span class="section-step">
+                            1
+                        </span>
+
+                        <div>
+
+                            <div>
+                                Datos Generales
+                            </div>
+
+                            <div class="text-muted small fw-normal mt-1">
+
+                                Información de identificación del producto.
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="row g-3">
+
+
+                        <!-- N. de producto -->
+
+                        <div class="col-12 col-lg-4">
+
+                            <label asp-for="ProductNumber"
+                                   class="form-label">
+
+                                Número de Producto
+
+                            </label>
+
+
+                            <div class="input-group">
+
+                                <span class="input-group-text">
+
+                                    <i class="bi bi-hash"></i>
+
+                                </span>
+
+                                <input asp-for="ProductNumber"
+                                       class="form-control"
+                                       autocomplete="off"
+                                       autofocus
+                                       placeholder="Ej. FG-10001" />
+
+                            </div>
+
+
+                            <span asp-validation-for="ProductNumber"
+                                  class="text-danger small d-block mt-1">
+                            </span>
+
+
+                            <div class="form-text">
+
+                                Identificador único utilizado para reconocer
+                                el producto.
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- Descripcion -->
+
+                        <div class="col-12 col-lg-8">
+
+                            <label asp-for="ProductDescription"
+                                   class="form-label">
+
+                                Descripción
+
+                            </label>
+
+
+                            <div class="input-group">
+
+                                <span class="input-group-text">
+
+                                    <i class="bi bi-card-text"></i>
+
+                                </span>
+
+                                <input asp-for="ProductDescription"
+                                       class="form-control"
+                                       autocomplete="off"
+                                       placeholder="Ej. Fuel Pump Assembly" />
+
+                            </div>
+
+
+                            <span asp-validation-for="ProductDescription"
+                                  class="text-danger small d-block mt-1">
+                            </span>
+
+
+                            <div class="form-text">
+
+                                Descripción utilizada para identificar
+                                el producto dentro del catálogo.
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <!-- Paso 2: Siguiente paso -->
+
+                <section class="form-section mb-0">
+
+                    <div class="form-section-title">
+
+                        <span class="section-step">
+                            2
+                        </span>
+
+                        <div>
+
+                            <div>
+                                Lista de Materiales
+                            </div>
+
+                            <div class="text-muted small fw-normal mt-1">
+
+                                Configuración posterior al registro del producto.
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="help-panel">
+
+                        <div class="d-flex align-items-start gap-3">
+
+                            <div class="security-icon">
+
+                                <i class="bi bi-diagram-3"></i>
+
+                            </div>
+
+
+                            <div>
+
+                                <div class="help-panel-title">
+
+                                    El BOM se configura después de crear el producto
+
+                                </div>
+
+                                <p class="help-panel-text">
+
+                                    Primero registra la información general.
+                                    Después podrás acceder al producto para agregar
+                                    los materiales y cantidades requeridas para su
+                                    fabricación.
+
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <!-- Acciones -->
+
+                <div class="d-flex flex-column flex-sm-row
+                    justify-content-end
+                    gap-2
+                    mt-4">
+
+                    <a asp-action="Index"
+                       class="btn btn-outline-secondary">
+
+                        <i class="bi bi-x-lg"></i>
+
+                        Cancelar
+
+                    </a>
+
+
+                    <button type="submit"
+                            class="btn btn-primary">
+
+                        <i class="bi bi-check-lg"></i>
+
+                        Crear Producto
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+@section Scripts
+{
+    <partial name="_ValidationScriptsPartial" />
+}

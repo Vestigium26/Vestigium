@@ -1,0 +1,1236 @@
+﻿@model IEnumerable<Vestigium.Models.Movement>
+@using Vestigium.Models.Enums
+@using Vestigium.ViewModels
+
+@{
+    ViewData["Title"] = "Movimientos";
+
+    var movements =
+        Model.ToList();
+
+    var totalMovements =
+        movements.Count;
+
+    var totalEntries =
+        movements.Count(x =>
+            x.MovementType ==
+            MovementType.Entry);
+
+    var totalTransfers =
+        movements.Count(x =>
+            x.MovementType ==
+            MovementType.Transfer);
+
+    var totalOutputs =
+        movements.Count(x =>
+            x.MovementType ==
+            MovementType.Output);
+}
+
+
+<div class="container-fluid px-0">
+
+    <!-- =====================================================
+         ENCABEZADO
+    ====================================================== -->
+
+    <div class="card hero-card mb-4">
+
+        <div class="card-body p-4">
+
+            <div class="d-flex flex-column flex-lg-row
+                        justify-content-between
+                        align-items-lg-center
+                        gap-3">
+
+                <div>
+
+                    <h1 class="hero-title
+                               d-flex
+                               align-items-center
+                               gap-2
+                               mb-1">
+
+                        <i class="bi bi-arrow-left-right"></i>
+
+                        <span>
+                            Movimientos de Inventario
+                        </span>
+
+                    </h1>
+
+
+                    <p class="hero-subtitle mb-2">
+
+                        Trazabilidad y consulta de movimientos
+                        registrados en el sistema.
+
+                    </p>
+
+
+                    <div class="small text-muted">
+
+                        <i class="bi bi-calendar-event me-1"></i>
+
+                        Período consultado:
+
+                        <strong>
+                            @ViewBag.Periodo
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =============================================
+                     ACCIONES
+                ============================================== -->
+
+                <div class="page-header-actions">
+
+                    <a asp-action="History"
+                       class="btn btn-outline-secondary">
+
+                        <i class="bi bi-clock-history"></i>
+
+                        Historial
+
+                    </a>
+
+
+                    <a id="exportPdfBtn"
+                       href="#"
+                       class="btn btn-outline-danger">
+
+                        <i class="bi bi-file-earmark-pdf me-1"></i>
+                        Exportar PDF
+
+                    </a>
+
+
+                    <a asp-action="Create"
+                       class="btn btn-primary">
+
+                        <i class="bi bi-plus-lg"></i>
+
+                        Nuevo Movimiento
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         INDICADORES
+    ====================================================== -->
+
+    <div class="row g-3 mb-4">
+
+        <!-- MOVIMIENTOS -->
+
+        <div class="col-12 col-md-6 col-xl-3">
+
+            @await Html.PartialAsync(
+                "_KpiCard",
+                new KpiCardVM
+                {
+                    Title = "Movimientos",
+                    Value = totalMovements.ToString("N0"),
+                    Subtitle = "Registrados en el período",
+                    Icon = "bi bi-clock-history",
+                    ColorClass = "kpi-primary"
+                })
+
+        </div>
+
+
+        <!-- ENTRADAS -->
+
+        <div class="col-12 col-md-6 col-xl-3">
+
+            @await Html.PartialAsync(
+                "_KpiCard",
+                new KpiCardVM
+                {
+                    Title = "Entradas",
+                    Value = totalEntries.ToString("N0"),
+                    Subtitle = "Movimientos de entrada",
+                    Icon = "bi bi-box-arrow-in-down",
+                    ColorClass = "kpi-success"
+                })
+
+        </div>
+
+
+        <!-- TRANSFERENCIAS -->
+
+        <div class="col-12 col-md-6 col-xl-3">
+
+            @await Html.PartialAsync(
+                "_KpiCard",
+                new KpiCardVM
+                {
+                    Title = "Transferencias",
+                    Value = totalTransfers.ToString("N0"),
+                    Subtitle = "Incluye reubicaciones",
+                    Icon = "bi bi-arrow-left-right",
+                    ColorClass = "kpi-info"
+                })
+
+        </div>
+
+
+        <!-- SALIDAS -->
+
+        <div class="col-12 col-md-6 col-xl-3">
+
+            @await Html.PartialAsync(
+                "_KpiCard",
+                new KpiCardVM
+                {
+                    Title = "Salidas",
+                    Value = totalOutputs.ToString("N0"),
+                    Subtitle = "Movimientos de salida",
+                    Icon = "bi bi-box-arrow-right",
+                    ColorClass = "kpi-danger"
+                })
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         RESUMEN DEL PERÍODO
+    ====================================================== -->
+
+    <div class="alert
+                alert-primary
+                border-0
+                shadow-sm
+                mb-4">
+
+        <div class="d-flex
+                    align-items-center
+                    gap-2">
+
+            <i class="bi bi-info-circle"></i>
+
+            <div>
+
+                @if (ViewBag.FromDate != null)
+                {
+                    <text>
+
+                        Se encontraron
+
+                        <strong>
+                            @totalMovements.ToString("N0")
+                        </strong>
+
+                        @(totalMovements == 1
+                            ? "movimiento"
+                            : "movimientos")
+
+                        en el período seleccionado.
+
+                    </text>
+                }
+                else
+                {
+                    <text>
+
+                        Se encontraron
+
+                        <strong>
+                            @totalMovements.ToString("N0")
+                        </strong>
+
+                        @(totalMovements == 1
+                            ? "movimiento"
+                            : "movimientos")
+
+                        en la fecha seleccionada.
+
+                    </text>
+                }
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         FILTROS
+    ====================================================== -->
+
+    <div class="card module-card mb-4">
+
+        <div class="card-header">
+
+            <div>
+
+                <h2 class="card-title-standard
+                           d-flex
+                           align-items-center
+                           gap-2">
+
+                    <i class="bi bi-funnel text-primary"></i>
+
+                    Filtros de Consulta
+
+                </h2>
+
+
+                <div class="text-muted small mt-1">
+
+                    Consulte movimientos por una fecha específica
+                    o por un período determinado.
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="card-body">
+
+            <div class="row
+                        g-3
+                        align-items-end">
+
+                <!-- =============================================
+                     TIPO DE CONSULTA
+                ============================================== -->
+
+                <div class="col-12 col-lg-3">
+
+                    <label class="form-label">
+
+                        Tipo de Consulta
+
+                    </label>
+
+
+                    <div>
+
+                        <div class="form-check form-check-inline">
+
+                            <input class="form-check-input"
+                                   type="radio"
+                                   name="filterMode"
+                                   id="singleDate"
+                                   value="single"
+                                   @(ViewBag.FromDate == null
+                                       ? "checked"
+                                       : null) />
+
+
+                            <label class="form-check-label"
+                                   for="singleDate">
+
+                                Fecha
+
+                            </label>
+
+                        </div>
+
+
+                        <div class="form-check form-check-inline">
+
+                            <input class="form-check-input"
+                                   type="radio"
+                                   name="filterMode"
+                                   id="dateRange"
+                                   value="range"
+                                   @(ViewBag.FromDate != null
+                                       ? "checked"
+                                       : null) />
+
+
+                            <label class="form-check-label"
+                                   for="dateRange">
+
+                                Período
+
+                            </label>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =============================================
+                     FECHA ÚNICA
+                ============================================== -->
+
+                <div class="col-12 col-md-6 col-lg-3"
+                     id="singleDateContainer">
+
+                    <label class="form-label">
+
+                        Fecha
+
+                    </label>
+
+
+                    <input type="date"
+                           id="selectedDate"
+                           value="@ViewBag.SelectedDate"
+                           class="form-control" />
+
+                </div>
+
+
+                <!-- =============================================
+                     DESDE
+                ============================================== -->
+
+                <div class="col-12 col-md-6 col-lg-3"
+                     id="rangeFromContainer"
+                     style="display:none;">
+
+                    <label class="form-label">
+
+                        Desde
+
+                    </label>
+
+
+                    <input type="date"
+                           id="fromDate"
+                           value="@ViewBag.FromDate"
+                           class="form-control" />
+
+                </div>
+
+
+                <!-- =============================================
+                     HASTA
+                ============================================== -->
+
+                <div class="col-12 col-md-6 col-lg-3"
+                     id="rangeToContainer"
+                     style="display:none;">
+
+                    <label class="form-label">
+
+                        Hasta
+
+                    </label>
+
+
+                    <input type="date"
+                           id="toDate"
+                           value="@ViewBag.ToDate"
+                           class="form-control" />
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         TABLA
+    ====================================================== -->
+
+    <div class="card module-card">
+
+        <!-- HEADER -->
+
+        <div class="card-header">
+
+            <div class="d-flex
+                        flex-column
+                        flex-md-row
+                        justify-content-between
+                        align-items-md-center
+                        gap-3">
+
+                <div>
+
+                    <h2 class="card-title-standard
+                               d-flex
+                               align-items-center
+                               gap-2">
+
+                        <i class="bi bi-table text-primary"></i>
+
+                        Movimientos de Inventario
+
+                    </h2>
+
+
+                    <div class="text-muted small mt-1">
+
+                        @totalMovements.ToString("N0")
+
+                        @(totalMovements == 1
+                            ? "registro encontrado"
+                            : "registros encontrados")
+
+                    </div>
+
+                </div>
+
+
+                <span class="component-badge">
+
+                    <i class="bi bi-list-ul"></i>
+
+                    @totalMovements.ToString("N0")
+
+                    @(totalMovements == 1
+                        ? "movimiento"
+                        : "movimientos")
+
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             TABLA DE MOVIMIENTOS
+        ================================================== -->
+
+        @if (movements.Any())
+        {
+            <div class="table-responsive">
+
+                <table id="movementsTable"
+                       class="table
+                    table-modern
+                    table-hover
+                    align-middle
+                    mb-0
+                    w-100">
+
+                    <thead>
+
+                        <tr>
+
+                            <th class="text-nowrap">
+                                Folio
+                            </th>
+
+                            <th class="text-nowrap">
+                                Fecha
+                            </th>
+
+                            <th>
+                                Número de Parte
+                            </th>
+
+                            <th class="text-nowrap">
+                                Tipo
+                            </th>
+
+                            <th class="text-end text-nowrap">
+                                Cantidad
+                            </th>
+
+                            <th class="text-nowrap">
+                                Origen
+                            </th>
+
+                            <th class="text-nowrap">
+                                Destino
+                            </th>
+
+                            <th>
+                                Comentarios
+                            </th>
+
+                            <th>
+                                Registró
+                            </th>
+
+                            <th>
+                                Recibió
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        @foreach (var item in movements)
+                        {
+                            var isInternalTransfer =
+                                item.MovementType ==
+                                    MovementType.Transfer &&
+                                !string.IsNullOrWhiteSpace(
+                                    item.Comments) &&
+                                item.Comments.Contains(
+                                    "Transferencia interna",
+                                    StringComparison.OrdinalIgnoreCase);
+
+
+                            <tr>
+
+                                <!-- =================================
+                                     FOLIO
+                                ================================== -->
+
+                                <td>
+
+                                    @if (!string.IsNullOrWhiteSpace(
+                                        item.ReportNumber))
+                                    {
+                                        <span class="table-reference
+                                                     text-nowrap">
+
+                                            @item.ReportNumber
+
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">
+
+                                            -
+
+                                        </span>
+                                    }
+
+                                </td>
+
+
+                                <!-- =================================
+                                     FECHA
+                                ================================== -->
+
+                                <td>
+
+                                    <span class="table-reference
+                                                 text-nowrap">
+
+                                        @(item.MovementDate
+                                            .ToString(
+                                                "dd/MM/yyyy HH:mm"))
+
+                                    </span>
+
+                                </td>
+
+
+                                <!-- =================================
+                                     MATERIAL
+                                ================================== -->
+
+                                <td>
+
+                                    <div class="fw-semibold
+                                                text-primary">
+
+                                        @item.Material.PartNumber
+
+                                    </div>
+
+
+                                    @if (!string.IsNullOrWhiteSpace(
+                                        item.Material.Description))
+                                    {
+                                        <div class="small text-muted">
+
+                                            @item.Material.Description
+
+                                        </div>
+                                    }
+
+                                </td>
+
+
+                                <!-- =================================
+                                     TIPO
+                                ================================== -->
+
+                                <td>
+
+                                    @switch (item.MovementType)
+                                    {
+                                        case MovementType.Entry:
+
+                                            <span class="status-badge
+                                                         badge-success">
+
+                                                <i class="bi bi-box-arrow-in-down"></i>
+
+                                                Entrada
+
+                                            </span>
+
+                                            break;
+
+
+                                        case MovementType.Transfer:
+
+                                            if (isInternalTransfer)
+                                            {
+                                                <span class="status-badge
+                                                             badge-neutral">
+
+                                                    <i class="bi bi-arrow-left-right"></i>
+
+                                                    Reubicación
+
+                                                </span>
+                                            }
+                                            else
+                                            {
+                                                <span class="status-badge
+                                                             engineering-pill">
+
+                                                    <i class="bi bi-arrow-right"></i>
+
+                                                    Transferencia
+
+                                                </span>
+                                            }
+
+                                            break;
+
+
+                                        case MovementType.Output:
+
+                                            <span class="status-badge
+                                                         badge-danger">
+
+                                                <i class="bi bi-box-arrow-up"></i>
+
+                                                Salida
+
+                                            </span>
+
+                                            break;
+                                    }
+
+                                </td>
+
+
+                                <!-- =================================
+                                     CANTIDAD
+                                ================================== -->
+
+                                <td class="text-end">
+
+                                    <span class="table-reference
+                                                 fw-semibold">
+
+                                        @item.Quantity.ToString("N0")
+
+                                    </span>
+
+                                </td>
+
+
+                                <!-- =================================
+                                     ORIGEN
+                                ================================== -->
+
+                                <td>
+
+                                    @if (!string.IsNullOrWhiteSpace(
+                                        item.OriginLocation))
+                                    {
+                                        <span class="location-badge">
+
+                                            <i class="bi bi-geo-alt"></i>
+
+                                            @item.OriginLocation
+
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">
+
+                                            -
+
+                                        </span>
+                                    }
+
+                                </td>
+
+
+                                <!-- =================================
+                                     DESTINO
+                                ================================== -->
+
+                                <td>
+
+                                    @if (!string.IsNullOrWhiteSpace(
+                                        item.DestinationLocation))
+                                    {
+                                        <span class="location-badge">
+
+                                            @item.DestinationLocation
+
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">
+
+                                            -
+
+                                        </span>
+                                    }
+
+                                </td>
+
+
+                                <!-- =================================
+                                     COMENTARIOS
+                                ================================== -->
+
+                                <td style="max-width:280px;">
+
+                                    @if (!string.IsNullOrWhiteSpace(
+                                        item.Comments))
+                                    {
+                                        <span>
+
+                                            @item.Comments
+
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">
+
+                                            -
+
+                                        </span>
+                                    }
+
+                                </td>
+
+
+                                <!-- =================================
+                                     REGISTRÓ
+                                ================================== -->
+
+                                <td>
+
+                                    @if (!string.IsNullOrWhiteSpace(
+                                        item.RegisteredByName))
+                                    {
+                                        <div class="fw-semibold">
+
+                                            @item.RegisteredByName
+
+                                        </div>
+
+
+                                        @if (!string.IsNullOrWhiteSpace(
+                                            item.UserName))
+                                        {
+                                            <div class="small text-muted">
+
+                                                @item.UserName
+
+                                            </div>
+                                        }
+                                    }
+                                    else if (!string.IsNullOrWhiteSpace(
+                                        item.UserName))
+                                    {
+                                        <span>
+
+                                            @item.UserName
+
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">
+
+                                            -
+
+                                        </span>
+                                    }
+
+                                </td>
+
+
+                                <!-- =================================
+                                     RECIBIÓ
+                                ================================== -->
+
+                                <td>
+
+                                    @if (!string.IsNullOrWhiteSpace(
+                                        item.ReceivedByName))
+                                    {
+                                        <div class="fw-semibold">
+
+                                            @item.ReceivedByName
+
+                                        </div>
+
+
+                                        @if (!string.IsNullOrWhiteSpace(
+                                            item.ReceivedByEmployeeNumber))
+                                        {
+                                            <div class="small text-muted">
+
+                                                @item.ReceivedByEmployeeNumber
+
+                                            </div>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">
+
+                                            -
+
+                                        </span>
+                                    }
+
+                                </td>
+
+                            </tr>
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+        }
+        else
+        {
+            <!-- =================================================
+                 SIN RESULTADOS
+            ================================================== -->
+
+            <div class="empty-state">
+
+                <div class="empty-state-icon">
+
+                    <i class="bi bi-inbox"></i>
+
+                </div>
+
+
+                <div class="empty-state-title">
+
+                    No existen movimientos registrados
+
+                </div>
+
+
+                <div class="empty-state-description">
+
+                    No se encontraron movimientos durante
+                    el período seleccionado.
+
+                </div>
+
+
+                <a asp-action="Create"
+                   class="btn btn-primary">
+
+                    <i class="bi bi-plus-lg"></i>
+
+                    Registrar Movimiento
+
+                </a>
+
+            </div>
+        }
+
+    </div>
+
+</div>
+
+
+@section Scripts
+{
+    <script>
+
+        // ==========================================
+        // ELEMENTOS DE FILTRO
+        // ==========================================
+
+        const singleDate =
+            document.getElementById(
+                "singleDate");
+
+        const dateRange =
+            document.getElementById(
+                "dateRange");
+
+        const singleContainer =
+            document.getElementById(
+                "singleDateContainer");
+
+        const rangeFromContainer =
+            document.getElementById(
+                "rangeFromContainer");
+
+        const rangeToContainer =
+            document.getElementById(
+                "rangeToContainer");
+
+        const selectedDate =
+            document.getElementById(
+                "selectedDate");
+
+        const fromDate =
+            document.getElementById(
+                "fromDate");
+
+        const toDate =
+            document.getElementById(
+                "toDate");
+
+
+        // ==========================================
+        // MOSTRAR / OCULTAR FILTROS
+        // ==========================================
+
+        function updateFilterMode() {
+
+            if (dateRange?.checked) {
+
+                singleContainer.style.display =
+                    "none";
+
+                rangeFromContainer.style.display =
+                    "block";
+
+                rangeToContainer.style.display =
+                    "block";
+            }
+            else {
+
+                singleContainer.style.display =
+                    "block";
+
+                rangeFromContainer.style.display =
+                    "none";
+
+                rangeToContainer.style.display =
+                    "none";
+            }
+        }
+
+
+        updateFilterMode();
+
+
+        singleDate?.addEventListener(
+            "change",
+            updateFilterMode);
+
+
+        dateRange?.addEventListener(
+            "change",
+            updateFilterMode);
+
+
+        // ==========================================
+        // CONSULTA POR FECHA
+        // ==========================================
+
+        selectedDate?.addEventListener(
+            "change",
+            function () {
+
+                if (!this.value) {
+                    return;
+                }
+
+
+                window.location =
+                    '@Url.Action("Index", "Movements")' +
+                    '?date=' +
+                    encodeURIComponent(
+                        this.value);
+            });
+
+
+        // ==========================================
+        // CONSULTA POR PERÍODO
+        // ==========================================
+
+        function loadRange() {
+
+            const from =
+                fromDate?.value;
+
+            const to =
+                toDate?.value;
+
+
+            if (!from || !to) {
+                return;
+            }
+
+
+            // Evitar período invertido.
+
+            if (from > to) {
+
+                alert(
+                    "La fecha inicial no puede ser posterior a la fecha final.");
+
+                return;
+            }
+
+
+            window.location =
+                '@Url.Action("Index", "Movements")' +
+                '?fromDate=' +
+                encodeURIComponent(from) +
+                '&toDate=' +
+                encodeURIComponent(to);
+        }
+
+
+        fromDate?.addEventListener(
+            "change",
+            loadRange);
+
+
+        toDate?.addEventListener(
+            "change",
+            loadRange);
+
+
+        // ==========================================
+        // EXPORTAR PDF
+        // ==========================================
+
+        const exportPdfBtn =
+            document.getElementById(
+                "exportPdfBtn");
+
+
+        exportPdfBtn?.addEventListener(
+            "click",
+            function (event) {
+
+                event.preventDefault();
+
+
+                const isRange =
+                    dateRange?.checked;
+
+
+                let url =
+                    '@Url.Action("ExportPdf", "Movements")';
+
+
+                if (isRange) {
+
+                    const from =
+                        fromDate?.value;
+
+                    const to =
+                        toDate?.value;
+
+
+                    if (!from || !to) {
+                        return;
+                    }
+
+
+                    if (from > to) {
+
+                        alert(
+                            "La fecha inicial no puede ser posterior a la fecha final.");
+
+                        return;
+                    }
+
+
+                    url +=
+                        '?fromDate=' +
+                        encodeURIComponent(from) +
+                        '&toDate=' +
+                        encodeURIComponent(to);
+                }
+                else {
+
+                    const date =
+                        selectedDate?.value;
+
+
+                    if (!date) {
+                        return;
+                    }
+
+
+                    url +=
+                        '?date=' +
+                        encodeURIComponent(date);
+                }
+
+
+                window.location =
+                    url;
+            });
+
+
+        // ==========================================
+        // DATATABLES
+        // ==========================================
+
+        $(document).ready(
+            function () {
+
+                const table =
+                    document.getElementById(
+                        "movementsTable");
+
+
+                if (!table) {
+                    return;
+                }
+
+
+                $('#movementsTable')
+                    .DataTable(
+                        {
+                            responsive:
+                                true,
+
+                            pageLength:
+                                25,
+
+                            order:
+                                [[1, 'desc']],
+
+                            language:
+                            {
+                                url:
+                                    '//cdn.datatables.net/plug-ins/1.13.8/i18n/es-ES.json'
+                            }
+                        });
+            });
+
+    </script>
+}

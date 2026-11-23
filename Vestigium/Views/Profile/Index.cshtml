@@ -1,0 +1,289 @@
+﻿@model Vestigium.Models.ViewModels.ProfileVM
+
+@{
+    ViewData["Title"] = "Mi Perfil";
+}
+
+<div class="container-fluid">
+
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show mb-4">
+
+            <i class="bi bi-check-circle me-2"></i>
+
+            @TempData["Success"]
+
+            <button type="button"
+                    class="btn-close"
+                    data-bs-dismiss="alert">
+            </button>
+
+        </div>
+    }
+
+
+    <!-- HERO DEL PERFIL -->
+
+    <div class="card profile-hero mb-4">
+
+        <div class="card-body">
+
+            <div class="d-flex flex-column flex-md-row align-items-center">
+
+                <div class="profile-avatar-large me-md-4 mb-3 mb-md-0">
+
+                    <i class="bi bi-person-circle"></i>
+
+                </div>
+
+                <div>
+
+                    <h2 class="fw-bold mb-2">
+
+                        @Model.FullName
+
+                    </h2>
+
+                    <p class="text-muted mb-3">
+
+                        Información de la cuenta activa en Vestigium.
+
+                    </p>
+
+                    <div class="d-flex flex-wrap gap-2">
+
+                        @switch (Model.Area)
+                        {
+                            case "Warehouse":
+
+                                <span class="badge warehouse-pill">
+
+                                    <i class="bi bi-box-seam me-1"></i>
+
+                                    Warehouse
+
+                                </span>
+
+                                break;
+
+                            case "Engineering":
+
+                                <span class="badge engineering-pill">
+
+                                    <i class="bi bi-gear me-1"></i>
+
+                                    Engineering
+
+                                </span>
+
+                                break;
+
+                            case "Quality":
+
+                                <span class="badge quality-pill">
+
+                                    <i class="bi bi-shield-check me-1"></i>
+
+                                    Quality
+
+                                </span>
+
+                                break;
+
+                            default:
+
+                                <span class="badge production-pill">
+
+                                    <i class="bi bi-cpu me-1"></i>
+
+                                    Production Line
+
+                                </span>
+
+                                break;
+                        }
+
+                        <span class="badge bg-primary">
+
+                            <i class="bi bi-person-badge me-1"></i>
+
+                            @Model.Role
+
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- INFORMACIÓN PERSONAL -->
+
+    <div class="card section-card mb-4">
+
+        <div class="card-header">
+
+            <h5 class="mb-0">
+
+                <i class="bi bi-person-vcard me-2 text-primary"></i>
+
+                Información Personal
+
+            </h5>
+
+        </div>
+
+        <div class="card-body">
+
+            <div class="row g-3">
+
+                <div class="col-lg-4 col-md-6">
+
+                    <div class="profile-info-card">
+
+                        <i class="bi bi-person-badge profile-card-icon"></i>
+
+                        <div class="profile-card-label">
+
+                            Número de Empleado
+
+                        </div>
+
+                        <div class="profile-card-value">
+
+                            @Model.EmployeeNumber
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="col-lg-4 col-md-6">
+
+                    <div class="profile-info-card">
+
+                        <i class="bi bi-envelope profile-card-icon"></i>
+
+                        <div class="profile-card-label">
+
+                            Correo Electrónico
+
+                        </div>
+
+                        <div class="profile-card-value">
+
+                            @Model.Email
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="col-lg-4 col-md-12">
+
+                    <div class="profile-info-card">
+
+                        <i class="bi bi-diagram-3 profile-card-icon"></i>
+
+                        <div class="profile-card-label">
+
+                            Área de Trabajo
+
+                        </div>
+
+                        <div class="profile-card-value">
+
+                            @Model.Area
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- SEGURIDAD -->
+
+    <div class="card section-card">
+
+        <div class="card-header">
+
+            <h5 class="mb-0">
+
+                <i class="bi bi-shield-lock me-2 text-primary"></i>
+
+                Seguridad de la Cuenta
+
+            </h5>
+
+        </div>
+
+        <div class="card-body">
+
+            <div class="row align-items-center">
+
+                <div class="col-md-8">
+
+                    <div class="security-summary">
+
+                        <div class="security-icon">
+
+                            <i class="bi bi-key-fill"></i>
+
+                        </div>
+
+                        <div>
+
+                            <div class="fw-semibold">
+
+                                Contraseña
+
+                            </div>
+
+                            <small class="text-muted">
+
+                                Mantenga su cuenta protegida actualizando
+                                periódicamente su contraseña.
+
+                            </small>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="col-md-4 text-md-end mt-3 mt-md-0">
+
+                    <a asp-controller="Profile"
+                       asp-action="ChangePassword"
+                       class="btn btn-primary">
+
+                        <i class="bi bi-key me-2"></i>
+
+                        Cambiar Contraseña
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

@@ -1,0 +1,647 @@
+﻿@using Vestigium.Data
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<ApplicationUser> UserManager
+
+@{
+	var currentUser = User.Identity?.IsAuthenticated == true
+		? await UserManager.GetUserAsync(User)
+		: null;
+
+	var currentController =
+		ViewContext.RouteData.Values["controller"]?.ToString();
+
+	var currentAction =
+		ViewContext.RouteData.Values["action"]?.ToString();
+
+	var isDashboard =
+		currentController == "Home" &&
+		currentAction == "Dashboard";
+
+	var initials = "";
+
+	if (!string.IsNullOrWhiteSpace(currentUser?.FullName))
+	{
+		initials = string.Concat(
+			currentUser.FullName
+				.Split(' ', StringSplitOptions.RemoveEmptyEntries)
+				.Take(2)
+				.Select(x => x[0]))
+			.ToUpperInvariant();
+	}
+
+	var avatarClass = currentUser?.Area switch
+	{
+		"Warehouse" => "avatar-warehouse",
+		"Engineering" => "avatar-engineering",
+		"Quality" => "avatar-quality",
+		"Production Line" => "avatar-production",
+		_ => "avatar-neutral"
+	};
+
+	var areaBadgeClass = currentUser?.Area switch
+	{
+		"Warehouse" => "badge-warehouse",
+		"Engineering" => "badge-engineering",
+		"Quality" => "badge-quality",
+		"Production Line" => "badge-production",
+		_ => "badge-neutral"
+	};
+}
+
+<!DOCTYPE html>
+
+<html lang="es">
+
+<head>
+
+	<script>
+		(function () {
+
+			const theme =
+				localStorage.getItem("vestigium-theme") || "light";
+
+			document.documentElement.setAttribute(
+				"data-bs-theme",
+				theme
+			);
+
+		})();
+	</script>
+
+	<meta charset="utf-8" />
+
+	<meta name="viewport"
+		  content="width=device-width, initial-scale=1.0" />
+
+	<title>@ViewData["Title"] - Vestigium</title>
+
+
+	<!-- BOOTSTRAP -->
+
+	<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+
+
+	<!-- BOOTSTRAP ICONS -->
+
+	<link rel="stylesheet"
+		  href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+
+
+	<!-- VESTIGIUM DESIGN SYSTEM -->
+
+	<link href="~/css/vestigium-theme.css" rel="stylesheet" />
+
+	<!-- MODULES -->
+
+	<link href="~/css/dashboard.css" rel="stylesheet" />
+	<link href="~/css/inventory.css" rel="stylesheet" />
+	<link href="~/css/movements.css" rel="stylesheet" />
+	<link href="~/css/users.css" rel="stylesheet" />
+	<link href="~/css/profile.css" rel="stylesheet" />
+	<link href="~/css/auth.css" rel="stylesheet" />
+	<link href="~/css/operations.css" rel="stylesheet" />
+
+	<!-- DARK MODE -->
+
+	<link href="~/css/darkmode.css" rel="stylesheet" />
+
+	<script type="importmap"></script>
+
+</head>
+
+
+<body>
+
+
+	<!-- NAVBAR -->
+
+	<header>
+
+		<nav class="navbar navbar-dark navbar-vestigium shadow-sm">
+
+			<div class="container-fluid">
+
+
+				<!-- Sidebar toggle -->
+
+				@if (User.Identity?.IsAuthenticated ?? false)
+				{
+					<button type="button"
+							class="btn btn-outline-light me-3"
+							data-bs-toggle="offcanvas"
+							data-bs-target="#sidebarVestigium"
+							aria-controls="sidebarVestigium"
+							aria-label="Abrir menú principal"
+							title="Menú">
+
+						<i class="bi bi-list"></i>
+
+					</button>
+				}
+
+
+				<!-- Brand -->
+
+				<a class="navbar-brand"
+				   asp-controller="Home"
+				   asp-action="Index">
+
+					<span class="navbar-brand-icon">
+						<i class="bi bi-boxes"></i>
+					</span>
+
+					<span>Vestigium</span>
+
+				</a>
+
+
+				<!-- Navbar actions -->
+
+				<div class="ms-auto d-flex align-items-center">
+
+
+					@if (User.Identity?.IsAuthenticated ?? false)
+					{
+						<!-- Current user -->
+
+						<div class="navbar-user text-light me-3">
+
+							<div class="navbar-user-name">
+								@currentUser?.FullName
+							</div>
+
+							<div class="navbar-user-role">
+								@currentUser?.Area
+							</div>
+
+						</div>
+
+
+						<!-- Theme -->
+
+						<button type="button"
+								id="themeToggle"
+								class="btn btn-outline-light me-2"
+								aria-label="Cambiar tema"
+								title="Cambiar tema">
+
+							<i class="bi bi-moon-stars"></i>
+
+						</button>
+
+
+						<!-- Logout -->
+
+						<form method="post"
+							  asp-area="Identity"
+							  asp-page="/Account/Logout"
+							  asp-route-returnUrl="@Url.Action("Index", "Home")"
+							  class="m-0">
+
+							<button type="submit"
+									class="btn btn-outline-light">
+
+								<i class="bi bi-box-arrow-right"></i>
+
+								<span class="d-none d-md-inline">
+									Cerrar Sesión
+								</span>
+
+							</button>
+
+						</form>
+					}
+					else
+					{
+						<a asp-area="Identity"
+						   asp-page="/Account/Login"
+						   class="btn btn-outline-light">
+
+							<i class="bi bi-box-arrow-in-right"></i>
+
+							<span class="d-none d-sm-inline">
+								Iniciar Sesión
+							</span>
+
+						</a>
+					}
+
+				</div>
+
+			</div>
+
+		</nav>
+
+	</header>
+
+
+	<!-- SIDEBAR -->
+
+	@if (User.Identity?.IsAuthenticated ?? false)
+	{
+		<div class="offcanvas offcanvas-start"
+			 tabindex="-1"
+			 id="sidebarVestigium"
+			 aria-labelledby="sidebarVestigiumLabel">
+
+
+			<!-- Sidebar header -->
+
+			<div class="offcanvas-header">
+
+				<a class="navbar-brand"
+				   id="sidebarVestigiumLabel"
+				   asp-controller="Home"
+				   asp-action="Index">
+
+					<span class="navbar-brand-icon">
+						<i class="bi bi-boxes"></i>
+					</span>
+
+					<span>Vestigium</span>
+
+				</a>
+
+
+				<button type="button"
+						class="btn-close btn-close-white"
+						data-bs-dismiss="offcanvas"
+						aria-label="Cerrar menú">
+				</button>
+
+			</div>
+
+
+			<!-- Sidebar body -->
+
+			<div class="offcanvas-body p-0">
+
+
+				<!-- USER -->
+
+				<div class="sidebar-user">
+
+					<div class="sidebar-user-avatar @avatarClass">
+						@initials
+					</div>
+
+
+					<div class="sidebar-user-name">
+						@currentUser?.FullName
+					</div>
+
+
+					@if (!string.IsNullOrWhiteSpace(currentUser?.Area))
+					{
+						<div class="mt-2">
+
+							<span class="sidebar-area-pill @areaBadgeClass">
+								@currentUser.Area
+							</span>
+
+						</div>
+					}
+
+
+					<div class="sidebar-user-id mt-2">
+						@currentUser?.UserName
+					</div>
+
+
+					<hr class="sidebar-user-divider" />
+
+				</div>
+
+
+				<!-- NAVIGATION -->
+
+				<div class="list-group list-group-flush sidebar-menu">
+
+
+					<!-- Operations -->
+
+					<div class="sidebar-section-title">
+
+						<i class="bi bi-gear me-2"></i>
+
+						Operations
+
+					</div>
+
+
+					<a asp-controller="Home"
+					   asp-action="Dashboard"
+					   class="sidebar-dashboard-link @(isDashboard ? "active" : "")"
+					   aria-current="@(isDashboard ? "page" : null)">
+
+						<i class="bi bi-speedometer2 me-2"></i>
+
+						Dashboard
+
+					</a>
+
+
+					<a asp-controller="Materials"
+					   asp-action="Index"
+					   class="list-group-item list-group-item-action
+							  @(currentController == "Materials" ? "active" : "")"
+					   aria-current="@(currentController == "Materials" ? "page" : null)">
+
+						<i class="bi bi-box-seam"></i>
+
+						Inventory
+
+					</a>
+
+
+					<a asp-controller="Movements"
+					   asp-action="Index"
+					   class="list-group-item list-group-item-action
+							  @(currentController == "Movements" ? "active" : "")"
+					   aria-current="@(currentController == "Movements" ? "page" : null)">
+
+						<i class="bi bi-arrow-left-right"></i>
+
+						Movements
+
+					</a>
+
+
+					<!-- Engineering -->
+
+					<div class="sidebar-section-title">
+
+						<i class="bi bi-diagram-3 me-2"></i>
+
+						Engineering
+
+					</div>
+
+
+					<a asp-controller="Products"
+					   asp-action="Index"
+					   class="list-group-item list-group-item-action
+							  @(currentController == "Products" ||
+								 currentController == "ProductBom"
+								  ? "active"
+								  : "")"
+					   aria-current="@(
+						   currentController == "Products" ||
+						   currentController == "ProductBom"
+							   ? "page"
+							   : null
+					   )">
+
+						<i class="bi bi-diagram-3"></i>
+
+						Catálogo de Productos
+
+					</a>
+
+
+					<!-- Administration -->
+
+					@if (User.IsInRole("Admin"))
+					{
+						<div class="sidebar-section-title">
+
+							<i class="bi bi-shield-check me-2"></i>
+
+							Administration
+
+						</div>
+
+
+						<a asp-controller="Users"
+						   asp-action="Index"
+						   class="list-group-item list-group-item-action
+								  @(currentController == "Users" ? "active" : "")"
+						   aria-current="@(currentController == "Users" ? "page" : null)">
+
+							<i class="bi bi-people"></i>
+
+							Users
+
+						</a>
+					}
+
+
+					<div class="sidebar-divider"></div>
+
+
+					<!-- Account -->
+
+					<div class="sidebar-section-title">
+
+						<i class="bi bi-person-circle me-2"></i>
+
+						Account
+
+					</div>
+
+
+					<a asp-controller="Profile"
+					   asp-action="Index"
+					   class="list-group-item list-group-item-action
+							  @(currentController == "Profile" ? "active" : "")"
+					   aria-current="@(currentController == "Profile" ? "page" : null)">
+
+						<i class="bi bi-person-circle"></i>
+
+						Mi Perfil
+
+					</a>
+
+
+					<a asp-controller="Home"
+					   asp-action="Privacy"
+					   class="list-group-item list-group-item-action
+							  @(currentController == "Home" &&
+								 currentAction == "Privacy"
+								  ? "active"
+								  : "")"
+					   aria-current="@(
+						   currentController == "Home" &&
+						   currentAction == "Privacy"
+							   ? "page"
+							   : null
+					   )">
+
+						<i class="bi bi-shield-check"></i>
+
+						Calidad y Privacidad
+
+					</a>
+
+				</div>
+
+
+				<!-- SIDEBAR FOOTER -->
+
+				<div class="sidebar-footer">
+
+					<div class="small fw-semibold">
+						Vestigium
+					</div>
+
+					<div class="small text-muted">
+						Sistema de Trazabilidad e Inventario
+					</div>
+
+					<div class="small text-muted">
+						AMETEK Reichert
+					</div>
+
+				</div>
+
+			</div>
+
+		</div>
+	}
+
+
+	<!-- MAIN CONTENT -->
+
+	<main class="container-fluid px-3 px-md-4 py-3">
+		@RenderBody()
+	</main>
+
+
+	<!-- FOOTER -->
+
+	<footer class="border-top footer text-muted mt-5">
+
+		<div class="container-fluid px-3 px-md-4 py-3">
+
+			<div class="row align-items-center g-2">
+
+				<div class="col-12 col-md-8">
+
+					<small>
+
+						<i class="bi bi-boxes me-1"></i>
+
+						Vestigium © @DateTime.Now.Year
+
+					</small>
+
+				</div>
+
+
+				<div class="col-12 col-md-4 text-md-end">
+
+					<small>
+
+						<a asp-controller="Home"
+						   asp-action="Privacy"
+						   class="text-decoration-none">
+
+							Calidad y Privacidad
+
+						</a>
+
+					</small>
+
+				</div>
+
+			</div>
+
+		</div>
+
+	</footer>
+
+
+	<!-- SCRIPTS -->
+
+	<script src="~/lib/jquery/dist/jquery.min.js"></script>
+	<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+	<script src="~/js/site.js" asp-append-version="true"></script>
+
+
+
+	<!-- THEME -->
+
+	<script>
+
+		(function () {
+
+			const themeToggle =
+				document.getElementById("themeToggle");
+
+			function updateThemeIcon(theme) {
+
+				const icon =
+					themeToggle?.querySelector("i");
+
+				if (!icon) {
+					return;
+				}
+
+				icon.className =
+					theme === "dark"
+						? "bi bi-sun"
+						: "bi bi-moon-stars";
+
+				themeToggle.setAttribute(
+					"aria-label",
+					theme === "dark"
+						? "Cambiar a tema claro"
+						: "Cambiar a tema oscuro"
+				);
+
+				themeToggle.setAttribute(
+					"title",
+					theme === "dark"
+						? "Tema claro"
+						: "Tema oscuro"
+				);
+			}
+
+
+			const savedTheme =
+				localStorage.getItem("vestigium-theme") || "light";
+
+			document.documentElement.setAttribute(
+				"data-bs-theme",
+				savedTheme
+			);
+
+			updateThemeIcon(savedTheme);
+
+
+			themeToggle?.addEventListener("click", function () {
+
+				const currentTheme =
+					document.documentElement.getAttribute(
+						"data-bs-theme"
+					);
+
+				const newTheme =
+					currentTheme === "dark"
+						? "light"
+						: "dark";
+
+				document.documentElement.setAttribute(
+					"data-bs-theme",
+					newTheme
+				);
+
+				localStorage.setItem(
+					"vestigium-theme",
+					newTheme
+				);
+
+				updateThemeIcon(newTheme);
+
+			});
+
+		})();
+
+	</script>
+
+
+	@await RenderSectionAsync("Scripts", required: false)
+
+</body>
+
+</html>

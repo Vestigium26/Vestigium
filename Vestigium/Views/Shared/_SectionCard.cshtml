@@ -1,0 +1,39 @@
+﻿@model Vestigium.ViewModels.SectionCardVM
+
+<div class="card v-card @Model.AreaClass">
+
+    <div class="card-header">
+
+        <div class="d-flex align-items-center">
+
+            @if (!string.IsNullOrWhiteSpace(Model.Icon))
+            {
+                <i class="@Model.Icon me-2"></i>
+            }
+
+            <div>
+
+                <div class="fw-semibold">
+                    @Model.Title
+                </div>
+
+                @if (!string.IsNullOrWhiteSpace(Model.Subtitle))
+                {
+                    <small class="text-muted">
+                        @Model.Subtitle
+                    </small>
+                }
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="card-body">
+
+        @Html.Raw(Model.Content)
+
+    </div>
+
+</div>

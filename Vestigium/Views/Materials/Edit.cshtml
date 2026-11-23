@@ -1,0 +1,776 @@
+﻿@model Vestigium.Models.ViewModels.MaterialEditVM
+
+@{
+    ViewData["Title"] = "Editar Material";
+
+    var hasServerErrors =
+        !ViewData.ModelState.IsValid;
+}
+
+<div class="container-fluid px-0">
+
+    <!-- =====================================================
+         BREADCRUMB
+    ====================================================== -->
+
+    <nav aria-label="breadcrumb">
+
+        <ol class="breadcrumb">
+
+            <li class="breadcrumb-item">
+
+                <a asp-action="Index">
+                    Inventario
+                </a>
+
+            </li>
+
+            <li class="breadcrumb-item active"
+                aria-current="page">
+
+                Editar Material
+
+            </li>
+
+        </ol>
+
+    </nav>
+
+
+    <!-- =====================================================
+         ENCABEZADO
+    ====================================================== -->
+
+    <div class="card hero-card mb-4">
+
+        <div class="card-body p-4">
+
+            <div class="d-flex flex-column flex-lg-row
+                align-items-lg-center
+                justify-content-between
+                gap-3">
+
+                <!-- Información -->
+
+                <div>
+
+                    <h1 class="hero-title
+                        d-flex
+                        align-items-center
+                        gap-2
+                        mb-1">
+
+                        <i class="bi bi-pencil-square"></i>
+
+                        <span>
+                            Editar Material
+                        </span>
+
+                    </h1>
+
+
+                    <p class="hero-subtitle">
+
+                        Actualice la identificación del material.
+                        El inventario y las ubicaciones se administran
+                        independientemente.
+
+                    </p>
+
+
+                    <div class="hero-meta">
+
+                        <span class="component-badge">
+
+                            <i class="bi bi-box-seam"></i>
+
+                            @Model.PartNumber
+
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Regresar -->
+
+                <div class="page-header-actions">
+
+                    <a asp-action="Index"
+                       class="btn btn-outline-secondary">
+
+                        <i class="bi bi-arrow-left"></i>
+
+                        Regresar al Inventario
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         FORMULARIO
+    ====================================================== -->
+
+    <div class="card module-card">
+
+        <!-- Header -->
+
+        <div class="card-header">
+
+            <div>
+
+                <h2 class="card-title-standard
+                    d-flex
+                    align-items-center
+                    gap-2">
+
+                    <i class="bi bi-box-seam text-primary"></i>
+
+                    Información del Material
+
+                </h2>
+
+
+                <div class="text-muted small mt-1">
+
+                    Modifique únicamente los datos de identificación
+                    del material.
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Body -->
+
+        <div class="card-body p-4">
+
+            <form asp-action="Edit"
+                  method="post"
+                  id="editMaterialForm"
+                  data-has-server-errors="@(hasServerErrors ? "true" : "false")">
+
+                <!-- =============================================
+                     CAMPOS INTERNOS
+                ============================================== -->
+
+                <input asp-for="Id"
+                       type="hidden" />
+
+
+                <!-- =============================================
+                     VALIDACIONES GENERALES
+                ============================================== -->
+                @if (!ViewData.ModelState.IsValid)
+                {
+                    <div asp-validation-summary="ModelOnly"
+                         class="alert alert-danger mb-4"
+                         role="alert">
+                    </div>
+                }
+
+
+                <!-- =================================================
+                     PASO 1
+                     IDENTIFICACIÓN
+                ================================================== -->
+
+                <section class="form-section">
+
+                    <div class="form-section-title">
+
+                        <span class="section-step">
+                            1
+                        </span>
+
+
+                        <div>
+
+                            <div>
+                                Identificación del Material
+                            </div>
+
+
+                            <div class="text-muted small fw-normal mt-1">
+
+                                Actualice el número de parte o la descripción
+                                del material seleccionado.
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="row g-3">
+
+                        <!-- =========================================
+                             NÚMERO DE PARTE
+                        ========================================== -->
+
+                        <div class="col-12 col-md-5">
+
+                            <label asp-for="PartNumber"
+                                   class="form-label">
+
+                                Número de Parte
+
+                            </label>
+
+
+                            <div class="input-group">
+
+                                <span class="input-group-text">
+
+                                    <i class="bi bi-hash"></i>
+
+                                </span>
+
+
+                                <input asp-for="PartNumber"
+                                       id="partNumberInput"
+                                       class="form-control table-reference"
+                                       autocomplete="off"
+                                       autofocus
+                                       placeholder="Ej. 12345-001" />
+
+                            </div>
+
+
+                            <span asp-validation-for="PartNumber"
+                                  class="text-danger small d-block mt-1">
+                            </span>
+
+
+                            <div class="form-text">
+
+                                Identificador utilizado en inventario,
+                                BOM y movimientos.
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- =========================================
+                             DESCRIPCIÓN
+                        ========================================== -->
+
+                        <div class="col-12 col-md-7">
+
+                            <label asp-for="Description"
+                                   class="form-label">
+
+                                Descripción
+
+                            </label>
+
+
+                            <div class="input-group">
+
+                                <span class="input-group-text">
+
+                                    <i class="bi bi-card-text"></i>
+
+                                </span>
+
+
+                                <input asp-for="Description"
+                                       class="form-control"
+                                       autocomplete="off"
+                                       placeholder="Descripción del material" />
+
+                            </div>
+
+
+                            <span asp-validation-for="Description"
+                                  class="text-danger small d-block mt-1">
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <!-- =================================================
+                     PASO 2
+                     ESTADO DEL INVENTARIO
+                ================================================== -->
+
+                <section class="form-section mb-0">
+
+                    <div class="form-section-title">
+
+                        <span class="section-step">
+                            2
+                        </span>
+
+
+                        <div>
+
+                            <div>
+                                Estado del Inventario
+                            </div>
+
+
+                            <div class="text-muted small fw-normal mt-1">
+
+                                Información calculada automáticamente
+                                a partir de las ubicaciones registradas.
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="row g-3">
+
+                        <!-- =========================================
+                             INVENTARIO ACTUAL
+                        ========================================== -->
+
+                        <div class="col-12 col-md-6">
+
+                            <div class="p-3
+                                border
+                                rounded-3
+                                bg-body-tertiary
+                                h-100">
+
+                                <div class="d-flex
+                                    align-items-center
+                                    gap-2
+                                    text-muted
+                                    small
+                                    mb-2">
+
+                                    <i class="bi bi-boxes"></i>
+
+                                    Inventario Actual
+
+                                </div>
+
+
+                                <div class="fs-4
+                                    fw-bold
+                                    table-reference">
+
+                                    @Model.Quantity.ToString("N0")
+
+                                </div>
+
+
+                                <div class="small text-muted mt-1">
+
+                                    Total disponible entre todas
+                                    las ubicaciones del material.
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- =========================================
+                             UBICACIÓN PRINCIPAL
+                        ========================================== -->
+
+                        <div class="col-12 col-md-6">
+
+                            <div class="p-3
+                                border
+                                rounded-3
+                                bg-body-tertiary
+                                h-100">
+
+                                <div class="d-flex
+                                    align-items-center
+                                    gap-2
+                                    text-muted
+                                    small
+                                    mb-2">
+
+                                    <i class="bi bi-geo-alt"></i>
+
+                                    Ubicación Principal
+
+                                </div>
+
+
+                                @if (!string.IsNullOrWhiteSpace(Model.Rack))
+                                {
+                                    <div class="fs-4
+                                        fw-bold
+                                        text-primary
+                                        table-reference">
+
+                                        @Model.Rack
+
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="fs-6 text-muted">
+
+                                        <i class="bi bi-dash-circle me-1"></i>
+
+                                        Sin ubicación
+
+                                    </div>
+                                }
+
+
+                                <div class="small text-muted mt-1">
+
+                                    Ubicación que contiene la mayor
+                                    existencia disponible.
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- =============================================
+                         INFORMACIÓN DE INVENTARIO
+                    ============================================== -->
+
+                    <div class="help-panel mt-4">
+
+                        <div class="d-flex align-items-start gap-3">
+
+                            <i class="bi bi-info-circle
+                            text-primary
+                            fs-5
+                            flex-shrink-0"></i>
+
+
+                            <div>
+
+                                <div class="help-panel-title">
+
+                                    Gestión de inventario
+
+                                </div>
+
+
+                                <p class="help-panel-text">
+
+                                    La cantidad y la ubicación principal
+                                    no se modifican desde esta pantalla.
+                                    Utilice ubicaciones, transferencias y
+                                    movimientos para actualizar el inventario.
+
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <!-- =================================================
+                     ACCIONES
+                ================================================== -->
+
+                <div class="d-flex flex-column flex-sm-row
+                    justify-content-end
+                    gap-2
+                    mt-4">
+
+                    <a asp-action="Index"
+                       class="btn btn-outline-secondary">
+
+                        <i class="bi bi-x-lg"></i>
+
+                        Cancelar
+
+                    </a>
+
+
+                    <button type="submit"
+                            id="updateMaterialSubmit"
+                            class="btn btn-primary">
+
+                        <i class="bi bi-check-lg"></i>
+
+                        Guardar Cambios
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+@section Scripts
+{
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+
+        (() => {
+
+            // ==============================================
+            // ELEMENTOS
+            // ==============================================
+
+            const editMaterialForm =
+                document.getElementById(
+                    "editMaterialForm"
+                );
+
+            const updateMaterialSubmit =
+                document.getElementById(
+                    "updateMaterialSubmit"
+                );
+
+
+            // ==============================================
+            // ESTADO DEVUELTO POR RAZOR
+            // ==============================================
+
+            const hasServerErrors =
+                editMaterialForm?.dataset.hasServerErrors ===
+                "true";
+
+
+            // ==============================================
+            // LLEVAR Y ENFOCAR CAMPO
+            // ==============================================
+
+            function focusField(field) {
+
+                if (!field) {
+                    return;
+                }
+
+
+                field.scrollIntoView({
+                    behavior: "smooth",
+                    block: "center"
+                });
+
+
+                setTimeout(
+                    () => {
+
+                        field.focus({
+                            preventScroll: true
+                        });
+
+                    },
+                    300
+                );
+
+            }
+
+
+            // ==============================================
+            // OBTENER PRIMER CAMPO CON ERROR
+            // ==============================================
+
+            function getFirstInvalidField() {
+
+                const firstValidationError =
+                    document.querySelector(
+                        ".field-validation-error"
+                    );
+
+
+                if (!firstValidationError) {
+                    return null;
+                }
+
+
+                const fieldName =
+                    firstValidationError.getAttribute(
+                        "data-valmsg-for"
+                    );
+
+
+                if (!fieldName) {
+                    return null;
+                }
+
+
+                const field =
+                    document.querySelector(
+                        `[name="${CSS.escape(fieldName)}"]`
+                    );
+
+
+                if (
+                    !field ||
+                    field.type === "hidden"
+                ) {
+
+                    return null;
+                }
+
+
+                return field;
+
+            }
+
+
+            // ==============================================
+            // ENVÍO
+            // ==============================================
+
+            editMaterialForm?.addEventListener(
+                "submit",
+                function(event) {
+
+                    // ======================================
+                    // 1. VALIDACIÓN ASP.NET / JQUERY
+                    // ======================================
+
+                    if (
+                        typeof $ !== "undefined" &&
+                        typeof $.validator !== "undefined" &&
+                        $(this).data("validator") &&
+                        !$(this).valid()
+                    ) {
+
+                        event.preventDefault();
+
+
+                        const firstInvalidField =
+                            getFirstInvalidField();
+
+
+                        if (firstInvalidField) {
+
+                            focusField(
+                                firstInvalidField
+                            );
+
+                        }
+
+
+                        return;
+
+                    }
+
+
+                    // ======================================
+                    // 2. VALIDACIÓN HTML
+                    // ======================================
+
+                    if (!this.checkValidity()) {
+
+                        event.preventDefault();
+
+
+                        this.reportValidity();
+
+
+                        return;
+
+                    }
+
+
+                    // ======================================
+                    // 3. EVITAR DOBLE ENVÍO
+                    // ======================================
+
+                    if (!updateMaterialSubmit) {
+                        return;
+                    }
+
+
+                    updateMaterialSubmit.disabled =
+                        true;
+
+
+                    updateMaterialSubmit.innerHTML =
+                        '<span class="spinner-border spinner-border-sm me-2" ' +
+                        'role="status" aria-hidden="true"></span>' +
+                        'Guardando...';
+
+                }
+            );
+
+
+            // ==============================================
+            // ERROR DEVUELTO POR EL SERVIDOR
+            // ==============================================
+
+            if (hasServerErrors) {
+
+                requestAnimationFrame(
+                    () => {
+
+                        const firstInvalidField =
+                            getFirstInvalidField();
+
+
+                        if (firstInvalidField) {
+
+                            focusField(
+                                firstInvalidField
+                            );
+
+
+                            return;
+
+                        }
+
+
+                        // ==================================
+                        // ERROR GENERAL DEL MODELO
+                        // ==================================
+
+                        const validationSummary =
+                            document.querySelector(
+                                ".validation-summary-errors"
+                            );
+
+
+                        if (validationSummary) {
+
+                            validationSummary.scrollIntoView({
+                                behavior: "smooth",
+                                block: "center"
+                            });
+
+                        }
+
+                    }
+                );
+
+            }
+
+        })();
+
+    </script>
+}

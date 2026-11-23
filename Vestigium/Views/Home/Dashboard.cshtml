@@ -1,0 +1,817 @@
+﻿@model Vestigium.Models.ViewModels.DashboardVM
+@using Vestigium.ViewModels
+
+@{
+	ViewData["Title"] = "Dashboard";
+
+	var hour = DateTime.Now.Hour;
+
+	string greeting;
+	string greetingIcon;
+	string greetingClass;
+
+	if (hour < 12)
+	{
+		greeting = "Buenos días";
+		greetingIcon = "bi bi-sunrise-fill";
+		greetingClass = "text-warning";
+	}
+	else if (hour < 18)
+	{
+		greeting = "Buenas tardes";
+		greetingIcon = "bi bi-sun-fill";
+		greetingClass = "text-warning";
+	}
+	else
+	{
+		greeting = "Buenas noches";
+		greetingIcon = "bi bi-moon-stars-fill";
+		greetingClass = "text-info";
+	}
+}
+
+<div class="container-fluid">
+
+	<!-- HERO -->
+
+	<div class="card hero-card mb-4">
+
+		<div class="card-body">
+
+			<div class="row align-items-center">
+
+				<div class="col-md-8">
+
+					<h3 class="fw-bold mb-2">
+
+						<i class="@greetingIcon @greetingClass me-2"></i>
+
+						@greeting, @Model.FullName
+
+					</h3>
+
+					<div class="small text-muted mb-3">
+
+						Centro de Control Operativo
+
+					</div>
+
+					<div class="text-muted mb-2">
+						<i class="bi bi-person-badge me-1"></i>
+						@Model.UserName
+					</div>
+
+					<div class="d-flex flex-wrap gap-2">
+
+						@switch (Model.Area)
+						{
+							case "Warehouse":
+
+								@await Html.PartialAsync(
+									"_StatusBadge",
+									new StatusBadgeVM
+									{
+										Text = "Warehouse",
+										Type = "warehouse"
+									})
+
+								break;
+
+							case "Engineering":
+
+								@await Html.PartialAsync(
+									"_StatusBadge",
+									new StatusBadgeVM
+									{
+										Text = "Engineering",
+										Type = "engineering"
+									})
+
+								break;
+
+							case "Quality":
+
+								@await Html.PartialAsync(
+									"_StatusBadge",
+									new StatusBadgeVM
+									{
+										Text = "Quality",
+										Type = "quality"
+									})
+
+								break;
+
+							case "Production Line":
+
+								@await Html.PartialAsync(
+									"_StatusBadge",
+									new StatusBadgeVM
+									{
+										Text = "Production Line",
+										Type = "production"
+									})
+
+								break;
+						}
+
+					</div>
+
+				</div>
+
+				<div class="col-md-2 text-md-end mt-3 mt-md-0">
+
+					<div class="text-muted">
+
+						<i class="bi bi-calendar3 me-1"></i>
+
+						@DateTime.Now.ToString("dddd, dd MMMM yyyy")
+
+					</div>
+
+					<h4 class="fw-bold mb-0" id="clock"></h4>
+
+				</div>
+
+				
+			</div>
+
+		</div>
+
+	</div>
+
+	<!-- ACCESOS RAPIDOS -->
+
+	<div class="page-header mb-4">
+
+		<div>
+
+			<h3 class="page-title mb-1">
+
+				<i class="bi bi-grid text-primary me-2"></i>
+
+				Accesos Rápidos
+
+			</h3>
+
+			<p class="page-subtitle">
+
+				Navegación directa a los módulos principales.
+
+			</p>
+
+		</div>
+
+	</div>
+
+	<div class="row g-3 mb-4">
+
+		<div class="col-md-6">
+
+			<a asp-controller="Materials"
+			   asp-action="Index"
+			   class="text-decoration-none">
+
+				<div class="card quick-action-card h-100 quick-action-inventory">
+
+					<div class="card-body text-center py-4">
+
+						<div class="quick-action-icon">
+							<i class="bi bi-box-seam"></i>
+						</div>
+
+						<div class="quick-action-title">
+							Inventory
+						</div>
+
+						<div class="quick-action-description">
+							Consultar materiales, ubicaciones e inventario disponible.
+						</div>
+
+					</div>
+
+				</div>
+
+			</a>
+
+		</div>
+
+		<div class="col-md-6">
+
+			<a asp-controller="Movements"
+			   asp-action="Index"
+			   class="text-decoration-none">
+
+				<div class="card quick-action-card h-100 quick-action-history">
+
+					<div class="card-body text-center py-4">
+
+						<div class="quick-action-icon">
+							<i class="bi bi-arrow-left-right"></i>
+						</div>
+
+						<div class="quick-action-title">
+							Movements
+						</div>
+
+						<div class="quick-action-description">
+							Registrar y consultar movimientos de inventario.
+						</div>
+
+					</div>
+
+				</div>
+
+			</a>
+
+		</div>
+
+	</div>
+
+	<!-- KPIs -->
+
+	<div class="row g-3 mb-4">
+
+		<div class="col-xl-2 col-lg-4 col-md-6">
+			@await Html.PartialAsync(
+				"_KpiCard",
+				new KpiCardVM
+				{
+					Title = "Materiales",
+					Value = Model.TotalMaterials.ToString("N0"),
+					Subtitle = "Registrados",
+					Icon = "bi bi-box-seam",
+					ColorClass = "kpi-primary",
+					Url = Url.Action("Index", "Materials")
+				})
+		</div>
+
+		<div class="col-xl-2 col-lg-4 col-md-6">
+			@await Html.PartialAsync(
+				"_KpiCard",
+				new KpiCardVM
+				{
+					Title = "Bajo Inventario",
+					Value = Model.LowInventoryCount.ToString("N0"),
+					Subtitle = "Materiales críticos",
+					Icon = "bi bi-exclamation-triangle",
+					ColorClass = "kpi-warning",
+					Url = Url.Action("Index", "Materials")
+				})
+
+		</div>
+
+		<div class="col-xl-4 col-lg-8 col-md-12">
+
+			@await Html.PartialAsync(
+				"_KpiCard",
+				new KpiCardVM
+				{
+					Title = "Inventario",
+					Value = Model.TotalInventory.ToString("N0"),
+					Subtitle = "Piezas disponibles",
+					Icon = "bi bi-stack",
+					ColorClass = "kpi-success",
+					Url = Url.Action("Index", "Materials")
+				})
+
+		</div>
+
+		<div class="col-xl-2 col-lg-4 col-md-6">
+			@await Html.PartialAsync(
+				"_KpiCard",
+				new KpiCardVM
+				{
+					Title = "MRB",
+					Value = Model.MrbQuantity.ToString("N0"),
+					Subtitle = "Material retenido",
+					Icon = "bi bi-shield-check",
+					ColorClass = "kpi-warning",
+					Url = Url.Action("Index", "Materials")
+				})
+
+		</div>
+
+		<div class="col-xl-2 col-lg-4 col-md-6">
+			@await Html.PartialAsync(
+				"_KpiCard",
+				new KpiCardVM
+				{
+					Title = "Scrap",
+					Value = Model.ScrapQuantity.ToString("N0"),
+					Subtitle = "Material descartado",
+					Icon = "bi bi-trash",
+					ColorClass = "kpi-danger",
+					Url = Url.Action("Index", "Materials")
+				})
+
+		</div>
+
+	</div>
+
+	<!-- GRAFICO -->
+
+	<div class="card module-card mb-4">
+
+		<div class="card-header">
+
+			<div>
+
+				<h6 class="card-title-standard mb-0">
+
+					<i class="bi bi-pie-chart me-2"></i>
+
+					Material Flow Overview
+
+				</h6>
+
+				<small class="text-muted">
+					Distribución operativa de movimientos
+				</small>
+
+			</div>
+
+		</div>
+
+		<div class="card-body">
+
+			<div class="row align-items-center">
+
+				<!-- RESUMEN -->
+				<div class="col-lg-4">
+
+					<div class="row text-center">
+
+						<div class="col-6 mb-4">
+
+							<div class="fw-bold text-success fs-4">
+								@Model.TotalEntries.ToString("N0")
+							</div>
+
+							<small class="text-muted">
+								Entradas
+							</small>
+
+						</div>
+
+						<div class="col-6 mb-4">
+
+							<div class="fw-bold text-primary fs-4">
+								@Model.TotalTransfers.ToString("N0")
+							</div>
+
+							<small class="text-muted">
+								Transferencias
+							</small>
+
+						</div>
+
+						<div class="col-6">
+
+							<div class="fw-bold text-warning fs-4">
+								@Model.TotalMrb.ToString("N0")
+							</div>
+
+							<small class="text-muted">
+								MRB
+							</small>
+
+						</div>
+
+						<div class="col-6">
+
+							<div class="fw-bold text-danger fs-4">
+								@Model.TotalScrap.ToString("N0")
+							</div>
+
+							<small class="text-muted">
+								Scrap
+							</small>
+
+						</div>
+
+					</div>
+
+				</div>
+
+				<!-- GRAFICO -->
+				<div class="col-lg-8">
+
+					<div class="chart-container mx-auto">
+
+						<canvas id="materialFlowChart"></canvas>
+
+					</div>
+
+				</div>
+
+			</div>
+
+			<!-- ACCION -->
+
+			<div class="text-center mt-4">
+
+				<a asp-controller="Movements"
+				   asp-action="Index"
+				   class="btn btn-outline-primary">
+
+					<i class="bi bi-arrow-left-right me-1"></i>
+
+					View Movements
+
+				</a>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div class="row">
+
+		<!-- INVENTARIO BAJO -->
+
+		<div class="col-lg-6 dashboard-table-section">
+
+			<div class="card module-card mb-4">
+
+				<!--Nuevo-->
+				<div class="card-header d-flex justify-content-between align-items-center">
+
+					<h6 class="card-title-standard mb-0">
+
+						<i class="bi bi-exclamation-triangle me-2"></i>
+
+						Top 10 Materiales Bajos en Inventario
+
+					</h6>
+					<a asp-controller="Materials"
+					   asp-action="Index"
+					   class="btn btn-sm btn-outline-primary">
+
+						<i class="bi bi-box-seam"></i>
+						Ver Inventario
+					</a>
+
+				</div>
+				<!---->
+
+				<div class="card-body">
+
+					@if (Model.LowInventoryMaterials.Any())
+					{
+						<div class="table-responsive">
+
+							<table class="table table-hover table-modern align-middle mb-0">
+
+								<thead class="table-modern-header">
+									<tr>
+										<th>No. Parte</th>
+										<th>Descripción</th>
+										<th>Cantidad</th>
+										<th>Ubicación</th>
+									</tr>
+								</thead>
+
+								<tbody>
+
+									@foreach (var item in Model.LowInventoryMaterials)
+									{
+										<tr class="@(item.Quantity <= 5 ? "critical-row" : "")">
+
+											<td>@item.PartNumber</td>
+
+											<td>@item.Description</td>
+
+											<td>
+
+												@if (item.Quantity <= 5)
+												{
+													<span class="badge bg-danger">
+														@item.Quantity
+													</span>
+												}
+												else
+												{
+													<span class="badge bg-warning text-dark">
+														@item.Quantity
+													</span>
+												}
+
+											</td>
+
+											<td>
+
+												<span class="badge bg-primary">
+													@item.Rack
+												</span>
+
+											</td>
+
+										</tr>
+									}
+
+								</tbody>
+
+							</table>
+
+						</div>
+					}
+					else
+					{
+						@await Html.PartialAsync(
+							"_EmptyState",
+							new EmptyStateVM
+							{
+								Title = "Sin materiales críticos",
+								Description = "No existen materiales con inventario bajo actualmente.",
+								Icon = "bi bi-check-circle"
+							})
+					}
+
+				</div>
+
+			</div>
+
+		</div>
+
+		<!-- ULTIMOS 5 MOVIMIENTOS -->
+
+		<div class="col-lg-6 dashboard-table-section">
+
+			<div class="card module-card mb-4">
+
+				<div class="card-header">
+
+					<h6 class="card-title-standard mb-0">
+
+						<i class="bi bi-clock-history me-2"></i>
+
+						Últimos 5 Movimientos
+
+					</h6>
+
+				</div>
+
+				<div class="card-body">
+
+					@if (Model.RecentMovements.Any())
+					{
+						<div class="table-responsive">
+
+							<table class="table table-hover table-modern align-middle mb-0">
+								<thead class="table-modern-header">
+
+									<tr>
+										<th>Folio</th>
+										<th>Parte</th>
+										<th>Tipo</th>
+										<th>Ruta</th>
+										<th>Cant.</th>
+										<th>Fecha</th>
+									</tr>
+
+								</thead>
+
+								<tbody>
+
+									@foreach (var movement in Model.RecentMovements)
+									{
+										<tr>
+
+											<td>
+
+												<span class="badge bg-primary">
+
+													@movement.ReportNumber
+
+												</span>
+
+												<div class="small text-muted mt-1">
+
+													@movement.UserName
+
+												</div>
+
+											</td>
+
+											<td>
+
+												<div class="fw-semibold">
+
+													@movement.Material.PartNumber
+
+												</div>
+
+											</td>
+
+											<td>
+
+												@switch (movement.MovementType)
+												{
+													case Vestigium.Models.Enums.MovementType.Entry:
+
+														<span class="badge bg-success">
+															Entrada
+														</span>
+
+														break;
+
+													case Vestigium.Models.Enums.MovementType.Transfer:
+
+														<span class="badge bg-primary">
+															Transferencia
+														</span>
+
+														break;
+
+													case Vestigium.Models.Enums.MovementType.Output:
+
+														<span class="badge bg-danger">
+															Salida
+														</span>
+
+														break;
+												}
+
+											</td>
+
+											<td>
+
+												<small class="fw-semibold">
+
+													@movement.OriginLocation
+
+													<i class="bi bi-arrow-right mx-1"></i>
+
+													@movement.DestinationLocation
+
+												</small>
+
+											</td>
+
+											<td>
+
+												<span class="fw-semibold">
+
+													@movement.Quantity
+
+												</span>
+
+											</td>
+
+											<td>
+
+												<small class="text-muted">
+
+													@(movement.MovementDate.ToString("MM/dd HH:mm"))
+
+												</small>
+
+											</td>
+
+										</tr>
+									}
+
+								</tbody>
+
+							</table>
+
+						</div>
+					}
+					else
+					{
+						@await Html.PartialAsync(
+							"_EmptyState",
+							new EmptyStateVM
+							{
+								Title = "Sin movimientos registrados",
+								Description = "Los movimientos aparecerán aquí.",
+								Icon = "bi bi-arrow-left-right"
+							})
+					}
+
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+</div>
+
+@section Scripts
+{
+	<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+
+	<script>
+
+		function updateClock() {
+
+			const now = new Date();
+
+			document.getElementById('clock').innerHTML =
+				now.toLocaleTimeString();
+		}
+
+		updateClock();
+
+		setInterval(updateClock, 1000);
+
+		const ctx =
+			document.getElementById('materialFlowChart');
+
+		const isDark =
+			document.documentElement.getAttribute("data-bs-theme") === "dark";
+
+		new Chart(ctx, {
+
+			type: 'doughnut',
+
+			data: {
+
+				labels: [
+					'Entradas',
+					'Transferencias',
+					'MRB',
+					'Scrap'
+				],
+
+				datasets: [{
+
+					data: [
+										@Model.TotalEntries,
+										@Model.TotalTransfers,
+										@Model.TotalMrb,
+						@Model.TotalScrap
+					],
+
+					backgroundColor: [
+						'#198754',
+						'#0d6efd',
+						'#ffc107',
+						'#dc3545'
+					],
+
+					borderRadius: 8,
+					borderWidth: 0
+				}]
+			},
+
+			options: {
+
+				responsive: true,
+
+				maintainAspectRatio: false,
+
+				cutout: '70%',
+
+				plugins: {
+
+					legend: {
+
+						position: 'bottom',
+
+						labels: {
+
+							color: isDark ? '#f8fafc' : '#212529',
+
+							usePointStyle: true,
+
+							pointStyle: 'circle',
+
+							padding: 20,
+
+							font: {
+								size: 13
+							}
+						}
+					},
+
+					tooltip: {
+
+						callbacks: {
+
+							label: function(context) {
+
+								let total =
+									context.dataset.data.reduce(
+										(a, b) => a + b,
+										0);
+
+								let value = context.raw;
+
+								let percentage =
+									((value / total) * 100)
+										.toFixed(1);
+
+								return `${value} piezas (${percentage}%)`;
+							}
+						}
+					}
+				}
+			}
+		});
+
+	</script>
+}

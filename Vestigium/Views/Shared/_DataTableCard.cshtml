@@ -1,0 +1,22 @@
+﻿@model Vestigium.ViewModels.DataTableCardVM
+
+<div class="card v-card">
+
+    <div class="card-header">
+        <i class="@Model.Icon me-2"></i>
+        @Model.Title
+    </div>
+
+    <div class="card-body">
+
+        @RenderSection("Toolbar", false)
+
+        <div class="table-responsive">
+
+            @RenderSection("Table", true)
+
+        </div>
+
+    </div>
+
+</div>
